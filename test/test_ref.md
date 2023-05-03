@@ -97,40 +97,40 @@ const char *answer(const char *question)
 
 #### Implicit image path and output path (ypp cache)
 
-- .build/test/ypp_cache/9eb3b5df4fd01a9e.svg
-- .build/test/ypp_cache/9eb3b5df4fd01a9e.svg
+- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
+- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
 
 
 #### Explicit image path
 
-- .build/test/img/ypp_plantuml_test-1.svg
-- .build/test/img/ypp_plantuml_test-1.svg
+- .build/test/img/ypp_dot_test-1.svg
+- .build/test/img/ypp_dot_test-1.svg
 
 
 #### Different explicit image path and output path
 
-- img/ypp_plantuml_test-2.svg
-- .build/test/img/ypp_plantuml_test-2.svg
+- img/ypp_dot_test-2.svg
+- .build/test/img/ypp_dot_test-2.svg
 
 
 ### Images with a specific format (e.g. PNG)
 
 #### Implicit image path and output path (ypp cache)
 
-- .build/test/ypp_cache/62b6dbe42a2fb66b.png
-- .build/test/ypp_cache/62b6dbe42a2fb66b.png
+- .build/test/ypp_cache/01398c77c7fd40c2.png
+- .build/test/ypp_cache/01398c77c7fd40c2.png
 
 
 #### Explicit image path
 
-- .build/test/img/ypp_plantuml_test-1.png
-- .build/test/img/ypp_plantuml_test-1.png
+- .build/test/img/ypp_dot_test-1.png
+- .build/test/img/ypp_dot_test-1.png
 
 
 #### Different explicit image path and output path
 
-- img/ypp_plantuml_test-2.png
-- .build/test/img/ypp_plantuml_test-2.png
+- img/ypp_dot_test-2.png
+- .build/test/img/ypp_dot_test-2.png
 
 
 ## Scripts loaded on the command line

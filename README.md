@@ -58,9 +58,6 @@ $ make install      # install ypp in ~/.local/bin
 can be defined to install `ypp` to a different directory
 (e.g. `make install PREFIX=/usr` to install `ypp` in `/usr/bin`).
 
-**Note**: `ypp` can also be installed with
-[makex](https://github.com/CDSoft/makex).
-
 # Test
 
 ``` sh

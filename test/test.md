@@ -59,10 +59,10 @@ print("d, e, f")
 
 @@(
 build = os.getenv "BUILD"
-alice_and_bob = [===[
-@startuml
-Alice -> Bob: hello
-@enduml
+example = [===[
+digraph {
+    A -> B
+}
 ]===]
 )
 
@@ -70,29 +70,29 @@ Alice -> Bob: hello
 
 #### Implicit image path and output path (ypp cache)
 
-@(F.map(F.prefix "- ", {image.plantuml (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot (example)}))
 
 #### Explicit image path
 
-@(F.map(F.prefix "- ", {image.plantuml { img = fs.join(build, "test", "img", "ypp_plantuml_test-1") } (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot { img = fs.join(build, "test", "img", "ypp_dot_test-1") } (example)}))
 
 #### Different explicit image path and output path
 
-@(F.map(F.prefix "- ", {image.plantuml { img = fs.join("img", "ypp_plantuml_test-2"), out = fs.join(build, "test", "img") } (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot { img = fs.join("img", "ypp_dot_test-2"), out = fs.join(build, "test", "img") } (example)}))
 
 ### Images with a specific format (e.g. PNG)
 
 #### Implicit image path and output path (ypp cache)
 
-@(F.map(F.prefix "- ", {image.plantuml.png (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot.png (example)}))
 
 #### Explicit image path
 
-@(F.map(F.prefix "- ", {image.plantuml.png { img = fs.join(build, "test", "img", "ypp_plantuml_test-1") } (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot.png { img = fs.join(build, "test", "img", "ypp_dot_test-1") } (example)}))
 
 #### Different explicit image path and output path
 
-@(F.map(F.prefix "- ", {image.plantuml.png { img = fs.join("img", "ypp_plantuml_test-2"), out = fs.join(build, "test", "img") } (alice_and_bob)}))
+@(F.map(F.prefix "- ", {image.dot.png { img = fs.join("img", "ypp_dot_test-2"), out = fs.join(build, "test", "img") } (example)}))
 
 ## Scripts loaded on the command line
 

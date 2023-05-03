@@ -8,7 +8,6 @@
 [Lua]: http://www.lua.org/
 [GitHub]: https://github.com/CDSoft/ypp
 [cdelord.fr]: http://cdelord.fr
-[makex]: https://github.com/CDSoft/makex
 [GraphViz]: http://graphviz.org/
 [PlantUML]: http://plantuml.sourceforge.net/
 [ditaa]: http://ditaa.sourceforge.net/
@@ -63,8 +62,6 @@ $ make install      # install ypp in ~/.local/bin
 `make install` installs `ypp` in `~/.local/bin`.
 The `PREFIX` variable can be defined to install `ypp` to a different directory
 (e.g. `make install PREFIX=/usr` to install `ypp` in `/usr/bin`).
-
-**Note**: `ypp` can also be installed with [makex].
 
 # Test
 
