@@ -142,8 +142,8 @@ end
 
 local function write_dep_file(args)
     if not args.gendep then return end
-    local name = args.dep_file or (args.output and fs.splitext(args.output)..".d")
-    if not name then die("The dependency file name is unknown, use -MF or -o") end
+    local name = args.depfile or (args.output and fs.splitext(args.output)..".d")
+    if not name then die("The dependency file name is unknown, use --MF or -o") end
     local function mklist(...)
         return F{...}:flatten():from_set(F.const(true)):keys()
             :filter(function(p) return p ~= "-" end)
