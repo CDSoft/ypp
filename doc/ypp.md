@@ -53,10 +53,14 @@ Anybody can contribute on [GitHub] to:
 
 # Installation
 
+[ypp] requires [LuaX].
+
 ``` sh
-$ git clone https://github.com/CDSoft/ypp.git
-$ cd ypp
-$ make install      # install ypp in ~/.local/bin
+$ git clone https://github.com/CDSoft/luax.git && make -C luax install
+...
+
+# install ypp in ~/.local/bin
+$ git clone https://github.com/CDSoft/ypp.git && make -C ypp install
 ```
 
 `make install` installs `ypp` in `~/.local/bin`.

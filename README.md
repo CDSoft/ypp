@@ -48,10 +48,15 @@ source software. Anybody can contribute on
 
 # Installation
 
+[ypp](http://cdelord.fr/ypp "Yet another PreProcessor") requires
+[LuaX](http://cdelord.fr/luax "Lua eXtended interpretor").
+
 ``` sh
-$ git clone https://github.com/CDSoft/ypp.git
-$ cd ypp
-$ make install      # install ypp in ~/.local/bin
+$ git clone https://github.com/CDSoft/luax.git && make -C luax install
+...
+
+# install ypp in ~/.local/bin
+$ git clone https://github.com/CDSoft/ypp.git && make -C ypp install
 ```
 
 `make install` installs `ypp` in `~/.local/bin`. The `PREFIX` variable
