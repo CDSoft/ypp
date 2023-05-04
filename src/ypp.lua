@@ -8,7 +8,6 @@
 * `ypp.input_file(n)`: return the path of the nth input file in the current *include* stack.
 @@@]]
 
-
 local F = require "F"
 local fs = require "fs"
 
@@ -224,14 +223,3 @@ local args = parse_args()
 require "atexit".run()
 write_dep_file(args)
 write_outputs(args)
-
-
--- TODO : mettre la doc dans les sources et l'extraire avec ypp ;-)
--- doc avec typst ? ou pandoc ?
--- avec pandoc (markdown généré à partir des sources et mis en conf dans github)
--- ou uniquement avec ypp : md -> md
---
--- voir plustard comment supprimer la dépendance à panda dans luax (peut-être un simple filtre Lua pour pandoc qui réimplémente l'extraction de doc)
---
--- générer le README à partir de la doc/ypp.md
--- et les images dans img
