@@ -110,7 +110,7 @@ function ypp_mt.__call(_, content)
         end
         return tostring(x)
     end
-    return (content:gsub("([:@?])(@?)(%b())", function(t, t2, x)
+    return (content:gsub("([@?])(@?)(%b())", function(t, t2, x)
         if (t == "@" and t2 == "") and ypp_enabled then -- x is an expression
             x = x:sub(2, -2)
             local y = (assert(load("return "..x, x, "t")))()
