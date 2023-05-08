@@ -135,11 +135,21 @@ export LUA_PATH := ./?.lua
 
 ## Run ypp tests
 test: $(BUILD)/test/test.ok
+test: $(BUILD)/test/test.d.ok
 
 $(BUILD)/test/test.ok: $(BUILD)/test/test.md test/test_ref.md
 	diff $^
 
-ref: $(BUILD)/test/test.md test/test_ref.md
+$(BUILD)/test/test.d.ok: $(BUILD)/test/test.d test/test_ref.d
+	diff $^
+
+ref: ref-md
+ref: ref-d
+
+ref-md: $(BUILD)/test/test.md test/test_ref.md
+	diff -q $^ || meld $^
+
+ref-d: $(BUILD)/test/test.d test/test_ref.d
 	diff -q $^ || meld $^
 
 $(BUILD)/test/test.md: $(BUILD)/ypp-pandoc test/test.md
@@ -147,7 +157,7 @@ $(BUILD)/test/test.md: $(BUILD)/ypp-pandoc test/test.md
 	$(BUILD)/ypp-pandoc \
 	    -t svg \
 	    --MT target1 --MT target2 --MD \
-	    -l test/test.lua \
+	    -p test -l test.lua \
 	    test/test.md \
 	    -o $@
 

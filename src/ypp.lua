@@ -33,14 +33,11 @@ end
 
 local function add_path(paths)
     if not paths then return end
-    local config = package.config:gmatch("[^\n]*")
-    local dir_sep = config()
-    local template_sep = config()
-    local template = config()
-    paths:split(template_sep):map(function(path)
-        local new_path = path..dir_sep..template..".lua"
-        package.path = new_path .. template_sep .. package.path
-    end)
+    local dir_sep, template_sep, template, _ = package.config:lines():unpack()
+    package.path = F.concat {
+        paths:split(template_sep):map(function(path) return path..dir_sep..template..".lua" end),
+        { package.path }
+    } : str(template_sep)
 end
 
 local function process(content)
@@ -53,7 +50,7 @@ local function read_file(filename)
         content = io.stdin:read "a"
     else
         content = assert(fs.read(filename))
-        known_input_files[#known_input_files+1] = filename
+        known_input_files[#known_input_files+1] = filename:gsub("^"..fs.getcwd()..fs.sep, "")
     end
     return content
 end
@@ -144,13 +141,13 @@ local function write_dep_file(args)
     local function mklist(...)
         return F{...}:flatten():from_set(F.const(true)):keys()
             :filter(function(p) return p ~= "-" end)
+            :map(function(p) return p:gsub("^%."..fs.sep, "") end)
+            :sort()
             :unwords()
     end
-    local scripts = {}
-    for modname, _ in pairs(package.loaded) do
-        local path = package.searchpath(modname, package.path)
-        if path then scripts[#scripts+1] = path end
-    end
+    local scripts = F.keys(package.loaded)
+        : map(function(modname) return package.searchpath(modname, package.path) or false end)
+        : filter(function(path) return path end)
     local deps = mklist(args.targets, args.output or {}).." : "..mklist(known_input_files, scripts)
     fs.write(name, deps.."\n")
 end
