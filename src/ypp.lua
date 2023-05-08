@@ -175,8 +175,12 @@ end
 local function parse_args()
     local parser = require "argparse"()
         : name "ypp"
-        : description "Yet a PreProcessor"
+        : description(("ypp %s\nYet a PreProcessor"):format(_YPP_VERSION))
         : epilog "For more information, see https://github.com/CDSoft/ypp"
+
+    parser : flag "-v"
+        : description "Show yyp version"
+        : action(function(_, _, _, _) print(_YPP_VERSION); os.exit() end)
 
     parser : option "-l"
         : description "Execute a Lua script"

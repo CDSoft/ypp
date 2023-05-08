@@ -71,10 +71,11 @@ $ make test
 
 # Usage
 
-    Usage: ypp [-h] [-l script] [-e expression] [-p path] [-o output]
+    Usage: ypp [-h] [-v] [-l script] [-e expression] [-p path] [-o output]
            [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
            [<input>] ...
 
+    ypp
     Yet a PreProcessor
 
     Arguments:
@@ -82,6 +83,7 @@ $ make test
 
     Options:
        -h, --help            Show this help message and exit.
+       -v                    Show yyp version
        -l script             Execute a Lua script
        -e expression         Execute a Lua expression
        -p path               Add a path to package.path

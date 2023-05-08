@@ -20,6 +20,9 @@ PREFIX := $(firstword $(wildcard $(PREFIX) $(HOME)/.local))
 BUILD = .build
 
 SOURCES = $(sort $(wildcard src/*.lua))
+SOURCES += $(BUILD)/src/_YPP_VERSION.lua
+
+YPP_VERSION := $(shell git describe --tags 2>/dev/null || echo 0.0)
 
 ## Compile ypp
 all: compile
@@ -102,6 +105,14 @@ $(BUILD)/ypp-luax: $(SOURCES)
 $(BUILD)/ypp-pandoc: $(SOURCES)
 	@mkdir -p $(dir $@)
 	luax -q -t pandoc -o $@ $^
+
+$(BUILD)/src/_YPP_VERSION.lua: $(wildcard .git/refs/tags) $(wildcard .git/index)
+	@mkdir -p $(dir $@)
+	@(  set -eu;                                                \
+	    echo "--@LOAD";                                         \
+	    echo "return [[$(YPP_VERSION)]]";                       \
+	) > $@.tmp
+	@mv $@.tmp $@
 
 ####################################################################
 # Installation

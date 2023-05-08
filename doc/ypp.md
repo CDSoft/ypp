@@ -76,7 +76,7 @@ $ make test
 # Usage
 
 ```
-@(script.sh(os.getenv"BUILD".."/ypp -h"))
+@(script.sh(os.getenv"BUILD".."/ypp -h") : gsub("ypp %d+.%d+[0-9a-g.-]*", "ypp"))
 ```
 
 # Documentation
