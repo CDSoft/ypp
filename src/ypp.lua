@@ -110,20 +110,18 @@ function ypp_mt.__call(_, content)
         end
         return tostring(x)
     end
-    return (content:gsub("([@?])(@?)(%b())", function(t, t2, x)
-        if (t == "@" and t2 == "") and ypp_enabled then -- x is an expression
-            x = x:sub(2, -2)
+    return (content:gsub("([@?]@?)(%b())", function(t, x)
+        x = x:sub(2, -2)
+        if t == "@" and ypp_enabled then -- x is an expression
             local y = (assert(load("return "..x, x, "t")))()
             -- if the expression can be evaluated, process it
             return format_value(y)
-        elseif (t == "@" and t2 == "@") and ypp_enabled then -- x is a chunk
-            x = x:sub(2, -2)
+        elseif t == "@@" and ypp_enabled then -- x is a chunk
             local y = (assert(load(x, x, "t")))()
             -- if the chunk returns a value, process it
             -- otherwise leave it blank
             return y ~= nil and format_value(y) or ""
-        elseif t == "?" and t2 == "" then -- enable/disable verbatim sections
-            x = x:sub(2, -2)
+        elseif t == "?" then -- enable/disable verbatim sections
             ypp_enabled = (assert(load("return "..x, x, "t")))()
             return ""
         end
