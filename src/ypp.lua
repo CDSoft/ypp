@@ -53,7 +53,7 @@ end
 
 local function add_path(paths)
     if not paths then return end
-    local dir_sep, template_sep, template, _ = package.config:lines():unpack()
+    local dir_sep, template_sep, template, _ = F(package.config):lines():unpack()
     package.path = F.concat {
         paths:split(template_sep):map(function(path) return path..dir_sep..template..".lua" end),
         { package.path }
@@ -119,30 +119,104 @@ local ypp_enabled = true
 
 function ypp_mt.__call(_, content)
     if type(content) == "table" then return F.map(ypp, content) end
+
     local function format_value(x)
         local mt = getmetatable(x)
         if mt and mt.__tostring then return tostring(x) end
-        if type(x) == "table" then
-            return F.map(tostring, x):unlines()
-        end
+        if type(x) == "table" then return F.map(tostring, x):unlines() end
         return tostring(x)
     end
-    return (content:gsub("([@?]@?)(%b())", function(t, x)
-        x = x:sub(2, -2)
-        if t == "@" and ypp_enabled then -- x is an expression
+
+    local tokens = {} -- tokenized output with chunks of plain text and macro results
+
+    local function emit_raw(s)
+        tokens[#tokens+1] = s
+    end
+
+    local function emit_expression(s, x)
+        if ypp_enabled then
             local y = (assert(load("return "..x, x, "t")))()
-            -- if the expression can be evaluated, process it
-            return format_value(y)
-        elseif t == "@@" and ypp_enabled then -- x is a chunk
-            local y = (assert(load(x, x, "t")))()
-            -- if the chunk returns a value, process it
-            -- otherwise leave it blank
-            return y ~= nil and format_value(y) or ""
-        elseif t == "?" then -- enable/disable verbatim sections
-            ypp_enabled = (assert(load("return "..x, x, "t")))()
-            return ""
+            emit_raw(format_value(y))
+        else
+            emit_raw(s)
         end
-    end))
+    end
+
+    local function emit_chunk(s, x)
+        if ypp_enabled then
+            local y = (assert(load(x, x, "t")))()
+            if y ~= nil then
+                emit_raw(format_value(y))
+            end
+        else
+            emit_raw(s)
+        end
+    end
+
+    local i = 1 -- next index to search for a macro
+    while i <= #content do
+
+        -- find the next pattern
+        local i1, j1 = content:find("[@?]@?%b()", i)
+        local i2, j2 = content:find("@@?%[=*%[", i)
+
+        if i1 and (not i2 or i2 > i1) then
+            -- ... [@?]@?(...) ...
+            -- ^   ^         ^
+            -- i   i1        j1
+            --     <--------->
+            --     s
+            --     <----><--->
+            --     t     x
+            if i1 > i then
+                -- emit text before the macro
+                emit_raw(content:sub(i, i1-1))
+            end
+            local s, t, x = content:match("^(([@?]@?)(%b()))", i1)
+            x = x:sub(2, -2)
+            if t == "@" then emit_expression(s, x)
+            elseif t == "@@" then emit_chunk(s, x)
+            elseif t == "?" then ypp_enabled = (assert(load("return "..x, x, "t")))()
+            else emit_raw(s)
+            end
+            i = j1 + 1
+
+        elseif i2 and (not i1 or i1 > i2) then
+            -- ... @@?[===[ ... ]===]
+            -- ^   ^      ^     ^   ^
+            -- i   i2     j2    i3  j3
+            --     <------>
+            --     s
+            --     <-> <->
+            --     t   sep
+            --     <---------------->
+            --     s0
+            if i2 > i then
+                -- emit text before the macro
+                emit_raw(content:sub(i, i2-1))
+            end
+            local s, t, sep = content:match("^((@@?)%[(=*)%[)", i2)
+            local i3, j3 = content:find("]"..sep.."]", j2+1, true)
+            if i3 then
+                local s0 = content:sub(i2, j3)
+                local x = content:sub(j2+1, i3-1)
+                if t == "@" then emit_expression(s0, x)
+                elseif t == "@@" then emit_chunk(s0, x)
+                else emit_raw(s0)
+                end
+                i = j3 + 1
+            else
+                emit_raw(s)
+                i = j2 + 1
+            end
+
+        else
+            emit_raw(content:sub(i, #content))
+            i = #content+1
+        end
+    end
+
+    return table.concat(tokens)
 end
 
 local function write_outputs(args)

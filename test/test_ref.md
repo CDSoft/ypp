@@ -20,6 +20,18 @@ $$ \sum_{n=1}^{100} = 5050 $$
 - Line 10
 
 
+nil in an expression = nil
+
+nil in a statement = 
+
+
+
+weird = bizarre string )) => ) unbalanced ())
+
+malformed expression: @[===========[ foo bar ]=====]
+malformed chunk: @@[===========[ foo bar ]=====]
+
+
 ## File inclusion
 
 ### Included from another file

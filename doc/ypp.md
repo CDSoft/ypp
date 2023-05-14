@@ -76,16 +76,21 @@ $ make test
 # Usage
 
 ```
-@(script.sh(os.getenv"BUILD".."/ypp -h") : gsub("ypp %d+.%d+[0-9a-g.-]*", "ypp"))
+@[[script.sh(os.getenv"BUILD".."/ypp -h") : gsub("ypp %d+.%d+[0-9a-g.-]*", "ypp")]]
 ```
 
 # Documentation
 
 ?(false)
 
-Lua expressions are embedded in the document to process: `@( Lua expression )`.
+Lua expressions are embedded in the document to process: `@( Lua expression )` or `@[===[ Lua expression ]===]`.
 
-Lua chunks can also be embedded in the document to add new definitions: `@@( Lua chunk )`.
+Lua chunks can also be embedded in the document to add new definitions: `@@( Lua chunk )` or `@@[===[ Lua chunk ]===]`.
+
+The Lua code can be delimited with parentheses or long brackets.
+The code delimited with parentheses shall only contain well-balanced parentheses.
+The long bracket delimiters shall have the same number of equal signs (which can be null),
+similarly to Lua literal strings
 
 A macro is just a Lua function. Some macros are predefined by `ypp`. New macros
 can be defined by loading Lua scripts (options `-l` and `-e`) or embedded as
@@ -112,12 +117,13 @@ $\sum_{i=0}^100 = @(F.range(100):sum())$
 ### Lua chunk
 
 ```
-@@( local sum = 0
+@@[[
+    local sum = 0
     for i = 1, 100 do
         sum = sum + i
     end
     return sum
-)
+]]
 
 $\sum_{i=0}^100 = @(sum)$
 ```
@@ -126,14 +132,15 @@ $\sum_{i=0}^100 = @(sum)$
 
 ## Builtin ypp functions
 
-@@( function module(modname)
+@@[[
+    function module(modname)
         return {
             "### `"..modname.."`",
             "",
             doc(fs.join("src", modname..".lua")),
         }
     end
-)
+]]
 
 @(module "ypp")
 
@@ -152,26 +159,30 @@ $\sum_{i=0}^100 = @(sum)$
 ypp is written in [Lua] and [LuaX].
 All Lua and LuaX libraries are available to ypp.
 
-[LuaX] is a Lua interpretor and REPL based on Lua 5.4.4, augmented with some useful packages.
+[LuaX] is a Lua interpretor and REPL based on Lua 5.4, augmented with some useful packages.
 
 LuaX comes with a standard Lua interpretor and provides some libraries (embedded
 in a single executable, no external dependency required).
 Here are some LuaX modules that can be useful in ypp documents:
 
-@@(function luaxdoc(name, file, descr) return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, file, descr) end)
+@@[===[
+    luaxdoc = F.curry(function(name, descr)
+        return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
+    end)
+]===]
 
-- @(luaxdoc("F", "F", "functional programming inspired functions"))
-- @(luaxdoc("L", "L", "`pandoc.List` module from the Pandoc Lua interpreter"))
-- @(luaxdoc("fs", "fs", "file system management"))
-- @(luaxdoc("sh", "sh", "shell command execution"))
-- @(luaxdoc("mathx", "mathx", "complete math library for Lua"))
-- @(luaxdoc("imath", "imath", "arbitrary precision integer and rational arithmetic library"))
-- @(luaxdoc("qmath", "qmath", "rational number library"))
-- @(luaxdoc("complex", "complex", "math library for complex numbers based on C99"))
-- @(luaxdoc("crypt", "crypt", "cryptography module"))
-- @(luaxdoc("lpeg", "lpeg", "Parsing Expression Grammars For Lua"))
-- @(luaxdoc("inspect", "inspect", "Human-readable representation of Lua tables"))
-- @(luaxdoc("serpent", "serpent", "Lua serializer and pretty printer"))
+- @[[luaxdoc "F" "functional programming inspired functions"]]
+- @[[luaxdoc "L" "`pandoc.List` module from the Pandoc Lua interpreter"]]
+- @[[luaxdoc "fs" "file system management"]]
+- @[[luaxdoc "sh" "shell command execution"]]
+- @[[luaxdoc "mathx" "complete math library for Lua"]]
+- @[[luaxdoc "imath" "arbitrary precision integer and rational arithmetic library"]]
+- @[[luaxdoc "qmath" "rational number library"]]
+- @[[luaxdoc "complex" "math library for complex numbers based on C99"]]
+- @[[luaxdoc "crypt" "cryptography module"]]
+- @[[luaxdoc "lpeg" "Parsing Expression Grammars For Lua"]]
+- @[[luaxdoc "inspect" "Human-readable representation of Lua tables"]]
+- @[[luaxdoc "serpent" "Lua serializer and pretty printer"]]
 
 More information here: <http://cdelord.fr/luax>
 

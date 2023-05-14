@@ -14,6 +14,21 @@ $$ \sum_{n=1}^{100} = @(sum(1, 100)) $$
 
 @(F.range(10):map(F.prefix"- Line "))
 
+nil in an expression = @(nil)
+
+nil in a statement = @@(return nil)
+
+@@[===[
+-- large block with unbalanced parentheses )))
+weird = ") unbalanced ())"
+]===]
+
+weird = @[[ "bizarre string )) => " .. weird ]]
+
+malformed expression: @[===========[ foo bar ]=====]
+malformed chunk: @@[===========[ foo bar ]=====]
+
+
 ## File inclusion
 
 @(include("test_inc.md", {pattern="===(.-)===", shift=2}))

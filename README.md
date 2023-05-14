@@ -98,10 +98,15 @@ $ make test
 # Documentation
 
 Lua expressions are embedded in the document to process:
-`@( Lua expression )`.
+`@( Lua expression )` or `@[===[ Lua expression ]===]`.
 
 Lua chunks can also be embedded in the document to add new definitions:
-`@@( Lua chunk )`.
+`@@( Lua chunk )` or `@@[===[ Lua chunk ]===]`.
+
+The Lua code can be delimited with parentheses or long brackets. The
+code delimited with parentheses shall only contain well-balanced
+parentheses. The long bracket delimiters shall have the same number of
+equal signs (which can be null), similarly to Lua literal strings
 
 A macro is just a Lua function. Some macros are predefined by `ypp`. New
 macros can be defined by loading Lua scripts (options `-l` and `-e`) or
@@ -126,12 +131,13 @@ according to their types:
 
 ### Lua chunk
 
-    @@( local sum = 0
+    @@[[
+        local sum = 0
         for i = 1, 100 do
             sum = sum + i
         end
         return sum
-    )
+    ]]
 
     $\sum_{i=0}^100 = @(sum)$
 
@@ -322,7 +328,7 @@ ypp is written in [Lua](http://www.lua.org/) and
 LuaX libraries are available to ypp.
 
 [LuaX](http://cdelord.fr/luax "Lua eXtended interpretor") is a Lua
-interpretor and REPL based on Lua 5.4.4, augmented with some useful
+interpretor and REPL based on Lua 5.4, augmented with some useful
 packages.
 
 LuaX comes with a standard Lua interpretor and provides some libraries
