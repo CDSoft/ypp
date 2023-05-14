@@ -144,7 +144,7 @@ according to their types:
 - `ypp.input_path()`: return the path of the current input file.
 - `ypp.input_file(n)`: return the name of the nth input file in the
   current *include* stack.
-- `ypp.input_file(n)`: return the path of the nth input file in the
+- `ypp.input_path(n)`: return the path of the nth input file in the
   current *include* stack.
 
 ## Builtin ypp modules
