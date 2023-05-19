@@ -30,7 +30,7 @@ It provides several interesting features:
   [Asymptote](http://asymptote.sourceforge.net/),
   [blockdiag](http://blockdiag.com/),
   [mermaid](https://mermaidjs.github.io/),
-  [lsvg](http://cdelord.fr/lsvg/), …)
+  [Octave](https://octave.org/), [lsvg](http://cdelord.fr/lsvg/), …)
 - documentation extraction (e.g. from comments in source files)
 
 # Open source
@@ -249,6 +249,7 @@ be used similaryly to `image`: `X(source)` or `X{...}(source)`.
 | [ditaa](http://ditaa.sourceforge.net/)         | `ditaa`      | `image.ditaa(source)`      |
 | [gnuplot](http://www.gnuplot.info/)            | `gnuplot`    | `image.gnuplot(source)`    |
 | [lsvg](http://cdelord.fr/lsvg/)                | `lsvg`       | `image.lsvg(source)`       |
+| [octave](https://octave.org/)                  | `octave`     | `image.octave(source)`     |
 
 Example:
 

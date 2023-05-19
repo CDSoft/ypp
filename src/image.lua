@@ -70,6 +70,7 @@ They can be used similaryly to `image`: `X(source)` or `X{...}(source)`.
         ditaa = "ditaa",
         gnuplot = "gnuplot",
         lsvg = "lsvg",
+        octave = "octave",
     }
     local function cmp(x, y)
         assert(engine[x], x.." engine unknown")
@@ -121,8 +122,8 @@ local function get_input_ext(s)
     return s:match("%%i(%.%w+)") or ""
 end
 
-local function get_ext(s)
-    return s:match("%%o(%.%w+)") or ""
+local function get_ext(s, t)
+    return s:match("%%o(%.%w+)") or t:match("%%o(%.%w+)") or ""
 end
 
 local function make_diagram_cmd(src, img, render)
@@ -146,12 +147,22 @@ local function expand_path(path)
 end
 
 local function diagram(exe, render, default_ext)
-    render = render : gsub("%%exe", exe)
-                    : gsub("%%ext", default_ext)
-                    : gsub("%%o", "%%o."..default_ext)
+    local template
+    if type(render) == "table" then
+        render, template = F.unpack(render)
+    else
+        template = "%s"
+    end
+    render = render
+        : gsub("%%exe", exe or "%0")
+        : gsub("%%ext", default_ext or "%0")
+        : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
+    template = template
+        : gsub("%%ext", default_ext or "%0")
+        : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
     local function prepare_diagram(opts, contents)
         local input_ext = get_input_ext(render)
-        local ext = get_ext(render)
+        local ext = get_ext(render, template)
         local img = opts.img
         local output_path = opts.out
         local hash_digest = crypt.hash(render..contents)
@@ -170,7 +181,7 @@ local function diagram(exe, render, default_ext)
             "img: "..img,
             "out: "..out,
             "",
-            contents,
+            (template : gsub("%%s", contents)),
         }
         local old_meta = fs.read(meta) or ""
         if not fs.is_file(out..ext) or meta_content ~= old_meta then
@@ -178,7 +189,10 @@ local function diagram(exe, render, default_ext)
                 fs.mkdirs(fs.dirname(out))
                 local name = fs.join(tmpdir, "diagram")
                 local name_ext = name..input_ext
-                assert(fs.write(name_ext, contents), "Can not create "..name_ext)
+                local templated_contents = template
+                    : gsub("%%o", out)
+                    : gsub("%%s", contents)
+                assert(fs.write(name_ext, templated_contents), "Can not create "..name_ext)
                 assert(fs.write(meta, meta_content), "Can not create "..meta)
                 local render_cmd = make_diagram_cmd(name, out, render)
                 render_diagram(render_cmd)
@@ -211,6 +225,7 @@ local blockdiag = "%exe -a -T%ext -o %o %i"
 local ditaa = "java -jar "..DITAA.." %svg -o -e UTF-8 %i %o"
 local gnuplot = "%exe -e 'set terminal %ext' -e 'set output \"%o\"' -c %i"
 local lsvg = "%exe %i.lua %o"
+local octave = { "octave --no-gui %i", "figure(\"visible\", \"off\")\n\n%s\nprint %o;" }
 
 local function define(t)
     local self = {}
@@ -255,6 +270,7 @@ return define {
     ditaa       = instantiate("ditaa", ditaa),
     gnuplot     = instantiate("gnuplot", gnuplot),
     lsvg        = instantiate("lsvg", lsvg),
+    octave      = instantiate("octave", octave),
     __call = function(_, render, ext) return diagram(nil, render, ext) end,
     __index = {
         set_format = function(fmt) default_ext = fmt end,

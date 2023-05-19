@@ -109,6 +109,27 @@ digraph {
 
 @(F.map(F.prefix "- ", {image.dot.png { img = fs.join("img", "ypp_dot_test-2"), out = fs.join(build, "test", "img") } (example)}))
 
+### Images with a custom command
+
+@(F.map(F.prefix "- ", {image("dot -T%ext -o %o %i", "svg") (example)}))
+
+### Images generated with Octave
+
+@(image.octave [===[
+x = 0:0.01:3;
+plot (x, erf (x));
+hold on;
+plot (x, x, "r");
+axis ([0, 3, 0, 1]);
+text (0.65, 0.6175, ...
+      ['$\displaystyle\leftarrow x = {2 \over \sqrt{\pi}}' ...
+       '\int_{0}^{x} e^{-t^2} dt = 0.6175$'],
+      "interpreter", "latex");
+xlabel ("x");
+ylabel ("erf (x)");
+title ("erf (x) with text annotation");
+]===])
+
 ## Scripts loaded on the command line
 
 `test_loaded` = `@(test_loaded)`

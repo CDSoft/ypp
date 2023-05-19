@@ -145,6 +145,16 @@ const char *answer(const char *question)
 - .build/test/img/ypp_dot_test-2.png
 
 
+### Images with a custom command
+
+- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
+- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
+
+
+### Images generated with Octave
+
+.build/test/ypp_cache/577b1d4914ad253d.svg
+
 ## Scripts loaded on the command line
 
 `test_loaded` = `true`

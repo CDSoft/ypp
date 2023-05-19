@@ -21,6 +21,7 @@
 [lsvg]: http://cdelord.fr/lsvg/
 [LuaX]: http://cdelord.fr/luax "Lua eXtended interpretor"
 [LuaX documentation]: http://cdelord.fr/luax/luax.lua.html
+[Octave]: https://octave.org/
 
 `ypp` is yet another preprocessor. It's an attempt to merge [UPP] and [Panda].
 It acts as a generic text preprocessor as [UPP] and comes with macros
@@ -36,7 +37,7 @@ It provides several interesting features:
 - conditional blocks
 - file inclusion (e.g. for source code examples)
 - script execution (e.g. to include the result of a command)
-- diagrams ([Graphviz], [PlantUML], [Asymptote], [blockdiag], [mermaid], [lsvg], ...)
+- diagrams ([Graphviz], [PlantUML], [Asymptote], [blockdiag], [mermaid], [Octave], [lsvg], ...)
 - documentation extraction (e.g. from comments in source files)
 
 # Open source
