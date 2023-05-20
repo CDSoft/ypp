@@ -27,7 +27,7 @@ E.g.:
 
 ?(false)
 ```
-@(when(lang="en") [===[
+@(when(lang=="en") [===[
 The current language is English.
 ]===])
 ```

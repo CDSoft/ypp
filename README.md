@@ -318,7 +318,7 @@ is rendered as
 
 E.g.:
 
-    @(when(lang="en") [===[
+    @(when(lang=="en") [===[
     The current language is English.
     ]===])
 
