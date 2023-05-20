@@ -137,7 +137,7 @@ $(PREFIX)/bin/%: $(BUILD)/%
 .PHONY: ref
 
 export BUILD
-export YPP_CACHE := $(BUILD)/test/ypp_cache
+export YPP_IMG := [$(BUILD)/test/]ypp_images
 export PLANTUML
 export DITAA
 
@@ -163,6 +163,8 @@ ref-md: $(BUILD)/test/test.md test/test_ref.md
 ref-d: $(BUILD)/test/test.d test/test_ref.d
 	diff -q $^ || meld $^
 
+$(BUILD)/test/test.d: $(BUILD)/test/test.md
+
 $(BUILD)/test/test.md: $(BUILD)/ypp-pandoc test/test.md
 	@mkdir -p $(dir $@)
 	$(BUILD)/ypp-pandoc \
@@ -183,15 +185,13 @@ $(BUILD)/test/test.md: $(BUILD)/ypp-pandoc test/test.md
 ## Generate README.md
 doc: README.md
 
-README.md: $(BUILD)/doc/README.md
-	pandoc --to gfm $< -o $@
-
-$(BUILD)/doc/README.md: $(BUILD)/ypp doc/ypp.md
-	@mkdir -p $(dir $@)
-	$(BUILD)/ypp \
+README.md: $(BUILD)/ypp doc/ypp.md
+	@mkdir -p $(BUILD)/doc
+	YPP_IMG=doc/img $(BUILD)/ypp \
 	    -t svg \
 	    --MF $(BUILD)/doc/README.d --MD \
 	    doc/ypp.md \
-	    -o $@
+	    -o $(BUILD)/doc/$@
+	pandoc --to gfm $(BUILD)/doc/$@ -o $@
 
 -include $(BUILD)/doc/README.d

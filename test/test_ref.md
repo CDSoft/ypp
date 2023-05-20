@@ -107,53 +107,25 @@ const char *answer(const char *question)
 
 ### Images with the default format (SVG)
 
-#### Implicit image path and output path (ypp cache)
-
-- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
-- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
-
-
-#### Explicit image path
-
-- .build/test/img/ypp_dot_test-1.svg
-- .build/test/img/ypp_dot_test-1.svg
-
-
-#### Different explicit image path and output path
-
-- img/ypp_dot_test-2.svg
-- .build/test/img/ypp_dot_test-2.svg
+- ypp_images/9d3c8eb78369bfa1.svg
+- .build/test/ypp_images/9d3c8eb78369bfa1.svg
 
 
 ### Images with a specific format (e.g. PNG)
 
-#### Implicit image path and output path (ypp cache)
-
-- .build/test/ypp_cache/01398c77c7fd40c2.png
-- .build/test/ypp_cache/01398c77c7fd40c2.png
-
-
-#### Explicit image path
-
-- .build/test/img/ypp_dot_test-1.png
-- .build/test/img/ypp_dot_test-1.png
-
-
-#### Different explicit image path and output path
-
-- img/ypp_dot_test-2.png
-- .build/test/img/ypp_dot_test-2.png
+- ypp_images/01398c77c7fd40c2.png
+- .build/test/ypp_images/01398c77c7fd40c2.png
 
 
 ### Images with a custom command
 
-- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
-- .build/test/ypp_cache/9d3c8eb78369bfa1.svg
+- ypp_images/9d3c8eb78369bfa1.svg
+- .build/test/ypp_images/9d3c8eb78369bfa1.svg
 
 
 ### Images generated with Octave
 
-.build/test/ypp_cache/577b1d4914ad253d.svg
+ypp_images/577b1d4914ad253d.svg
 
 ## Scripts loaded on the command line
 

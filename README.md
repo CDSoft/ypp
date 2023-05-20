@@ -71,7 +71,7 @@ $ make test
 
 # Usage
 
-    Usage: ypp [-h] [-v] [-l script] [-e expression] [-p path] [-o output]
+    Usage: ypp [-h] [-v] [-l script] [-e expression] [-p path] [-o file]
            [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
            [<input>] ...
 
@@ -87,7 +87,7 @@ $ make test
        -l script             Execute a Lua script
        -e expression         Execute a Lua expression
        -p path               Add a path to package.path
-       -o output             Redirect the output to 'file'
+       -o file               Redirect the output to 'file'
        -t {svg,pdf,png}      Set the default format of generated images
        --MT target           Add `name` to the target list (see `--MD`)
        --MF name             Set the dependency file name
@@ -194,30 +194,31 @@ modified (as if `shift` were `0`).
   or `"pdf"`). `image` returns the name of the image (e.g. to point to
   the image once deployed) and the actual file path (e.g. to embed the
   image in the final document).
-- `image(render, ext){...}(source)`: same as
-  `image(render, ext)(source)` with a few options. `{...}` can define
-  some fields:
-  - `img`: name of the output image (or a hash if `img` is not defined).
-  - `out`: destination path of the image (or the directory of `img` if
-    `out` is not defined). The optional `out` field overloads `img` to
-    change the output directory when rendering the image.
 
 The `render` parameter is a string that defines the command to execute
 to generate the image. It contains some parameters:
 
-- `%i` is replaced by the name of the input document (generated from a
-  hash of `source`).
+- `%i` is replaced by the name of the input document (temporary file
+  containing `source`).
 - `%o` is replaced by the name of the output image file (generated from
-  the `img` and `out` fields).
-- `%h` is replaced by a hash computed from the image source (this option
-  is probality completely useless…).
+  a hash of `source`).
 
-The `img` field is optional. The default value is a name generated in
-the directory given by the environment variable `YPP_CACHE` (`.ypp` if
-`YPP_CACHE` is not defined).
+Images are generated in a directory given by:
+
+- the environment variable `YPP_IMG` if it is defined
+- the directory name of the output file if the `-o` option is given
+- the `img` directory in the current directory
+
+The image link in the output document may have to be different than the
+actual path in the file system. This happens when the documents are not
+generated in the same path than the source document. Brackets can be
+used to specify the part of the path that belongs to the generated image
+but not to the link in the output document in `YPP_IMG`. E.g. if
+`YPP_IMG=[prefix]path` then images will be generated in `prefix/path`
+and the link used in the output document will be `path`.
 
 The file format (extension) must be in `render`, after the `%o` tag
-(e.g.: `%o.png`), not in the `img` field.
+(e.g.: `%o.png`).
 
 If the program requires a specific input file extension, it can be
 specified in `render`, after the `%i` tag (e.g.: `%i.xyz`).
@@ -225,7 +226,7 @@ specified in `render`, after the `%i` tag (e.g.: `%i.xyz`).
 Some render commands are predefined. For each render `X` (which produces
 images in the default format) there are 3 other render commands `X.svg`,
 `X.png` and `X.pdf` which explicitely specify the image format. They can
-be used similaryly to `image`: `X(source)` or `X{...}(source)`.
+be used similaryly to `image`: `X(source)`.
 
 | Image engine                                   | ypp function | Example                    |
 |------------------------------------------------|--------------|----------------------------|
@@ -254,7 +255,7 @@ be used similaryly to `image`: `X(source)` or `X{...}(source)`.
 Example:
 
 ``` markdown
-![ypp image generation example](@(image.dot {img="doc/ypp"} [===[
+![ypp image generation example](@(image.dot [===[
 digraph {
     rankdir=LR;
     input -> ypp -> output
@@ -266,7 +267,8 @@ digraph {
 is rendered as
 
 <figure>
-<img src="doc/ypp.svg" alt="ypp image generation example" />
+<img src="doc/img/eed9599f368662df.svg"
+alt="ypp image generation example" />
 <figcaption aria-hidden="true">ypp image generation example</figcaption>
 </figure>
 

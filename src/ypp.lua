@@ -274,16 +274,21 @@ local function parse_args()
         : count "*"
         : action(function(_, _, path, _) add_path(path) end)
 
+    local output = nil
     parser : option "-o"
         : description "Redirect the output to 'file'"
         : target "output"
-        : argname "output"
+        : argname "file"
+        : action(function(_, _, path, _)
+            output = path
+            require"image".output(output)
+        end)
 
     parser : option "-t"
         : description "Set the default format of generated images"
         : target "image_format"
         : choices { "svg", "pdf", "png" }
-        : action(function(_, _, fmt, _) require"image".set_format(fmt) end)
+        : action(function(_, _, fmt, _) require"image".format(fmt) end)
 
     parser : option "--MT"
         : description "Add `name` to the target list (see `--MD`)"
@@ -308,7 +313,7 @@ local function parse_args()
             F.map(process_file, names)
         end)
 
-    return parser:parse()
+    return F.patch(parser:parse(), {output=output})
 end
 
 _ENV.ypp = ypp

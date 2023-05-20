@@ -23,23 +23,28 @@ http://cdelord.fr/ypp
 --[[@@@
 * `image(render, ext)(source)`: use the command `render` to produce an image from the source `source` with the format `ext` (`"svg"`, `"png"` or `"pdf"`).
   `image` returns the name of the image (e.g. to point to the image once deployed) and the actual file path (e.g. to embed the image in the final document).
-* `image(render, ext){...}(source)`: same as `image(render, ext)(source)` with a few options. `{...}` can define some fields:
-  - `img`: name of the output image (or a hash if `img` is not defined).
-  - `out`: destination path of the image (or the directory of `img` if `out` is not defined).
-    The optional `out` field overloads `img` to change the output directory when rendering the image.
 
 The `render` parameter is a string that defines the command to execute to generate the image.
 It contains some parameters:
 
-- `%i` is replaced by the name of the input document (generated from a hash of `source`).
-- `%o` is replaced by the name of the output image file (generated from the `img` and `out` fields).
-- `%h` is replaced by a hash computed from the image source (this option is probality completely useless...).
+- `%i` is replaced by the name of the input document (temporary file containing `source`).
+- `%o` is replaced by the name of the output image file (generated from a hash of `source`).
 
-The `img` field is optional. The default value is a name generated in the directory given by the
-environment variable `YPP_CACHE` (`.ypp` if `YPP_CACHE` is not defined).
+Images are generated in a directory given by:
 
-The file format (extension) must be in `render`,
-after the `%o` tag (e.g.: `%o.png`), not in the `img` field.
+- the environment variable `YPP_IMG` if it is defined
+- the directory name of the output file if the `-o` option is given
+- the `img` directory in the current directory
+
+The image link in the output document may have to be different than the
+actual path in the file system. This happens when the documents are not
+generated in the same path than the source document. Brackets can be used to
+specify the part of the path that belongs to the generated image but not to the
+link in the output document in `YPP_IMG`.
+E.g. if `YPP_IMG=[prefix]path` then images will be generated in `prefix/path`
+and the link used in the output document will be `path`.
+
+The file format (extension) must be in `render`, after the `%o` tag (e.g.: `%o.png`).
 
 If the program requires a specific input file extension, it can be specified in `render`,
 after the `%i` tag (e.g.: `%i.xyz`).
@@ -47,9 +52,10 @@ after the `%i` tag (e.g.: `%i.xyz`).
 Some render commands are predefined.
 For each render `X` (which produces images in the default format)
 there are 3 other render commands `X.svg`, `X.png` and `X.pdf` which explicitely specify the image format.
-They can be used similaryly to `image`: `X(source)` or `X{...}(source)`.
+They can be used similaryly to `image`: `X(source)`.
 
-@@( local engine = {
+@@[===[
+    local engine = {
         circo = "Graphviz",
         dot = "Graphviz",
         fdp = "Graphviz",
@@ -86,13 +92,13 @@ They can be used similaryly to `image`: `X(source)` or `X{...}(source)`.
     F.keys(image):sort(cmp):map(function(x)
         return ("[%s] | `%s` | `image.%s(source)`"):format(engine[x], x, x)
     end)
-)
+]===]
 
 Example:
 
 ?(false)
 ``` markdown
-![ypp image generation example](@(image.dot {img="doc/ypp"} [===[
+![ypp image generation example](@(image.dot [===[
 digraph {
     rankdir=LR;
     input -> ypp -> output
@@ -104,7 +110,7 @@ digraph {
 
 is rendered as
 
-![ypp image generation example](@(image.dot {img="doc/ypp"} [===[
+![ypp image generation example](@(image.dot [===[
 digraph {
     rankdir=LR;
     input -> ypp -> output
@@ -118,6 +124,20 @@ local F = require "F"
 local fs = require "fs"
 local sh = require "sh"
 
+local output_path   -- actual directory where images are saved
+local link_path     -- directory added to image filenames
+
+local function parse_output_path(path)
+    local prefix, link = path : match "^%[(.-)%](.*)"
+    if prefix then
+        output_path = fs.join(prefix, link)
+        link_path = link
+    else
+        output_path = path
+        link_path = path
+    end
+end
+
 local function get_input_ext(s)
     return s:match("%%i(%.%w+)") or ""
 end
@@ -126,23 +146,23 @@ local function get_ext(s, t)
     return s:match("%%o(%.%w+)") or t:match("%%o(%.%w+)") or ""
 end
 
-local function make_diagram_cmd(src, img, render)
-    return render:gsub("%%i", src):gsub("%%o", img)
+local function make_diagram_cmd(src, out, render)
+    return render:gsub("%%i", src):gsub("%%o", out)
 end
 
 local function render_diagram(cmd)
     assert(sh.run(cmd), "Diagram error")
 end
 
-local function default_image_cache()
-    return _G["YPP_CACHE"] or os.getenv "YPP_CACHE" or ".ypp"
-end
+local output_file -- filename given by the -o option
 
-local function expand_path(path)
-    if path:sub(1, 2) == "~/" then
-        return os.getenv("HOME").."/"..path:sub(3)
-    else
-        return path
+local function default_image_output()
+    if not output_path then
+        local env = os.getenv "YPP_IMG"
+        parse_output_path(
+            (env and env ~= "" and env)
+            or (output_file and fs.join(fs.dirname(output_file), "img"))
+            or "img")
     end
 end
 
@@ -160,26 +180,20 @@ local function diagram(exe, render, default_ext)
     template = template
         : gsub("%%ext", default_ext or "%0")
         : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
-    local function prepare_diagram(opts, contents)
+    return function(contents)
         local input_ext = get_input_ext(render)
         local ext = get_ext(render, template)
-        local img = opts.img
-        local output_path = opts.out
-        local hash_digest = crypt.hash(render..contents)
-        if not img then
-            local image_cache = default_image_cache()
-            fs.mkdirs(image_cache)
-            img = fs.join(image_cache, hash_digest)
-        else
-            img = img:gsub("%%h", hash_digest)
-        end
-        local out = expand_path(output_path and fs.join(output_path, fs.basename(img)) or img)
+        local hash = crypt.hash(render..contents)
+        default_image_output()
+        fs.mkdirs(output_path)
+        local out = fs.join(output_path, hash)
+        local link = fs.join(link_path, fs.basename(out))
         local meta = out..ext..".meta"
         local meta_content = F.unlines {
-            "source: "..hash_digest,
+            "hash: "..hash,
             "render: "..render,
-            "img: "..img,
             "out: "..out,
+            "link: "..link,
             "",
             (template : gsub("%%s", contents)),
         }
@@ -198,17 +212,7 @@ local function diagram(exe, render, default_ext)
                 render_diagram(render_cmd)
             end)
         end
-        return img..ext, out..ext
-    end
-    return function(opts)
-        if type(opts) == "string" then
-            -- no options, use the cache
-            return prepare_diagram({}, opts) -- opts is actually the source of the image
-        else
-            return function(contents)
-                return prepare_diagram(opts, contents)
-            end
-        end
+        return link..ext, out..ext
     end
 end
 
@@ -225,7 +229,7 @@ local blockdiag = "%exe -a -T%ext -o %o %i"
 local ditaa = "java -jar "..DITAA.." %svg -o -e UTF-8 %i %o"
 local gnuplot = "%exe -e 'set terminal %ext' -e 'set output \"%o\"' -c %i"
 local lsvg = "%exe %i.lua %o"
-local octave = { "octave --no-gui %i", "figure(\"visible\", \"off\")\n\n%s\nprint %o;" }
+local octave = { "octave --no-gui %i", 'figure("visible", "off")\n\n%s\nprint %o;' }
 
 local function define(t)
     local self = {}
@@ -273,6 +277,7 @@ return define {
     octave      = instantiate("octave", octave),
     __call = function(_, render, ext) return diagram(nil, render, ext) end,
     __index = {
-        set_format = function(fmt) default_ext = fmt end,
+        format = function(fmt) default_ext = fmt end,
+        output = function(path) output_file = path end,
     },
 }
