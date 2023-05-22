@@ -97,11 +97,27 @@ $ make test
 
 # Documentation
 
-Lua expressions are embedded in the document to process:
-`@( Lua expression )` or `@[===[ Lua expression ]===]`.
+Lua expressions and chunks are embedded in the document to process.
+Expressions are introduced by `@` and chunks by `@@`. Several syntaxes
+are provided.
 
-Lua chunks can also be embedded in the document to add new definitions:
-`@@( Lua chunk )` or `@@[===[ Lua chunk ]===]`.
+The first syntax is more generic and can execute any kind of Lua
+expression or chunk:
+
+- `@(Lua expression)` or `@[===[ Lua expression ]===]`
+- `@@(Lua chunk)` or `@@[===[ Lua chunk ]===]`
+
+The second one can be used to read a variable or execute a Lua function:
+
+- `@ident`: get the value of `ident` (which can be a field of a table.
+  e.g. `@math.pi`)
+- `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
+- `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
+- `@func(...)[===[ ... ]===]` or `@@func(...)[===[ ... ]===]`
+- `@func{...}[===[ ... ]===]` or `@@func{...}[===[ ... ]===]`
+
+Note: the number or equal signs in long strings is variable, as in Lua
+long strings
 
 The Lua code can be delimited with parentheses or long brackets. The
 code delimited with parentheses shall only contain well-balanced
@@ -121,6 +137,12 @@ according to their types:
   line per item)
 - other types are formatted by the default `tostring` function.
 
+For documentation purpose, ypp macros can be enable/disabled with the
+special `?` macro:
+
+- `?(false)`: disable ypp
+- `?(true)`: enable ypp
+
 ## Examples
 
 ### Lua expression
@@ -139,7 +161,7 @@ according to their types:
         return sum
     ]]
 
-    $\sum_{i=0}^100 = @(sum)$
+    $\sum_{i=0}^100 = @sum$
 
 ## Builtin ypp functions
 
@@ -209,7 +231,7 @@ Images are generated in a directory given by:
 - the directory name of the output file if the `-o` option is given
 - the `img` directory in the current directory
 
-If `source` starts with a `@` (e.g. `"@filename"`) then the actual image
+If `source` starts with a `@` (e.g. `"nil"`) then the actual image
 source is read from the file `filename`.
 
 The image link in the output document may have to be different than the

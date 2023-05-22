@@ -133,10 +133,19 @@ function ypp_mt.__call(_, content)
         tokens[#tokens+1] = s
     end
 
-    local function emit_expression(s, x)
+    local function emit_expression(s, x, protected)
         if ypp_enabled then
-            local y = (assert(load("return "..x, x, "t")))()
-            emit_raw(format_value(y))
+            if protected then
+                local ok_compile, chunk = pcall(load, "return "..x, x, "t")
+                if not ok_compile then emit_raw(s); return end
+                assert(chunk)
+                local ok_eval, y = pcall(chunk)
+                if not ok_eval then emit_raw(s); return end
+                emit_raw(format_value(y))
+            else
+                local y = (assert(load("return "..x, x, "t")))()
+                emit_raw(format_value(y))
+            end
         else
             emit_raw(s)
         end
@@ -153,67 +162,146 @@ function ypp_mt.__call(_, content)
         end
     end
 
+    local emit = { ["@"] = emit_expression, ["@@"] = emit_chunk }
+
     local i = 1 -- next index to search for a macro
     while i <= #content do
 
-        -- find the next pattern
-        local i1, j1 = content:find("[@?]@?%b()", i)
-        local i2, j2 = content:find("@@?%[=*%[", i)
+        -- searches for the next pattern among:
+        --  ?(...)                          enable/disable ypp              pattern_0
+        --  @(...)                          evaluate ...                    pattern_1
+        --  @@(...)                         evaluate ...                    pattern_1
+        --  @[===[ ... ]===]                evaluate ...                    pattern_2
+        --  @@[===[ ... ]===]               evaluate ...                    pattern_2
+        --  @var                            evaluate var                    pattern_3
+        --  @@var                           evaluate var                    pattern_3 (useless?)
+        --  @func(...)                      evaluate func(...)              pattern_3
+        --  @@func(...)                     evaluate func(...)              pattern_3
+        --  @func{...}                      evaluate func{...}              pattern_3
+        --  @@func{...}                     evaluate func{...}              pattern_3
+        --  @func[===[ ... ]===]            evaluate func(...)              pattern_3
+        --  @@func[===[ ... ]===]           evaluate func(...)              pattern_3
+        --  @func(...)[===[ ... ]===]       evaluate func(...)(...)         pattern_3
+        --  @@func(...)[===[ ... ]===]      evaluate func(...)(...)         pattern_3
+        --  @func{...}[===[ ... ]===]       evaluate func{...}(...)         pattern_3
+        --  @@func{...}[===[ ... ]===]      evaluate func{...}(...)         pattern_3
+        -- each pattern is recognized by a function that returns the position (start and stop) of the pattern and a function to run to evaluate the macro
 
-        if i1 and (not i2 or i2 > i1) then
-            -- ... [@?]@?(...) ...
-            -- ^   ^         ^
-            -- i   i1        j1
-            --     <--------->
-            --     s
-            --     <----><--->
-            --     t     x
+        local function pattern_0()
+            local i1, x, j1 = content:match("()%?(%b())()", i)
+            if i1 then
+                return i1, j1, function() ypp_enabled = (assert(load("return "..x, x, "t")))() end
+            end
+        end
+
+        local function pattern_1()
+            local i1, s, t, x, j1 = content:match("()((@@?)(%b()))()", i)
+            if i1 then
+                return i1, j1, function() emit[t](s, x:sub(2, -2)) end
+            end
+        end
+
+        local function pattern_2()
+            local i1, t, sep, j1 = content:match("()(@@?)%[(=-)%[()", i)
+            if i1 then
+                local x, j2 = content:match("(.-)%]"..sep.."%]()", j1)
+                if j2 then
+                    return i1, j2, function() emit[t](content:sub(i1, j2-1), x) end
+                end
+            end
+        end
+
+        local method_pattern = "[_%w][_%w%.:]*"
+
+        local function pattern_3()
+            local i1, t, fi, f, j1 = content:match("()(@@?)()("..method_pattern..")()", i)
+            if i1 then
+                -- @@?f
+                local j2p = content:match("^%s*%b()()", j1)
+                if j2p then
+                    -- @@?f(args_p)
+                    local sep, j3 = content:match("^%s*%[(=-)%[()", j2p)
+                    if j3 then
+                        -- @@?f(args_p)[===[
+                        local j4 = content:match("^.-%]"..sep.."%]()", j3)
+                        if j4 then
+                            -- @@?f(args_p)[===[last_arg]===]
+                            return i1, j4, function() emit[t](content:sub(i1, j4-1), content:sub(fi, j4-1)) end
+                        else
+                            -- unfinished pattern
+                            return
+                        end
+                    else
+                        -- @@?f(args_p)
+                        return i1, j2p, function() emit[t](content:sub(i1, j2p-1), content:sub(fi, j2p-1)) end
+                    end
+                end
+                local j2b = content:match("^%s*%b{}()", j1)
+                if j2b then
+                    -- @@?f{args_b}
+                    local sep, j3 = content:match("^%s*%[(=-)%[()", j2b)
+                    if j3 then
+                        -- @@?f{args_b}[===[
+                        local j4 = content:match("^.-%]"..sep.."%]()", j3)
+                        if j4 then
+                            -- @@?f(args_b)[===[last_arg]===]
+                            return i1, j4, function() emit[t](content:sub(i1, j4-1), content:sub(fi, j4-1)) end
+                        else
+                            -- unfinished pattern
+                            return
+                        end
+                    else
+                        -- @@?f{args_b}
+                        return i1, j2b, function() emit[t](content:sub(i1, j2b-1), content:sub(fi, j2b-1)) end
+                    end
+                end
+                local sep, j2l = content:match("^%s*%[(=-)%[()", j1)
+                if j2l then
+                    -- @@?f[===[
+                    local j3 = content:match("^.-%]"..sep.."%]()", j2l)
+                    if j3 then
+                        -- @@?f[===[last_arg]===]
+                        return i1, j3, function() emit[t](content:sub(i1, j3-1), content:sub(fi, j3-1)) end
+                    else
+                        -- unfinished pattern
+                        return
+                    end
+                end
+                if not f:match ":" then
+                    -- @@?f
+                    return i1, j1, function() emit[t](content:sub(i1, j1-1), content:sub(fi, j1-1), true) end
+                end
+            end
+        end
+
+        local patterns = {
+            pattern_0,
+            pattern_1,
+            pattern_2,
+            pattern_3,
+        }
+
+        local i1, j1, pattern1 = #content+1, #content+1, function() end
+        for _, find_pattern in ipairs(patterns) do
+            local i2, j2, pattern2 = find_pattern()
+            if i2 and i2 < i1 then
+                i1, j1, pattern1 = i2, j2, pattern2
+            end
+        end
+
+        if not i1 then
+            -- no more patterns
+            emit_raw(content:sub(i, #content))
+            i = #content+1
+        else
             if i1 > i then
                 -- emit text before the macro
                 emit_raw(content:sub(i, i1-1))
             end
-            local s, t, x = content:match("^(([@?]@?)(%b()))", i1)
-            x = x:sub(2, -2)
-            if t == "@" then emit_expression(s, x)
-            elseif t == "@@" then emit_chunk(s, x)
-            elseif t == "?" then ypp_enabled = (assert(load("return "..x, x, "t")))()
-            else emit_raw(s)
-            end
-            i = j1 + 1
-
-        elseif i2 and (not i1 or i1 > i2) then
-            -- ... @@?[===[ ... ]===]
-            -- ^   ^      ^     ^   ^
-            -- i   i2     j2    i3  j3
-            --     <------>
-            --     s
-            --     <-> <->
-            --     t   sep
-            --     <---------------->
-            --     s0
-            if i2 > i then
-                -- emit text before the macro
-                emit_raw(content:sub(i, i2-1))
-            end
-            local s, t, sep = content:match("^((@@?)%[(=*)%[)", i2)
-            local i3, j3 = content:find("]"..sep.."]", j2+1, true)
-            if i3 then
-                local s0 = content:sub(i2, j3)
-                local x = content:sub(j2+1, i3-1)
-                if t == "@" then emit_expression(s0, x)
-                elseif t == "@@" then emit_chunk(s0, x)
-                else emit_raw(s0)
-                end
-                i = j3 + 1
-            else
-                emit_raw(s)
-                i = j2 + 1
-            end
-
-        else
-            emit_raw(content:sub(i, #content))
-            i = #content+1
+            pattern1()
+            i = j1
         end
+
     end
 
     return table.concat(tokens)

@@ -31,6 +31,34 @@ weird = bizarre string )) => ) unbalanced ())
 malformed expression: @[===========[ foo bar ]=====]
 malformed chunk: @@[===========[ foo bar ]=====]
 
+### pattern_0
+
+`"1+1=@(1+1)"` => `"1+1=2"`
+
+### pattern_1
+
+1+1 = 2
+1+1 = 2
+
+### pattern_2
+
+1+1 = 2
+1+1 = 2
+1+1 = 2
+1+1 = 2
+
+### pattern_3
+
+
+
+pi = 3.1415926535898
+math.max(2, 3) = 3
+F.maximum{2, 3, 1} = 3
+func(1, 2)[[three]] = three = 1 + 2
+functb{1, 2}[[three]] = three = 1 + 2
+string.upper[=[ Hello World! ]=] = HELLO WORLD!
+
+ignored pattern: someone@example.com
 
 ## File inclusion
 

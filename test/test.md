@@ -28,10 +28,49 @@ weird = @[[ "bizarre string )) => " .. weird ]]
 malformed expression: @[===========[ foo bar ]=====]
 malformed chunk: @@[===========[ foo bar ]=====]
 
+### pattern_0
+
+?(false)`"1+1=@(1+1)"`?(true) => `"1+1=@(1+1)"`
+
+### pattern_1
+
+1+1 = @(1+1)
+1+1 = @@(return 1+1)
+
+### pattern_2
+
+1+1 = @[[1+1]]
+1+1 = @[==[1+1]==]
+1+1 = @@[[return 1+1]]
+1+1 = @@[==[return 1+1]==]
+
+### pattern_3
+
+@@[===[
+    function func(x, y)
+        return function(s)
+            return s.." = "..x.." + "..y
+        end
+    end
+    function functb(xs)
+        return function(s)
+            return s.." = "..F.str(xs, " + ")
+        end
+    end
+]===]
+
+pi = @math.pi
+math.max(2, 3) = @math.max(2, 3)
+F.maximum{2, 3, 1} = @F.maximum{2, 3, 1}
+func(1, 2)[[three]] = @func(1, 2)[[three]]
+functb{1, 2}[[three]] = @functb{1, 2}[[three]]
+string.upper[=[ Hello World! ]=] = @string.upper[=[Hello World!]=]
+
+ignored pattern: someone@example.com
 
 ## File inclusion
 
-@(include("test_inc.md", {pattern="===(.-)===", shift=2}))
+@include("test_inc.md", {pattern="===(.-)===", shift=2})
 
 ## Comments
 
@@ -43,19 +82,19 @@ This comment is ignored
 
 @@(lang = "fr")
 
-@(when(lang=="en") "English text discarded (lang=@(lang))")
-@(when(lang=="fr") "Texte français conservé (lang=@(lang))")
+@when(lang=="en") [[English text discarded (lang=@(lang))]]
+@when(lang=="fr") [[Texte français conservé (lang=@(lang))]]
 
 ## Documentation extraction
 
-@(doc("test.c", {doc="@@@(.-)@@@", shift=2}))
+@doc("test.c", {doc="@@@(.-)@@@", shift=2})
 
 ## Scripts
 
 ### Custom language
 
-- 1+1 = @(script "python" [[print(1+1)]])
-- 2+2 = @(script "python %s" [[print(2+2)]])
+- 1+1 = @script("python") [[print(1+1)]]
+- 2+2 = @script("python %s") [[print(2+2)]]
 
 ### Predefined language
 
@@ -64,11 +103,11 @@ This comment is ignored
 
 ### Formatting script output
 
-@(convert(script.python [===[
+@convert(script.python [===[
 print("X, Y, Z")
 print("a, b, c")
 print("d, e, f")
-]===], "csv"))
+]===], "csv")
 
 ## Images
 
@@ -83,19 +122,19 @@ digraph {
 
 ### Images with the default format (SVG)
 
-@(F.map(F.prefix "- ", {image.dot (example)}))
+@F.map(F.prefix "- ", {image.dot (example)})
 
 ### Images with a specific format (e.g. PNG)
 
-@(F.map(F.prefix "- ", {image.dot.png (example)}))
+@F.map(F.prefix "- ", {image.dot.png (example)})
 
 ### Images with a custom command
 
-@(F.map(F.prefix "- ", {image("dot -T%ext -o %o %i", "svg") (example)}))
+@F.map(F.prefix "- ", {image("dot -T%ext -o %o %i", "svg") (example)})
 
 ### Images generated with Octave
 
-@(image.octave [===[
+@image.octave [===[
 x = 0:0.01:3;
 plot (x, erf (x));
 hold on;
@@ -108,7 +147,7 @@ text (0.65, 0.6175, ...
 xlabel ("x");
 ylabel ("erf (x)");
 title ("erf (x) with text annotation");
-]===])
+]===]
 
 ### Images from an external file
 
@@ -116,10 +155,10 @@ title ("erf (x) with text annotation");
 
 ## Scripts loaded on the command line
 
-`test_loaded` = `@(test_loaded)`
+`test_loaded` = `@test_loaded`
 
 ## Scripts loaded by test.md
 
 @@(require "test/test2")
 
-`test_2_loaded` = `@(test_2_loaded)`
+`test_2_loaded` = `@test_2_loaded`

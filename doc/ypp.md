@@ -84,9 +84,24 @@ $ make test
 
 ?(false)
 
-Lua expressions are embedded in the document to process: `@( Lua expression )` or `@[===[ Lua expression ]===]`.
+Lua expressions and chunks are embedded in the document to process.
+Expressions are introduced by `@` and chunks by `@@`.
+Several syntaxes are provided.
 
-Lua chunks can also be embedded in the document to add new definitions: `@@( Lua chunk )` or `@@[===[ Lua chunk ]===]`.
+The first syntax is more generic and can execute any kind of Lua expression or chunk:
+
+- `@(Lua expression)` or `@[===[ Lua expression ]===]`
+- `@@(Lua chunk)` or `@@[===[ Lua chunk ]===]`
+
+The second one can be used to read a variable or execute a Lua function:
+
+- `@ident`: get the value of `ident` (which can be a field of a table. e.g. `@math.pi`)
+- `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
+- `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
+- `@func(...)[===[ ... ]===]` or `@@func(...)[===[ ... ]===]`
+- `@func{...}[===[ ... ]===]` or `@@func{...}[===[ ... ]===]`
+
+Note: the number or equal signs in long strings is variable, as in Lua long strings
 
 The Lua code can be delimited with parentheses or long brackets.
 The code delimited with parentheses shall only contain well-balanced parentheses.
@@ -104,6 +119,14 @@ to their types:
   metamethod, it is used to format the value
 - arrays (with no `__tostring` metamethod): items are concatenated (one line per item)
 - other types are formatted by the default `tostring` function.
+
+For documentation purpose, ypp macros can be enable/disabled with the special `?` macro:
+
+?(true)
+@@(function q(cond) return ("?(%s)"):format(cond) end)
+- `@q(false)`: disable ypp
+- `@q(true)`: enable ypp
+?(false)
 
 ## Examples
 
@@ -126,7 +149,7 @@ $\sum_{i=0}^100 = @(F.range(100):sum())$
     return sum
 ]]
 
-$\sum_{i=0}^100 = @(sum)$
+$\sum_{i=0}^100 = @sum$
 ```
 
 ?(true)
@@ -172,16 +195,16 @@ Here are some LuaX modules that can be useful in ypp documents:
     end)
 ]===]
 
-- @[[luaxdoc "F" "functional programming inspired functions"]]
-- @[[luaxdoc "L" "`pandoc.List` module from the Pandoc Lua interpreter"]]
-- @[[luaxdoc "fs" "file system management"]]
-- @[[luaxdoc "sh" "shell command execution"]]
-- @[[luaxdoc "mathx" "complete math library for Lua"]]
-- @[[luaxdoc "imath" "arbitrary precision integer and rational arithmetic library"]]
-- @[[luaxdoc "qmath" "rational number library"]]
+- @[[luaxdoc "F"       "functional programming inspired functions"]]
+- @[[luaxdoc "L"       "`pandoc.List` module from the Pandoc Lua interpreter"]]
+- @[[luaxdoc "fs"      "file system management"]]
+- @[[luaxdoc "sh"      "shell command execution"]]
+- @[[luaxdoc "mathx"   "complete math library for Lua"]]
+- @[[luaxdoc "imath"   "arbitrary precision integer and rational arithmetic library"]]
+- @[[luaxdoc "qmath"   "rational number library"]]
 - @[[luaxdoc "complex" "math library for complex numbers based on C99"]]
-- @[[luaxdoc "crypt" "cryptography module"]]
-- @[[luaxdoc "lpeg" "Parsing Expression Grammars For Lua"]]
+- @[[luaxdoc "crypt"   "cryptography module"]]
+- @[[luaxdoc "lpeg"    "Parsing Expression Grammars For Lua"]]
 - @[[luaxdoc "inspect" "Human-readable representation of Lua tables"]]
 - @[[luaxdoc "serpent" "Lua serializer and pretty printer"]]
 
