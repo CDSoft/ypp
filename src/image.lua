@@ -36,6 +36,8 @@ Images are generated in a directory given by:
 - the directory name of the output file if the `-o` option is given
 - the `img` directory in the current directory
 
+If `source` starts with a `@` (e.g. `"@filename"`) then the actual image source is read from the file `filename`.
+
 The image link in the output document may have to be different than the
 actual path in the file system. This happens when the documents are not
 generated in the same path than the source document. Brackets can be used to
@@ -181,6 +183,10 @@ local function diagram(exe, render, default_ext)
         : gsub("%%ext", default_ext or "%0")
         : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
     return function(contents)
+        local filename = contents:match("^@([^\n\r]+)$")
+        if filename then
+            content = include.raw(filename)
+        end
         local input_ext = get_input_ext(render)
         local ext = get_ext(render, template)
         local hash = crypt.hash(render..contents)

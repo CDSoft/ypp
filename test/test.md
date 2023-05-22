@@ -110,6 +110,10 @@ ylabel ("erf (x)");
 title ("erf (x) with text annotation");
 ]===])
 
+### Images from an external file
+
+@(image.dot "@test/test.dot")
+
 ## Scripts loaded on the command line
 
 `test_loaded` = `@(test_loaded)`
