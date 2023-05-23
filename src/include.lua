@@ -51,7 +51,7 @@ local function include(filename, opts)
         return ypp(s)
     end)
     if opts.from or opts.to or opts.shift then
-        content = convert(content, opts.from, opts.to, opts.shift)
+        content = convert(content, opts)
     end
     return content
 end

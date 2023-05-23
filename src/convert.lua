@@ -21,25 +21,28 @@ http://cdelord.fr/ypp
 --@LOAD
 
 --[[@@@
-* `convert(s, [from, to, shift])`: convert the string `s` from the format `from` to the format `to` and shifts the header levels by `shift`.
+* `convert(s, [opts])`:
+  convert the string `s` from the format `opts.from` to the format `opts.to` and shifts the header levels by `opts.shift`.
 
 This function requires a Pandoc Lua interpreter. The conversion is made by [Pandoc] itself.
 
-The parameters `from`, `to` and `shift` are optional. By default Pandoc converts documents from and to Markdown and the header level is not modified (as if `shift` were `0`).
+The `opts` parameter is optional.
+By default Pandoc converts documents from and to Markdown and the header level is not modified.
 @@@]]
 
-return function(content, from, to, shift)
+return function(content, opts)
     assert(pandoc, "The convert macro requires a Pandoc Lua interpreter")
-    local doc = pandoc.read(content, from)
+    opts = opts or {}
+    local doc = pandoc.read(content, opts.from)
     local div = pandoc.Div(doc.blocks)
-    if shift then
+    if opts.shift then
         div = pandoc.walk_block(div, {
             Header = function(h)
                 h = h:clone()
-                h.level = h.level + shift
+                h.level = h.level + opts.shift
                 return h
             end,
         })
     end
-    return pandoc.write(pandoc.Pandoc(div.content), to)
+    return pandoc.write(pandoc.Pandoc(div.content), opts.to)
 end

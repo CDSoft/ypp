@@ -196,16 +196,15 @@ E.g.:
 
 ### `convert`
 
-- `convert(s, [from, to, shift])`: convert the string `s` from the
-  format `from` to the format `to` and shifts the header levels by
-  `shift`.
+- `convert(s, [opts])`: convert the string `s` from the format
+  `opts.from` to the format `opts.to` and shifts the header levels by
+  `opts.shift`.
 
 This function requires a Pandoc Lua interpreter. The conversion is made
 by [Pandoc](https://pandoc.org "A universal document converter") itself.
 
-The parameters `from`, `to` and `shift` are optional. By default Pandoc
-converts documents from and to Markdown and the header level is not
-modified (as if `shift` were `0`).
+The `opts` parameter is optional. By default Pandoc converts documents
+from and to Markdown and the header level is not modified.
 
 ### `doc`
 

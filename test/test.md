@@ -111,7 +111,7 @@ This comment is also ignored
 print("X, Y, Z")
 print("a, b, c")
 print("d, e, f")
-]===], "csv")
+]===], {from="csv"})
 
 ## Images
 
