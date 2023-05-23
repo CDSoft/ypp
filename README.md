@@ -182,6 +182,18 @@ special `?` macro:
 - `atexit(func)`: execute `func` when the whole output is computed,
   before actually writing the output.
 
+### `comment`
+
+- `comment(...)`: returns an empty string (useful for commenting some
+  text)
+
+E.g.:
+
+    @comment [===[
+    This paragraph is a comment
+    and is not part of the output document.
+    ]===]
+
 ### `convert`
 
 - `convert(s, [from, to, shift])`: convert the string `s` from the

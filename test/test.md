@@ -78,6 +78,10 @@ ignored pattern: someone@example.com
 This comment is ignored
 ]===])
 
+@comment[=[
+This comment is also ignored
+]=]
+
 ## Conditional
 
 @@(lang = "fr")

@@ -171,6 +171,7 @@ $\sum_{i=0}^100 = @sum$
 ## Builtin ypp modules
 
 @(module "atexit")
+@(module "comment")
 @(module "convert")
 @(module "doc")
 @(module "image")
