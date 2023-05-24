@@ -28,6 +28,12 @@ weird = @[[ "bizarre string )) => " .. weird ]]
 malformed expression: @[===========[ foo bar ]=====]
 malformed chunk: @@[===========[ foo bar ]=====]
 
+function call: @math.deg(math.pi/2)
+chaining methods: @F.range(1, 10):sum()
+chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")
+
+escaping: `@q"@F.range(1, 10):sum()"`
+
 ### pattern_0
 
 ?(false)`"1+1=@(1+1)"`?(true) => `"1+1=@(1+1)"`
@@ -102,8 +108,8 @@ This comment is also ignored
 
 ### Predefined language
 
-- 3+3 = @(script.python [[print(3+3)]])
-- 4+4 = @(script.sh [[echo $((4+4))]])
+- 3+3 = @script.python [[print(3+3)]]
+- 4+4 = @script.sh [[echo $((4+4))]]
 
 ### Formatting script output
 
@@ -115,14 +121,13 @@ print("d, e, f")
 
 ## Images
 
-@@(
-build = os.getenv "BUILD"
+@@[[
 example = [===[
 digraph {
     A -> B
 }
 ]===]
-)
+]]
 
 ### Images with the default format (SVG)
 
@@ -155,7 +160,7 @@ title ("erf (x) with text annotation");
 
 ### Images from an external file
 
-@(image.dot "@test/test.dot")
+@image.dot "@test/test.dot"
 
 ## Scripts loaded on the command line
 
@@ -163,6 +168,6 @@ title ("erf (x) with text annotation");
 
 ## Scripts loaded by test.md
 
-@@(require "test/test2")
+@@require "test/test2"
 
 `test_2_loaded` = `@test_2_loaded`

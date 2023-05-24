@@ -44,12 +44,12 @@ Example:
 
 ?(false)
 ```
-$\sum_{i=0}^100 = @(script.python "print(sum(range(101)))")$
+$\sum_{i=0}^100 = @script.python "print(sum(range(101)))"$
 ```
 ?(true)
 is rendered as
 ```
-$\sum_{i=0}^100 = @(script.python "print(sum(range(101)))")$
+$\sum_{i=0}^100 = @script.python "print(sum(range(101)))"$
 ```
 @@@]]
 

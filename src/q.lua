@@ -1,4 +1,4 @@
-/*
+--[[
 This file is part of ypp.
 
 ypp is free software: you can redistribute it and/or modify
@@ -16,27 +16,12 @@ along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
 For further information about ypp you can visit
 http://cdelord.fr/ypp
-*/
+--]]
 
-/*@@@
-**`answer`** takes any question
-and returns the most relevant answer.
+--@LOAD
 
-Example:
-``` c
-    const char *meaning
-        = answer("What's the meaning of life?");
-```
-
-The code is:
-``` c
-@include.raw("test.c", {pattern="//".."===%s*(.-)%s*$"})
-```
-@@@*/
-
-//===
-const char *answer(const char *question)
-{
-    return "42";
-}
-
+--[[@@@
+* `q(source)`: return `source` unpreprocessed.
+  `q` is used to avoid macro execution in a portion of text.
+@@@]]
+return F.id

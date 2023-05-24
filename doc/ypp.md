@@ -19,7 +19,7 @@
 [Lua]: http://www.lua.org/
 [gnuplot]: http://www.gnuplot.info/
 [lsvg]: http://cdelord.fr/lsvg/
-[LuaX]: http://cdelord.fr/luax "Lua eXtended interpretor"
+[LuaX]: http://cdelord.fr/luax "Lua eXtended interpreter"
 [LuaX documentation]: http://cdelord.fr/luax/luax.lua.html
 [Octave]: https://octave.org/
 
@@ -77,7 +77,7 @@ $ make test
 # Usage
 
 ```
-@[[script.sh(os.getenv"BUILD".."/ypp -h") : gsub("ypp %d+.%d+[0-9a-g.-]*", "ypp")]]
+@script.sh(os.getenv"BUILD".."/ypp -h") : gsub("ypp %d+.%d+[0-9a-g.-]*", "ypp")
 ```
 
 # Documentation
@@ -93,15 +93,30 @@ The first syntax is more generic and can execute any kind of Lua expression or c
 - `@(Lua expression)` or `@[===[ Lua expression ]===]`
 - `@@(Lua chunk)` or `@@[===[ Lua chunk ]===]`
 
-The second one can be used to read a variable or execute a Lua function:
+The second one can be used to read a variable or execute a Lua function with a subset of the Lua grammar:
 
 - `@ident`: get the value of `ident` (which can be a field of a table. e.g. `@math.pi`)
 - `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
 - `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
-- `@func(...)[===[ ... ]===]` or `@@func(...)[===[ ... ]===]`
-- `@func{...}[===[ ... ]===]` or `@@func{...}[===[ ... ]===]`
+
+The full grammar is:
+
+```
+expression ::= <identifier> continuation
+
+continuation ::= '.' expression
+               | ':' expression
+               | '(' well parenthesized substring ')' continuation
+               | '{' well bracketed substring '}' continuation
+               | <single quoted string> continuation
+               | <double quoted string> continuation
+               | <long string> continuation
+               | <empty string>
+```
 
 Note: the number or equal signs in long strings is variable, as in Lua long strings
+
+The special macro `@/` is used to explicitly end an expression when the context is ambiguous.
 
 The Lua code can be delimited with parentheses or long brackets.
 The code delimited with parentheses shall only contain well-balanced parentheses.
@@ -123,9 +138,8 @@ to their types:
 For documentation purpose, ypp macros can be enable/disabled with the special `?` macro:
 
 ?(true)
-@@(function q(cond) return ("?(%s)"):format(cond) end)
-- `@q(false)`: disable ypp
-- `@q(true)`: enable ypp
+- @(q"`?(false)`"): disable ypp
+- @(q"`?(true)`"): enable ypp
 ?(false)
 
 ## Examples
@@ -166,27 +180,28 @@ $\sum_{i=0}^100 = @sum$
     end
 ]]
 
-@(module "ypp")
+@module "ypp"
 
 ## Builtin ypp modules
 
-@(module "atexit")
-@(module "comment")
-@(module "convert")
-@(module "doc")
-@(module "image")
-@(module "include")
-@(module "script")
-@(module "when")
+@module "atexit"
+@module "comment"
+@module "convert"
+@module "doc"
+@module "image"
+@module "include"
+@module "q"
+@module "script"
+@module "when"
 
 ## LuaX modules
 
 ypp is written in [Lua] and [LuaX].
 All Lua and LuaX libraries are available to ypp.
 
-[LuaX] is a Lua interpretor and REPL based on Lua 5.4, augmented with some useful packages.
+[LuaX] is a Lua interpreter and REPL based on Lua 5.4, augmented with some useful packages.
 
-LuaX comes with a standard Lua interpretor and provides some libraries (embedded
+LuaX comes with a standard Lua interpreter and provides some libraries (embedded
 in a single executable, no external dependency required).
 Here are some LuaX modules that can be useful in ypp documents:
 

@@ -19,7 +19,7 @@ Ypp is a minimalist and generic text preprocessor using Lua macros.
 It provides several interesting features:
 
 - full
-  [Lua](http://www.lua.org/)/[LuaX](http://cdelord.fr/luax "Lua eXtended interpretor")
+  [Lua](http://www.lua.org/)/[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter")
   interpreter
 - variable expansion (minimalistic templating)
 - conditional blocks
@@ -49,7 +49,7 @@ source software. Anybody can contribute on
 # Installation
 
 [ypp](http://cdelord.fr/ypp "Yet another PreProcessor") requires
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpretor").
+[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter").
 
 ``` sh
 $ git clone https://github.com/CDSoft/luax.git && make -C luax install
@@ -107,17 +107,32 @@ expression or chunk:
 - `@(Lua expression)` or `@[===[ Lua expression ]===]`
 - `@@(Lua chunk)` or `@@[===[ Lua chunk ]===]`
 
-The second one can be used to read a variable or execute a Lua function:
+The second one can be used to read a variable or execute a Lua function
+with a subset of the Lua grammar:
 
 - `@ident`: get the value of `ident` (which can be a field of a table.
   e.g. `@math.pi`)
 - `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
 - `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
-- `@func(...)[===[ ... ]===]` or `@@func(...)[===[ ... ]===]`
-- `@func{...}[===[ ... ]===]` or `@@func{...}[===[ ... ]===]`
+
+The full grammar is:
+
+    expression ::= <identifier> continuation
+
+    continuation ::= '.' expression
+                   | ':' expression
+                   | '(' well parenthesized substring ')' continuation
+                   | '{' well bracketed substring '}' continuation
+                   | <single quoted string> continuation
+                   | <double quoted string> continuation
+                   | <long string> continuation
+                   | <empty string>
 
 Note: the number or equal signs in long strings is variable, as in Lua
 long strings
+
+The special macro `@/` is used to explicitly end an expression when the
+context is ambiguous.
 
 The Lua code can be delimited with parentheses or long brackets. The
 code delimited with parentheses shall only contain well-balanced
@@ -242,7 +257,7 @@ Images are generated in a directory given by:
 - the directory name of the output file if the `-o` option is given
 - the `img` directory in the current directory
 
-If `source` starts with a `@` (e.g. `"nil"`) then the actual image
+If `source` starts with a `@` (e.g. `"@filename"`) then the actual image
 source is read from the file `filename`.
 
 The image link in the output document may have to be different than the
@@ -291,13 +306,13 @@ be used similaryly to `image`: `X(source)`.
 Example:
 
 ``` markdown
-![ypp image generation example](@(image.dot [===[
+![ypp image generation example](@image.dot [===[
 digraph {
     rankdir=LR;
     input -> ypp -> output
     ypp -> image
 }
-]===]))
+]===])
 ```
 
 is rendered as
@@ -322,6 +337,11 @@ alt="ypp image generation example" />
   - `opts.shift` is the offset applied to the header levels. The default
     offset is `0`.
 
+### `q`
+
+- `q(source)`: return `source` unpreprocessed. `q` is used to avoid
+  macro execution in a portion of text.
+
 ### `script`
 
 - `script(cmd)(source)`: execute `cmd` to interpret `source`. `source`
@@ -344,7 +364,7 @@ alt="ypp image generation example" />
 
 Example:
 
-    $\sum_{i=0}^100 = @(script.python "print(sum(range(101)))")$
+    $\sum_{i=0}^100 = @script.python "print(sum(range(101)))"$
 
 is rendered as
 
@@ -356,21 +376,22 @@ is rendered as
 
 E.g.:
 
-    @(when(lang=="en") [===[
+    @when(lang=="en")
+    [===[
     The current language is English.
-    ]===])
+    ]===]
 
 ## LuaX modules
 
 ypp is written in [Lua](http://www.lua.org/) and
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpretor"). All Lua and
+[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter"). All Lua and
 LuaX libraries are available to ypp.
 
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpretor") is a Lua
-interpretor and REPL based on Lua 5.4, augmented with some useful
+[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter") is a Lua
+interpreter and REPL based on Lua 5.4, augmented with some useful
 packages.
 
-LuaX comes with a standard Lua interpretor and provides some libraries
+LuaX comes with a standard Lua interpreter and provides some libraries
 (embedded in a single executable, no external dependency required). Here
 are some LuaX modules that can be useful in ypp documents:
 
