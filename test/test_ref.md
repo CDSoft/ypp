@@ -159,7 +159,7 @@ ypp_images/577b1d4914ad253d.svg
 
 ### Images from an external file
 
-ypp_images/26f8d5220ce447c2.svg
+ypp_images/18206a450c4c8a4e.svg
 
 ## Scripts loaded on the command line
 

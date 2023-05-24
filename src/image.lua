@@ -185,7 +185,7 @@ local function diagram(exe, render, default_ext)
     return function(contents)
         local filename = contents:match("^@([^\n\r]+)$")
         if filename then
-            content = include.raw(filename)
+            contents = include.raw(filename)
         end
         local input_ext = get_input_ext(render)
         local ext = get_ext(render, template)
