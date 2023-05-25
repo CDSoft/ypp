@@ -180,14 +180,16 @@ end
 
 local function parse(s, i0)
 
-    local function skip(i) return i, i, F.const"" end
-
     -- find the start of the next expression
     local i1, tag, i2 = s:match("()([@?/]+)()", i0)
-    if not i1 then return skip(#s+1) end
+    if not i1 then return #s+1, #s+1, F.const"" end
 
     -- S -> "@/"
-    if tag == "@/" then return skip(i2) end
+    if tag == "@/" then
+        return i1, i2, function(state)
+            return state.on and "" or tag
+        end
+    end
 
     -- S -> "?%b()"
     if tag == "?" then
@@ -234,7 +236,7 @@ local function parse(s, i0)
     end
 
     -- S -> {}
-    return skip(i2)
+    return i2, i2, F.const""
 
 end
 

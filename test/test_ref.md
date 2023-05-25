@@ -34,6 +34,8 @@ malformed chunk: @@[===========[ foo bar ]=====]
 function call: 90.0
 chaining methods: 55
 chaining methods: WORLD! <- HELLO
+chaining methods: OLLEH -< !DLROW
+chaining methods: WORLD! <- HELLO  : reverse()
 
 escaping: `@F.range(1, 10):sum()`
 

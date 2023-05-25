@@ -31,6 +31,8 @@ malformed chunk: @@[===========[ foo bar ]=====]
 function call: @math.deg(math.pi/2)
 chaining methods: @F.range(1, 10):sum()
 chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")
+chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ") : reverse()
+chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ") @/ : reverse()
 
 escaping: `@q"@F.range(1, 10):sum()"`
 
