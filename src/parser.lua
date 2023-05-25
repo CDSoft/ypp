@@ -35,10 +35,15 @@ local function traceback(tag, expr)
             F(debug.traceback())
                 : lines()
                 : take_while(function(line)
-                    return line:trim() ~= "[C]: in function 'xpcall'"
+                    return not line:find("[C]: in function 'xpcall'", 1, true)
+                    and not line:find("src/parser%.lua:%d+: in local 'msgh'")
+                end)
+                : filter(function(line)
+                    return not line:find("src/parser%.lua:%d+:")
                 end),
         }
         io.stderr:write(trace:unlines())
+        io.stderr:flush()
         os.exit(1)
     end
 end
@@ -46,18 +51,22 @@ end
 local function eval(s, tag, expr, state)
     if state.on then
         local msgh = traceback(tag, expr)
-        local ok_compile, chunk = xpcall(load, msgh, (tag=="@" and "return " or "")..expr, expr, "t")
-        if not ok_compile or not chunk then return s end
-        local ok_eval, y = xpcall(chunk, msgh)
+        local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag=="@" and "return " or "")..expr, expr, "t")
+        if not ok_compile then return s end -- load execution error
+        if not chunk then -- compilation error
+            msgh(compile_error)
+            return s
+        end
+        local ok_eval, val = xpcall(chunk, msgh)
         if not ok_eval then return s end
         if tag == "@@" then
-            if y ~= nil then
-                return format_value(y)
+            if val ~= nil then
+                return format_value(val)
             else
                 return ""
             end
         end
-        return format_value(y)
+        return format_value(val)
     else
         return s
     end
