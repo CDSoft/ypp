@@ -72,34 +72,31 @@ local function eval(s, tag, expr, state)
     end
 end
 
--- a parser is a function that takes a string, a position and returns the start and stop of the next expression
+-- a parser is a function that takes a string, a position and returns the start and stop of the next expression and the expression
 
 local function parse_parentheses(s, i0)
     -- (...)
-    local full, i1 = s:match("^%s*(%b())()", i0)
-    if full then
-        local inside = full:sub(2, -2)
-        return inside, i1
+    local i1, expr, i2 = s:match("^%s*()(%b())()", i0)
+    if expr then
+        return i1, i2, expr:sub(2, -2)
     end
 end
 
 local function parse_brackets(s, i0)
     -- {...}
-    local full, i1 = s:match("^%s*(%b{})()", i0)
-    if full then
-        local inside = full:sub(2, -2)
-        return inside, i1
+    local i1, expr, i2 = s:match("^%s*()(%b{})()", i0)
+    if expr then
+        return i1, i2, expr:sub(2, -2)
     end
 end
 
 local function parse_long_string(s, i0)
     -- [==[ ... ]==]
-    local sep, i1 = s:match("^%s*%[(=-)%[()", i0)
+    local i1, sep, i2 = s:match("^%s*()%[(=-)%[()", i0)
     if sep then
-        local i2, i3 = s:match("()%]"..sep.."%]()", i1)
-        if i2 then
-            local inside = s:sub(i1, i2-1)
-            return inside, i3
+        local i3, i4 = s:match("()%]"..sep.."%]()", i2)
+        if i3 then
+            return i1, i4, s:sub(i2, i3-1)
         end
     end
 end
@@ -111,7 +108,7 @@ local function parse_quoted_string(s, i0, c)
         local i = i1+1
         while i <= #s do
             if s:sub(i, i) == c then
-                return i+1
+                return i1, i+1, s:sub(i1+1, i-1)
             end
             if s:sub(i, i) == '\\' then
                 i = i+1
@@ -128,7 +125,7 @@ local function parse_expr(s, i0)
     local i1, ident, i2 = s:match("^%s*()([%w_]+)()", i0)
     if ident then
         local i3 = parse_sexpr(s, i2)
-        if i3 then return i1, i3 end
+        if i3 then return i1, i3, s:sub(i1, i3-1) end
     end
 end
 
@@ -137,13 +134,13 @@ parse_sexpr = function(s, i0)
     do
         local i1 = s:match("^%s*[.:]()", i0)
         if i1 then
-            local _, i2 = parse_expr(s, i1)
+            local _, i2, _ = parse_expr(s, i1)
             if i2 then return i2 end
         end
     end
     -- SE -> (...) SE
     do
-        local _, i1 = parse_parentheses(s, i0)
+        local _, i1, _ = parse_parentheses(s, i0)
         if i1 then
             local i2 = parse_sexpr(s, i1)
             if i2 then return i2 end
@@ -151,7 +148,7 @@ parse_sexpr = function(s, i0)
     end
     -- SE -> {...} SE
     do
-        local _, i1 = parse_brackets(s, i0)
+        local _, i1, _ = parse_brackets(s, i0)
         if i1 then
             local i2 = parse_sexpr(s, i1)
             if i2 then return i2 end
@@ -159,7 +156,7 @@ parse_sexpr = function(s, i0)
     end
     -- SE -> "..." SE
     do
-        local i1 = parse_quoted_string(s, i0, '"')
+        local _, i1, _ = parse_quoted_string(s, i0, '"')
         if i1 then
             local i2 = parse_sexpr(s, i1)
             if i2 then return i2 end
@@ -167,7 +164,7 @@ parse_sexpr = function(s, i0)
     end
     -- SE -> '...' SE
     do
-        local i1 = parse_quoted_string(s, i0, "'")
+        local _, i1, _ = parse_quoted_string(s, i0, "'")
         if i1 then
             local i2 = parse_sexpr(s, i1)
             if i2 then return i2 end
@@ -175,7 +172,7 @@ parse_sexpr = function(s, i0)
     end
     -- SE -> [[...]] SE
     do
-        local _, i1 = parse_long_string(s, i0)
+        local _, i1, _ = parse_long_string(s, i0)
         if i1 then
             local i2 = parse_sexpr(s, i1)
             if i2 then return i2 end
@@ -187,27 +184,23 @@ parse_sexpr = function(s, i0)
     end
 end
 
-local function parse(s, i0)
+local function parse(s, i0, state)
 
     -- find the start of the next expression
     local i1, tag, i2 = s:match("()([@?/]+)()", i0)
-    if not i1 then return #s+1, #s+1, F.const"" end
+    if not i1 then return #s+1, #s+1, "" end
 
     -- S -> "@/"
     if tag == "@/" then
-        return i1, i2, function(state)
-            return state.on and "" or tag
-        end
+        return i1, i2, state.on and "" or tag
     end
 
     -- S -> "?%b()"
     if tag == "?" then
-        local cond, i3 = parse_parentheses(s, i2)
+        local _, i3, cond = parse_parentheses(s, i2)
         if cond then
-            return i1, i3, function(state)
-                state.on = assert(load("return "..cond, cond, "t"))()
-                return ""
-            end
+            state.on = assert(load("return "..cond, cond, "t"))()
+            return i1, i3, ""
         end
     end
 
@@ -215,37 +208,30 @@ local function parse(s, i0)
     if tag == "@" or tag == "@@" then
         -- S -> "@@?(...)"
         do
-            local inside, i3 = parse_parentheses(s, i2)
-            if inside then
-                return i1, i3, function(state)
-                    return eval(s:sub(i1, i3-1), tag, inside, state)
-                end
+            local _, i3, expr = parse_parentheses(s, i2)
+            if expr then
+                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
             end
         end
         -- S -> "@@?[==[...]==]"
         do
-            local inside, i3 = parse_long_string(s, i2)
-            if inside then
-                return i1, i3, function(state)
-                    return eval(s:sub(i1, i3-1), tag, inside, state)
-                end
+            local _, i3, expr = parse_long_string(s, i2)
+            if expr then
+                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
             end
         end
         -- S -> "@@?"expr
         do
-            local i3, i4 = parse_expr(s, i2)
-            if i3 then
-                local expr = s:sub(i3, i4-1)
-                return i1, i4, function(state)
-                    return eval(s:sub(i1, i4-1), tag, expr, state)
-                end
+            local _, i3, expr = parse_expr(s, i2)
+            if expr then
+                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
             end
         end
 
     end
 
     -- S -> {}
-    return i2, i2, F.const""
+    return i2, i2, ""
 
 end
 
@@ -254,12 +240,12 @@ return function(s)
     local state = {on=true}
     local i = 1
     while i <= #s do
-        local i1, i2, f = parse(s, i)
+        local i1, i2, out = parse(s, i, state)
         if i1 then
             if i1 > i then
                 ts[#ts+1] = s:sub(i, i1-1)
             end
-            ts[#ts+1] = f(state)
+            ts[#ts+1] = out
             i = i2
         else
             ts[#ts+1] = s:sub(i, #s)
