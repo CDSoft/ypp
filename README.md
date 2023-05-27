@@ -337,6 +337,9 @@ alt="ypp image generation example" />
   - `opts.shift` is the offset applied to the header levels. The default
     offset is `0`.
 
+- `include.raw(filename, [opts])`: like `include` but the content of the
+  file is not preprocessed with `ypp`.
+
 ### `q`
 
 - `q(source)`: return `source` unpreprocessed. `q` is used to avoid

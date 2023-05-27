@@ -27,28 +27,18 @@ http://cdelord.fr/ypp
     - `opts.from` is the format of the input file (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.to` is the destination format (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.shift` is the offset applied to the header levels. The default offset is `0`.
+
+* `include.raw(filename, [opts])`: like `include` but the content of the file is not preprocessed with `ypp`.
 @@@]]
 
-local function raw(filename, opts)
+local function include(filename, opts, prepro)
     opts = opts or {}
     local content = ypp.with_inputfile(filename, function(full_filepath)
         local s = ypp.read_file(full_filepath)
         if opts.pattern then
             s = s:match(opts.pattern)
         end
-        return s
-    end)
-    return content
-end
-
-local function include(filename, opts)
-    opts = opts or {}
-    local content = ypp.with_inputfile(filename, function(full_filepath)
-        local s = ypp.read_file(full_filepath)
-        if opts.pattern then
-            s = s:match(opts.pattern)
-        end
-        return ypp(s)
+        return prepro(s)
     end)
     if opts.from or opts.to or opts.shift then
         content = convert(content, opts)
@@ -57,8 +47,7 @@ local function include(filename, opts)
 end
 
 return setmetatable({
-    include = include,
-    raw = raw,
+    raw = function(filename, opts) return include(filename, opts, F.id) end,
 }, {
-    __call = function(_, ...) return include(...) end,
+    __call = function(_, filename, opts) return include(filename, opts, ypp) end,
 })
