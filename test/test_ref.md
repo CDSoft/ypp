@@ -20,7 +20,7 @@ $$ \sum_{n=1}^{100} = 5050 $$
 - Line 10
 
 
-nil in an expression = nil
+nil in an expression = @(nil)
 
 nil in a statement = 
 
@@ -67,6 +67,7 @@ functb{1, 2}[[three]] = three = 1 + 2
 string.upper[=[ Hello World! ]=] = HELLO WORLD!
 
 ignored pattern: someone@example.com
+undefined variable: @undefined
 
 ## File inclusion
 

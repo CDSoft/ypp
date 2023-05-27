@@ -59,6 +59,7 @@ local function eval(s, tag, expr, state)
         end
         local ok_eval, val = xpcall(chunk, msgh)
         if not ok_eval then return s end
+        if val == nil and tag=="@" and expr:match("^[%w_]+$") then return s end
         if tag == "@@" then
             if val ~= nil then
                 return format_value(val)

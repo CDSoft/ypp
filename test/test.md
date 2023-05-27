@@ -75,6 +75,7 @@ functb{1, 2}[[three]] = @functb{1, 2}[[three]]
 string.upper[=[ Hello World! ]=] = @string.upper[=[Hello World!]=]
 
 ignored pattern: someone@example.com
+undefined variable: @undefined
 
 ## File inclusion
 
