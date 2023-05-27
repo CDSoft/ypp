@@ -37,6 +37,4 @@ and is not part of the output document.
 
 local F = require "F"
 
-return function()
-    return ""
-end
+return F.const ""
