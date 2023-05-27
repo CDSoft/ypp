@@ -33,7 +33,6 @@ http://cdelord.fr/ypp
 @@( local descr = {
         bat = "`command` (DOS/Windows)",
         cmd = "`cmd` (DOS/Windows)",
-        fs = "`dotnet fsi` (F# on Windows)",
         sh = "sh",
         bash = "bash",
         zsh = "zsh",
@@ -69,24 +68,9 @@ local function make_script_cmd(cmd, arg, ext)
     return cmd
 end
 
-local scripttypes = {
-    {cmd="^python",         ext=".py"},
-    {cmd="^lua",            ext=".lua"},
-    {cmd="^bash",           ext=".sh"},
-    {cmd="^zsh",            ext=".sh"},
-    {cmd="^sh",             ext=".sh"},
-    {cmd="^cmd",            ext=".cmd"},
-    {cmd="^command",        ext=".bat"},
-    {cmd="^dotnet%s+fsi",   ext=".fsx"},
-}
-
 local function script_ext(cmd)
     local ext = cmd:match("%%s(%.%w+)") -- extension given by the command line
-    if ext then return ext end
-    for _, scripttype in ipairs(scripttypes) do
-        if cmd:match(scripttype.cmd) then return scripttype.ext end
-    end
-    return ""
+    return ext or ""
 end
 
 local function run_script(cmd, content)
@@ -106,14 +90,13 @@ end
 local run = F.curry(run_script)
 
 return setmetatable({
-    python = run "python",
-    lua = run "lua",
-    bash = run "bash",
-    zsh = run "zsh",
-    sh = run "sh",
-    cmd = run "cmd",
-    bat = run "command",
-    fs = run "dotnet fsi",
+    python = run "python %s.py",
+    lua = run "lua %s.lua",
+    bash = run "bash %s.sh",
+    zsh = run "zsh %s.sh",
+    sh = run "sh %s.sh",
+    cmd = run "cmd %s.cmd",
+    bat = run "command %s.bat",
 }, {
     __call = function(_, cmd) return run(cmd) end,
 })
