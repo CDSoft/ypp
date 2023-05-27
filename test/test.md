@@ -77,6 +77,30 @@ string.upper[=[ Hello World! ]=] = @string.upper[=[Hello World!]=]
 ignored pattern: someone@example.com
 undefined variable: @undefined
 
+### Special syntax for assignments
+
+@@ golden_ratio = 16e-1
+$golden\_ratio = @golden_ratio$
+
+@@ a = (2*(3+4))
+a = @a
+
+@@ b = {
+    x = 1,
+    y = 2
+}
+b = @F.show(b)
+
+@@ c = [===[
+a long string
+]===]
+c = @c
+
+@@ d = F.range(10)
+        : map(function(x) return x*x end)
+        : str(", ")
+d = @d
+
 ## File inclusion
 
 @include("test_inc.md", {pattern="===(.-)===", shift=2})

@@ -185,6 +185,85 @@ parse_sexpr = function(s, i0)
     end
 end
 
+local function parse_lhs(s, i0)
+    -- LHS -> identifier ('.' identifier)*
+    local i1, i2 = s:match("^%s*()[%w_]+()", i0)
+    if i1 then
+        local i = i2
+        while true do
+            local i3, i4 = s:match("^%s*()%.%s*[%w_]+()", i)
+            if i3 then
+                i = i4
+            else
+                return i1, i
+            end
+        end
+    end
+end
+
+local atoms = {
+    "^%s*()%-?%d+%.%d+e%-?%d+()",
+    "^%s*()%-?%d+%.e%-?%d+()",
+    "^%s*()%-?%.%d+e%-?%d+()",
+    "^%s*()%-?%d+e%-?%d+()",
+    "^%s*()%-?%d+%.%d+()",
+    "^%s*()%-?%d+%.()",
+    "^%s*()%-?%.%d+()",
+    "^%s*()%-?%d+()",
+    "^%s*()true()",
+    "^%s*()false()",
+}
+
+local function parse_rhs(s, i0)
+    -- RHS -> number | bool
+    for _, atom in ipairs(atoms) do
+        local i1, i2 = s:match(atom, i0)
+        if i1 then return i1, i2 end
+    end
+    -- RHS = (...)
+    do
+        local i1, i2, _ = parse_parentheses(s, i0)
+        if i1 then
+            return i1, i2
+        end
+    end
+    -- RHS = {...}
+    do
+        local i1, i2, _ = parse_brackets(s, i0)
+        if i1 then
+            return i1, i2
+        end
+    end
+    -- RHS = "..."
+    do
+        local i1, i2, _ = parse_quoted_string(s, i0, '"')
+        if i1 then
+            return i1, i2
+        end
+    end
+    -- RHS = '...'
+    do
+        local i1, i2, _ = parse_quoted_string(s, i0, "'")
+        if i1 then
+            return i1, i2
+        end
+    end
+    -- RHS = [=[ ... ]=]
+    do
+        local i1, i2, _ = parse_long_string(s, i0)
+        if i1 then
+            return i1, i2
+        end
+    end
+    -- RHS -> expr
+    do
+        local i1, i2, _ = parse_expr(s, i0)
+        if i1 then
+            return i1, i2
+        end
+    end
+end
+
 local function parse(s, i0, state)
 
     -- find the start of the next expression
@@ -202,6 +281,20 @@ local function parse(s, i0, state)
         if cond then
             state.on = assert(load("return "..cond, cond, "t"))()
             return i1, i3, ""
+        end
+    end
+
+    -- S -> "@@ LHS = RHS
+    if tag == "@@" then
+        local i3, i4 = parse_lhs(s, i2)
+        if i3 then
+            local i5 = s:match("^%s*=()", i4)
+            if i5 then
+                local i6, i7 = parse_rhs(s, i5)
+                if i6 then
+                    return i1, i7, eval(s:sub(i1, i7-1), tag, s:sub(i3, i7-1), state)
+                end
+            end
         end
     end
 

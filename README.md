@@ -115,7 +115,7 @@ with a subset of the Lua grammar:
 - `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
 - `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
 
-The full grammar is:
+The expression grammar is:
 
     expression ::= <identifier> continuation
 
@@ -127,6 +127,23 @@ The full grammar is:
                    | <double quoted string> continuation
                    | <long string> continuation
                    | <empty string>
+
+And the third one is an assignment to Lua variables:
+
+- `@@var = ...`
+
+The assignment grammar is:
+
+    assignment ::= <identifier> ('.' <identifier>)* '='
+                   ( <number>
+                   | 'true' | 'false'
+                   | '(' well parenthesized substring ')'
+                   | '{' well bracketed substring '}'
+                   | <single quoted string>
+                   | <double quoted string>
+                   | <long string>
+                   | expression
+                   )
 
 Note: the number or equal signs in long strings is variable, as in Lua
 long strings

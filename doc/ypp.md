@@ -99,7 +99,7 @@ The second one can be used to read a variable or execute a Lua function with a s
 - `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
 - `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
 
-The full grammar is:
+The expression grammar is:
 
 ```
 expression ::= <identifier> continuation
@@ -112,6 +112,25 @@ continuation ::= '.' expression
                | <double quoted string> continuation
                | <long string> continuation
                | <empty string>
+```
+
+And the third one is an assignment to Lua variables:
+
+- `@@var = ...`
+
+The assignment grammar is:
+
+```
+assignment ::= <identifier> ('.' <identifier>)* '='
+               ( <number>
+               | 'true' | 'false'
+               | '(' well parenthesized substring ')'
+               | '{' well bracketed substring '}'
+               | <single quoted string>
+               | <double quoted string>
+               | <long string>
+               | expression
+               )
 ```
 
 Note: the number or equal signs in long strings is variable, as in Lua long strings
@@ -205,11 +224,9 @@ LuaX comes with a standard Lua interpreter and provides some libraries (embedded
 in a single executable, no external dependency required).
 Here are some LuaX modules that can be useful in ypp documents:
 
-@@[===[
-    luaxdoc = F.curry(function(name, descr)
-        return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
-    end)
-]===]
+@@ luaxdoc = F.curry(function(name, descr)
+    return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
+end)
 
 - @[[luaxdoc "F"       "functional programming inspired functions"]]
 - @[[luaxdoc "L"       "`pandoc.List` module from the Pandoc Lua interpreter"]]

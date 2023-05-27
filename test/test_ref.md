@@ -69,6 +69,24 @@ string.upper[=[ Hello World! ]=] = HELLO WORLD!
 ignored pattern: someone@example.com
 undefined variable: @undefined
 
+### Special syntax for assignments
+
+
+$golden\_ratio = 1.6$
+
+
+a = 14
+
+
+b = {x=1, y=2}
+
+
+c = a long string
+
+
+
+d = 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
+
 ## File inclusion
 
 ### Included from another file
