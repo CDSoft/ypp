@@ -353,14 +353,14 @@ alt="ypp image generation example" />
 
 `script` also predefines shortcuts for some popular languages:
 
-- `script.bash(source)`: run a script with Bash
+- `script.bash(source)`: run a script with bash
 - `script.bat(source)`: run a script with `command` (DOS/Windows)
 - `script.cmd(source)`: run a script with `cmd` (DOS/Windows)
 - `script.fs(source)`: run a script with `dotnet fsi` (F# on Windows)
 - `script.lua(source)`: run a script with Lua
 - `script.python(source)`: run a script with Python
-- `script.sh(source)`: run a script with Sh
-- `script.zsh(source)`: run a script with Zsh
+- `script.sh(source)`: run a script with sh
+- `script.zsh(source)`: run a script with zsh
 
 Example:
 

@@ -34,6 +34,9 @@ http://cdelord.fr/ypp
         bat = "`command` (DOS/Windows)",
         cmd = "`cmd` (DOS/Windows)",
         fs = "`dotnet fsi` (F# on Windows)",
+        sh = "sh",
+        bash = "bash",
+        zsh = "zsh",
     }
     return F.keys(script):map(function(lang)
         return ("- `script.%s(source)`: run a script with %s"):format(lang, descr[lang] or lang:cap())
