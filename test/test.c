@@ -30,7 +30,7 @@ Example:
 
 The code is:
 ``` c
-@include.raw("test.c", {pattern="//".."===%s*(.-)%s*$"})
+@include.raw "test.c" {pattern="//".."===%s*(.-)%s*$"}
 ```
 @@@*/
 

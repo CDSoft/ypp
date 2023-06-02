@@ -20,6 +20,8 @@ http://cdelord.fr/ypp
 
 --@LOAD
 
+local flex = require "flex"
+
 --[[@@@
 * `convert(s, [opts])`:
   convert the string `s` from the format `opts.from` to the format `opts.to` and shifts the header levels by `opts.shift`.
@@ -28,9 +30,18 @@ This function requires a Pandoc Lua interpreter. The conversion is made by [Pand
 
 The `opts` parameter is optional.
 By default Pandoc converts documents from and to Markdown and the header level is not modified.
+
+?(false)
+The `convert` macro can also be called as a curried function (arguments can be swapped). E.g.:
+
+    @convert {from="csv"} (python.script [===[
+    # python script that produces a CVS document
+    ]===]
+
+?(true)
 @@@]]
 
-return function(content, opts)
+return flex.str_opt(function(content, opts)
     assert(pandoc, "The convert macro requires a Pandoc Lua interpreter")
     opts = opts or {}
     local doc = pandoc.read(content, opts.from)
@@ -45,4 +56,4 @@ return function(content, opts)
         })
     end
     return pandoc.write(pandoc.Pandoc(div.content), opts.to)
-end
+end)

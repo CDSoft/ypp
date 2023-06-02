@@ -238,6 +238,13 @@ by [Pandoc](https://pandoc.org "A universal document converter") itself.
 The `opts` parameter is optional. By default Pandoc converts documents
 from and to Markdown and the header level is not modified.
 
+The `convert` macro can also be called as a curried function (arguments
+can be swapped). E.g.:
+
+    @convert {from="csv"} (python.script [===[
+    # python script that produces a CVS document
+    ]===]
+
 ### `doc`
 
 - `doc(filename, [opts])`: extract documentation fragments from the file
@@ -251,6 +258,11 @@ from and to Markdown and the header level is not modified.
     (e.g. `"markdown"`, `"rst"`, …). The default format is Markdown.
   - `opts.shift` is the offset applied to the header levels. The default
     offset is `0`.
+
+The `doc` macro can also be called as a curried function (arguments can
+be swapped). E.g.:
+
+    @doc "file.c" {pattern="///(.-)///"}
 
 ### `image`
 
@@ -356,6 +368,12 @@ alt="ypp image generation example" />
 
 - `include.raw(filename, [opts])`: like `include` but the content of the
   file is not preprocessed with `ypp`.
+
+The `include` macro can also be called as a curried function (arguments
+can be swapped). E.g.:
+
+    @include "file.csv" {from="csv"}
+    @include {from="csv"} "file.csv"
 
 ### `q`
 

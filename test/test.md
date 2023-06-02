@@ -103,7 +103,7 @@ d = @d
 
 ## File inclusion
 
-@include("test_inc.md", {pattern="===(.-)===", shift=2})
+@include "test_inc.md" {pattern="===(.-)===", shift=2}
 
 ## Comments
 
@@ -124,7 +124,7 @@ This comment is also ignored
 
 ## Documentation extraction
 
-@doc("test.c", {doc="@@@(.-)@@@", shift=2})
+@doc "test.c" {pattern="@@@(.-)@@@", shift=2}
 
 ## Scripts
 
@@ -140,21 +140,19 @@ This comment is also ignored
 
 ### Formatting script output
 
-@convert(script.python [===[
+@convert {from="csv"} (script.python [===[
 print("X, Y, Z")
 print("a, b, c")
 print("d, e, f")
-]===], {from="csv"})
+]===])
 
 ## Images
 
-@@[[
-example = [===[
+@@ example = [===[
 digraph {
     A -> B
 }
 ]===]
-]]
 
 ### Images with the default format (SVG)
 

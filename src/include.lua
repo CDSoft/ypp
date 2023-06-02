@@ -20,6 +20,8 @@ http://cdelord.fr/ypp
 
 --@LOAD
 
+local flex = require "flex"
+
 --[[@@@
 * `include(filename, [opts])`: include the file `filename`.
 
@@ -29,6 +31,14 @@ http://cdelord.fr/ypp
     - `opts.shift` is the offset applied to the header levels. The default offset is `0`.
 
 * `include.raw(filename, [opts])`: like `include` but the content of the file is not preprocessed with `ypp`.
+
+?(false)
+The `include` macro can also be called as a curried function (arguments can be swapped). E.g.:
+
+    @include "file.csv" {from="csv"}
+    @include {from="csv"} "file.csv"
+
+?(true)
 @@@]]
 
 local function include(filename, opts, prepro)
@@ -46,8 +56,11 @@ local function include(filename, opts, prepro)
     return content
 end
 
+local flex_include     = flex.str_opt(function(filename, opts) return include(filename, opts, ypp) end)
+local flex_include_raw = flex.str_opt(function(filename, opts) return include(filename, opts, F.id) end)
+
 return setmetatable({
-    raw = function(filename, opts) return include(filename, opts, F.id) end,
+    raw = flex_include_raw,
 }, {
-    __call = function(_, filename, opts) return include(filename, opts, ypp) end,
+    __call = function(_, ...) return flex_include(...) end,
 })

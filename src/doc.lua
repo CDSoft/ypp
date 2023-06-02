@@ -20,6 +20,9 @@ http://cdelord.fr/ypp
 
 --@LOAD
 
+local F = require "F"
+local flex = require "flex"
+
 --[[@@@
 * `doc(filename, [opts])`: extract documentation fragments from the file `filename` (all fragments are concatenated).
 
@@ -27,13 +30,18 @@ http://cdelord.fr/ypp
     - `opts.from` is the format of the documentation fragments (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.to` is the destination format of the documentation (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.shift` is the offset applied to the header levels. The default offset is `0`.
-@@@]]
 
-local F = require "F"
+?(false)
+The `doc` macro can also be called as a curried function (arguments can be swapped). E.g.:
+
+    @doc "file.c" {pattern="///(.-)///"}
+
+?(true)
+@@@]]
 
 local default_pattern = ("@"):rep(3).."(.-)"..("@"):rep(3)
 
-return function(filename, opts)
+return flex.str_opt(function(filename, opts)
     opts = opts or {}
     local pattern = opts.pattern or default_pattern
     local content = ypp.with_inputfile(filename, function(full_filepath)
@@ -48,4 +56,4 @@ return function(filename, opts)
         content = convert(content, opts)
     end
     return content
-end
+end)
