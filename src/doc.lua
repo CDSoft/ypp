@@ -22,6 +22,7 @@ http://cdelord.fr/ypp
 
 local F = require "F"
 local flex = require "flex"
+local convert = require "convert"
 
 --[[@@@
 * `doc(filename, [opts])`: extract documentation fragments from the file `filename` (all fragments are concatenated).
@@ -52,8 +53,6 @@ return flex.str_opt(function(filename, opts)
         end)
         return output:unlines()
     end)
-    if opts.from or opts.to or opts.shift then
-        content = convert(content, opts)
-    end
+    content = convert.if_required(content, opts)
     return content
 end)

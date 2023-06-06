@@ -34,14 +34,20 @@ By default Pandoc converts documents from and to Markdown and the header level i
 ?(false)
 The `convert` macro can also be called as a curried function (arguments can be swapped). E.g.:
 
-    @convert {from="csv"} (python.script [===[
+    @convert {from="csv"} (script.python [===[
+    # python script that produces a CVS document
+    ]===])
+
+Notice that `convert` can be implicitely called by `include` or `script` by giving the appropriate options. E.g.:
+
+    @script.python {from="csv"} [===[
     # python script that produces a CVS document
     ]===]
 
 ?(true)
 @@@]]
 
-return flex.str_opt(function(content, opts)
+local convert = flex.str_opt(function(content, opts)
     assert(pandoc, "The convert macro requires a Pandoc Lua interpreter")
     opts = opts or {}
     local doc = pandoc.read(content, opts.from)
@@ -57,3 +63,19 @@ return flex.str_opt(function(content, opts)
     end
     return pandoc.write(pandoc.Pandoc(div.content), opts.to)
 end)
+
+local convert_if_required = flex.str_opt(function(content, opts)
+    opts = opts or {}
+    if opts.from or opts.to or opts.shift then
+        content = convert(content, opts)
+    end
+    return content
+end)
+
+return setmetatable({}, {
+    __call = function(_, ...)
+        return convert(...) end,
+    __index = {
+        if_required = convert_if_required
+    },
+})

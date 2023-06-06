@@ -21,6 +21,7 @@ http://cdelord.fr/ypp
 --@LOAD
 
 local flex = require "flex"
+local convert = require "convert"
 
 --[[@@@
 * `include(filename, [opts])`: include the file `filename`.
@@ -50,9 +51,7 @@ local function include(filename, opts, prepro)
         end
         return prepro(s)
     end)
-    if opts.from or opts.to or opts.shift then
-        content = convert(content, opts)
-    end
+    content = convert.if_required(content, opts)
     return content
 end
 

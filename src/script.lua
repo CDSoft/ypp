@@ -58,6 +58,8 @@ $\sum_{i=0}^100 = @script.python "print(sum(range(101)))"$
 local F = require "F"
 local fs = require "fs"
 local sh = require "sh"
+local flex = require "flex"
+local convert = require "convert"
 
 local function make_script_cmd(cmd, arg, ext)
     arg = arg..ext
@@ -73,21 +75,23 @@ local function script_ext(cmd)
     return ext or ""
 end
 
-local function run_script(cmd, content)
-    return fs.with_tmpdir(function (tmpdir)
-        local name = fs.join(tmpdir, "script")
-        local ext = script_ext(cmd)
-        fs.write(name..ext, content)
-        local output = sh.read(make_script_cmd(cmd, name, ext))
-        if output then
-            return output:gsub("%s*$", "")
-        else
-            error("script error")
-        end
+local function run(cmd)
+    return flex.str_opt(function(content, opts)
+        return fs.with_tmpdir(function (tmpdir)
+            local name = fs.join(tmpdir, "script")
+            local ext = script_ext(cmd)
+            fs.write(name..ext, content)
+            local output = sh.read(make_script_cmd(cmd, name, ext))
+            if output then
+                output = output:gsub("%s*$", "")
+                output = convert.if_required(output, opts)
+                return output
+            else
+                error("script error")
+            end
+        end)
     end)
 end
-
-local run = F.curry(run_script)
 
 return setmetatable({
     python = run "python %s.py",

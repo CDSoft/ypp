@@ -152,6 +152,16 @@ const char *answer(const char *question)
 
 ### Formatting script output
 
+#### Explicit conversion
+
+  X   Y   Z
+  --- --- ---
+  a   b   c
+  d   e   f
+
+
+#### Implicit conversion
+
   X   Y   Z
   --- --- ---
   a   b   c

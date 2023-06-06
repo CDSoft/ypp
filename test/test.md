@@ -140,11 +140,21 @@ This comment is also ignored
 
 ### Formatting script output
 
+#### Explicit conversion
+
 @convert {from="csv"} (script.python [===[
 print("X, Y, Z")
 print("a, b, c")
 print("d, e, f")
 ]===])
+
+#### Implicit conversion
+
+@script.python {from="csv"} [===[
+print("X, Y, Z")
+print("a, b, c")
+print("d, e, f")
+]===]
 
 ## Images
 
