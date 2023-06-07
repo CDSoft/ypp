@@ -47,10 +47,10 @@ Notice that `convert` can be implicitely called by `include` or `script` by givi
 ?(true)
 @@@]]
 
-local convert = flex.str_opt(function(content, opts)
+local convert = flex.str(function(content, opts)
     assert(pandoc, "The convert macro requires a Pandoc Lua interpreter")
     opts = opts or {}
-    local doc = pandoc.read(content, opts.from)
+    local doc = pandoc.read(tostring(content), opts.from)
     local div = pandoc.Div(doc.blocks)
     if opts.shift then
         div = pandoc.walk_block(div, {
@@ -64,17 +64,17 @@ local convert = flex.str_opt(function(content, opts)
     return pandoc.write(pandoc.Pandoc(div.content), opts.to)
 end)
 
-local convert_if_required = flex.str_opt(function(content, opts)
+local convert_if_required = function(content, opts)
     opts = opts or {}
+    content = tostring(content)
     if opts.from or opts.to or opts.shift then
-        content = convert(content, opts)
+        content = tostring(convert(content)(opts))
     end
     return content
-end)
+end
 
 return setmetatable({}, {
-    __call = function(_, ...)
-        return convert(...) end,
+    __call = function(_, ...) return convert(...) end,
     __index = {
         if_required = convert_if_required
     },

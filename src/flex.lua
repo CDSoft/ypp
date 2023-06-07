@@ -20,58 +20,95 @@ http://cdelord.fr/ypp
 
 --@LIB
 
-local function flex_type(x)
-    if type(x) == "string" then return "str" end
-    if type(x) == "table" then
-        local mt = getmetatable(x)
-        return (mt and mt.__tostring) and "str" or "opt"
+local F = require "F"
+
+-- A flex function is a curried function with a variable number of parameters.
+-- It is implemented with a callable table.
+-- The actual value is computed when evaluated as a string.
+-- It takes several arguments:
+--      - exactly one string (the argument)
+--      - zero or many option tables (they are all merged until tostring is called)
+
+-- e.g.:
+--      function f(s, opt)
+--          ...
+--      end
+--
+--      g = flex(f)
+--
+--      g "foo" {x=1}       => calls f("foo", {x=1})
+--      g {y=2} "foo" {x=1} => calls f("foo", {x=1, y=2})
+--
+--      h = g{z=3} -- kind of "partial application"
+--
+--      h "foo"             => calls f("foo", {z=3})
+--      h "foo" {x=1}       => calls f("foo", {x=1, z=3})
+
+local flex_str_mt = {}
+
+function flex_str_mt:__call(x)
+    local xmt = getmetatable(x)
+    if type(x) ~= "table" or (xmt and xmt.__tostring) then
+        -- called with a string or a table with a __tostring metamethod
+        -- ==> store the string
+        assert(self.s == F.Nil, "Multiple argument")
+        return setmetatable({s=tostring(x), opt=self.opt, f=self.f}, flex_str_mt)
+    else
+        -- called with an option table
+        -- ==> add the new options to the current ones
+        return setmetatable({s=self.s, opt=self.opt:patch(x), f=self.f}, flex_str_mt)
     end
-    return nil
 end
 
-local function flex_str_opt(f)
-    return function(x, y)
-        local tx = flex_type(x)
-        local ty = flex_type(y)
-        if tx == "str" and ty == "opt" then
-            return f(tostring(x), y)
+function flex_str_mt:__tostring()
+    -- string value requested
+    -- convert to string and call f on this string
+    assert(self.s ~= F.Nil, "Missing argument")
+    return tostring(self.f(tostring(self.s), self.opt))
+end
+
+function flex_str_mt:__index(k)
+    -- string method requested but the object is not a string yet
+    -- ==> make a string proxy
+    if string[k] then
+        return function(s, ...)
+            return string[k](tostring(s), ...)
         end
-        if ty == "str" and tx == "opt" then
-            return f(tostring(y), x)
-        end
-        if ty == nil then
-            if tx == "opt" then
-                local opt = x
-                return setmetatable({}, {
-                    __tostring = function(_) error "string expected" end,
-                    __index = function(_, _) error "string expected" end,
-                    __call = function(_, str)
-                        assert(flex_type(str) == "str", "string expected")
-                        return f(tostring(str), opt)
-                    end,
-                })
-            end
-            if tx == "str" then
-                local str = x
-                return setmetatable({}, {
-                    __tostring = function(_) return f(tostring(str), {}) end,
-                    __index = function(_, k)
-                        return function(s, ...)
-                            return string[k](tostring(s), ...)
-                        end
-                    end,
-                    __call = function(_, opt)
-                        assert(flex_type(opt) == "opt", "table expected")
-                        return f(tostring(str), opt)
-                    end,
-                })
-            end
-            error "string or table expected"
-        end
-        error "string and table (optional) expected"
     end
+end
+
+local function flex_str(f)
+    return setmetatable({s=F.Nil, opt=F{}, f=f}, flex_str_mt)
+end
+
+-- flex_array is similar to flex_str but cumulates any number of parameters in an array
+
+local flex_array_mt = {}
+
+function flex_array_mt:__call(x)
+    local xmt = getmetatable(x)
+    if type(x) ~= "table" or (xmt and xmt.__tostring) then
+        -- called with a string or a table with a __tostring metamethod
+        -- ==> store the string
+        return setmetatable({xs=self.xs..{x}, opt=self.opt, f=self.f}, flex_array_mt)
+    else
+        -- called with an option table
+        -- ==> add the new options to the current ones
+        return setmetatable({xs=self.xs, opt=self.opt:patch(x), f=self.f}, flex_array_mt)
+    end
+end
+
+function flex_array_mt:__tostring()
+    -- string value requested
+    -- convert the result of f to a string
+    return tostring(f(self.xs, self.opt))
+end
+
+local function flex_array(f)
+    return setmetatable({xs=F{}, opt=F{}, f=f}, flex_array_mt)
 end
 
 return {
-    str_opt = flex_str_opt,
+    str = flex_str,
+    array = flex_array,
 }

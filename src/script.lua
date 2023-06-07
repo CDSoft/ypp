@@ -55,7 +55,6 @@ $\sum_{i=0}^100 = @script.python "print(sum(range(101)))"$
 ```
 @@@]]
 
-local F = require "F"
 local fs = require "fs"
 local sh = require "sh"
 local flex = require "flex"
@@ -76,7 +75,8 @@ local function script_ext(cmd)
 end
 
 local function run(cmd)
-    return flex.str_opt(function(content, opts)
+    return flex.str(function(content, opts)
+        content = tostring(content)
         return fs.with_tmpdir(function (tmpdir)
             local name = fs.join(tmpdir, "script")
             local ext = script_ext(cmd)

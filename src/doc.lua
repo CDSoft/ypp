@@ -42,7 +42,7 @@ The `doc` macro can also be called as a curried function (arguments can be swapp
 
 local default_pattern = ("@"):rep(3).."(.-)"..("@"):rep(3)
 
-return flex.str_opt(function(filename, opts)
+return flex.str(function(filename, opts)
     opts = opts or {}
     local pattern = opts.pattern or default_pattern
     local content = ypp.with_inputfile(filename, function(full_filepath)

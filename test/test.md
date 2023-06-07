@@ -105,6 +105,8 @@ d = @d
 
 @include "test_inc.md" {pattern="===(.-)===", shift=2}
 
+lines: @include "test_inc.md" : lines() : map(F.const(1)) : sum()
+
 ## Comments
 
 @@(--[===[

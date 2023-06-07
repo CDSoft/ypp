@@ -55,8 +55,8 @@ local function include(filename, opts, prepro)
     return content
 end
 
-local flex_include     = flex.str_opt(function(filename, opts) return include(filename, opts, ypp) end)
-local flex_include_raw = flex.str_opt(function(filename, opts) return include(filename, opts, F.id) end)
+local flex_include     = flex.str(function(filename, opts) return include(filename, opts, ypp) end)
+local flex_include_raw = flex.str(function(filename, opts) return include(filename, opts, F.id) end)
 
 return setmetatable({
     raw = flex_include_raw,
