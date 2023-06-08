@@ -153,7 +153,8 @@ local function make_diagram_cmd(src, out, render)
 end
 
 local function render_diagram(cmd)
-    assert(sh.run(cmd), "Diagram error")
+    -- stdout shall be discarded otherwise ypp can not be used in a pipe
+    assert(sh.read(cmd), "Diagram error")
 end
 
 local output_file -- filename given by the -o option
@@ -182,6 +183,7 @@ local function diagram(exe, render, default_ext)
     template = template
         : gsub("%%ext", default_ext or "%0")
         : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
+    render = F.I{ext=default_ext}(render)
     return function(contents)
         local filename = contents:match("^@([^\n\r]+)$")
         if filename then
@@ -232,7 +234,7 @@ local plantuml = "java -jar "..PLANTUML.." -pipe -charset UTF-8 -t%ext < %i > %o
 local asymptote = "%exe -f %ext -o %o %i"
 local mermaid = "%exe --pdfFit -i %i -o %o"
 local blockdiag = "%exe -a -T%ext -o %o %i"
-local ditaa = "java -jar "..DITAA.." %svg -o -e UTF-8 %i %o"
+local ditaa = "java -jar "..DITAA.." $(ext=='svg' and '--svg' or '') -o -e UTF-8 %i %o"
 local gnuplot = "%exe -e 'set terminal %ext' -e 'set output \"%o\"' -c %i"
 local lsvg = "%exe %i.lua %o"
 local octave = { "octave --no-gui %i", 'figure("visible", "off")\n\n%s\nprint %o;' }
