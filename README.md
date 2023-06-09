@@ -354,7 +354,7 @@ digraph {
 is rendered as
 
 <figure>
-<img src="doc/img/eed9599f368662df.svg"
+<img src="doc/img/d7606e157c43d0e4.svg"
 alt="ypp image generation example" />
 <figcaption aria-hidden="true">ypp image generation example</figcaption>
 </figure>

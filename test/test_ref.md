@@ -176,29 +176,29 @@ const char *answer(const char *question)
 
 ### Images with the default format (SVG)
 
-- ypp_images/9d3c8eb78369bfa1.svg
-- .build/test/ypp_images/9d3c8eb78369bfa1.svg
+- ypp_images/9a8a73b7973f99e3.svg
+- .build/test/ypp_images/9a8a73b7973f99e3.svg
 
 
 ### Images with a specific format (e.g. PNG)
 
-- ypp_images/01398c77c7fd40c2.png
-- .build/test/ypp_images/01398c77c7fd40c2.png
+- ypp_images/2e84820d15bf345b.png
+- .build/test/ypp_images/2e84820d15bf345b.png
 
 
 ### Images with a custom command
 
-- ypp_images/9d3c8eb78369bfa1.svg
-- .build/test/ypp_images/9d3c8eb78369bfa1.svg
+- ypp_images/9a8a73b7973f99e3.svg
+- .build/test/ypp_images/9a8a73b7973f99e3.svg
 
 
 ### Images generated with Octave
 
-ypp_images/577b1d4914ad253d.svg
+ypp_images/4cd70118e8654415.svg
 
 ### Images from an external file
 
-ypp_images/18206a450c4c8a4e.svg
+ypp_images/398c8ba71be19f13.svg
 
 ## Scripts loaded on the command line
 
