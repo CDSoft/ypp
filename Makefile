@@ -174,7 +174,7 @@ $(BUILD)/test/test.md: $(BUILD)/ypp-pandoc test/test.md
 	    test/test.md \
 	    -o $@
 
--include $(BUILD)/test/test.d
+-include $(BUILD)/test/*.d
 
 ####################################################################
 # Documentation
@@ -194,4 +194,4 @@ README.md: $(BUILD)/ypp doc/ypp.md
 	    -o $(BUILD)/doc/$@
 	pandoc --to gfm $(BUILD)/doc/$@ -o $@
 
--include $(BUILD)/doc/README.d
+-include $(BUILD)/doc/*.d
