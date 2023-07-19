@@ -28,6 +28,13 @@ http://cdelord.fr/ypp
 * `ypp.input_path(n)`: return the path of the nth input file in the current *include* stack.
 @@@]]
 
+-- preload some LuaX modules
+F = require "F"
+crypt = require "crypt"
+fs = require "fs"
+sh = require "sh"
+sys = require "sys"
+
 local F = require "F"
 local fs = require "fs"
 

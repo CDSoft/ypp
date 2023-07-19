@@ -20,6 +20,8 @@ http://cdelord.fr/ypp
 
 --@LOAD
 
+local F = require "F"
+
 local flex = require "flex"
 local convert = require "convert"
 

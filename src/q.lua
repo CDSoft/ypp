@@ -24,4 +24,7 @@ http://cdelord.fr/ypp
 * `q(source)`: return `source` unpreprocessed.
   `q` is used to avoid macro execution in a portion of text.
 @@@]]
+
+local F = require "F"
+
 return F.id
