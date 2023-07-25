@@ -141,9 +141,6 @@ export YPP_IMG := [$(BUILD)/test/]ypp_images
 export PLANTUML
 export DITAA
 
-# avoid being polluted by user definitions
-export LUA_PATH := ./?.lua
-
 ## Run ypp tests
 test: $(BUILD)/test/test.ok
 test: $(BUILD)/test/test.d.ok

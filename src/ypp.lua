@@ -29,14 +29,14 @@ http://cdelord.fr/ypp
 @@@]]
 
 -- preload some LuaX modules
-F = require "F"
-crypt = require "crypt"
-fs = require "fs"
-sh = require "sh"
-sys = require "sys"
+_G.F = require "F"
+_G.crypt = require "crypt"
+_G.fs = require "fs"
+_G.sh = require "sh"
+_G.sys = require "sys"
 
-local F = require "F"
-local fs = require "fs"
+local F = _G.F
+local fs = _G.fs
 
 local ypp_mt = {__index={}}
 local ypp = setmetatable({}, ypp_mt)
@@ -148,9 +148,7 @@ local function write_dep_file(args)
             :sort()
             :unwords()
     end
-    local scripts = F.keys(package.loaded)
-        : map(function(modname) return package.searchpath(modname, package.path) or false end)
-        : filter(function(path) return path end)
+    local scripts = F.values(package.modpath)
     local deps = mklist(args.targets, args.output or {}).." : "..mklist(known_input_files, scripts)
     fs.write(name, deps.."\n")
 end
