@@ -56,6 +56,11 @@ For each render `X` (which produces images in the default format)
 there are 3 other render commands `X.svg`, `X.png` and `X.pdf` which explicitely specify the image format.
 They can be used similaryly to `image`: `X(source)`.
 
+An optional table can be given before `source` to set some options:
+
+* `X {name="output_name"} (source)` renders `source` and save the image to a file named `output_name`.
+  This can help distributing documents with user friendly image names.
+
 @@[===[
     local engine = {
         circo = "Graphviz",
@@ -184,7 +189,7 @@ local function diagram(exe, render, default_ext)
         : gsub("%%ext", default_ext or "%0")
         : gsub("%%o", default_ext and ("%%o."..default_ext) or "%0")
     render = F.I{ext=default_ext}(render)
-    return function(contents)
+    local render_image = function(contents, opts)
         local filename = contents:match("^@([^\n\r]+)$")
         if filename then
             contents = tostring(include.raw(filename))
@@ -194,7 +199,7 @@ local function diagram(exe, render, default_ext)
         local hash = crypt.hash(render..contents)
         default_image_output()
         fs.mkdirs(output_path)
-        local out = fs.join(output_path, hash)
+        local out = fs.join(output_path, opts.name or hash)
         local link = fs.join(link_path, fs.basename(out))
         local meta = out..ext..".meta"
         local meta_content = F.unlines {
@@ -221,6 +226,17 @@ local function diagram(exe, render, default_ext)
             end)
         end
         return link..ext, out..ext
+    end
+    return function(param)
+        if type(param) == "table" then
+            local opts = param
+            return function(contents)
+                return render_image(contents, opts)
+            end
+        else
+            local contents = param
+            return render_image(contents, {})
+        end
     end
 end
 

@@ -194,9 +194,13 @@ const char *answer(const char *question)
 
 ### Images generated with Octave
 
+ypp_images/test-octave.svg
+
 ypp_images/4cd70118e8654415.svg
 
 ### Images from an external file
+
+ypp_images/test-dot.svg
 
 ypp_images/398c8ba71be19f13.svg
 

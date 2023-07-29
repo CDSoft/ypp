@@ -315,6 +315,12 @@ images in the default format) there are 3 other render commands `X.svg`,
 `X.png` and `X.pdf` which explicitely specify the image format. They can
 be used similaryly to `image`: `X(source)`.
 
+An optional table can be given before `source` to set some options:
+
+- `X {name="output_name"} (source)` renders `source` and save the image
+  to a file named `output_name`. This can help distributing documents
+  with user friendly image names.
+
 | Image engine                                   | ypp function | Example                    |
 |------------------------------------------------|--------------|----------------------------|
 | [Asymptote](http://asymptote.sourceforge.net/) | `asy`        | `image.asy(source)`        |
