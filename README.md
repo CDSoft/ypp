@@ -360,8 +360,7 @@ digraph {
 is rendered as
 
 <figure>
-<img src="doc/img/d7606e157c43d0e4.svg"
-alt="ypp image generation example" />
+<img src="doc/img/image.svg" alt="ypp image generation example" />
 <figcaption aria-hidden="true">ypp image generation example</figcaption>
 </figure>
 

@@ -117,7 +117,7 @@ digraph {
 
 is rendered as
 
-![ypp image generation example](@image.dot [===[
+![ypp image generation example](@image.dot {name="image"} [===[
 digraph {
     rankdir=LR;
     input -> ypp -> output
