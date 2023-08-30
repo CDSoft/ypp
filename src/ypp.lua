@@ -133,6 +133,7 @@ local function write_outputs(args)
     if not args.output or args.output == "-" then
         io.stdout:write(content)
     else
+        fs.mkdirs(fs.dirname(args.output))
         fs.write(args.output, content)
     end
 end
@@ -150,6 +151,7 @@ local function write_dep_file(args)
     end
     local scripts = F.values(package.modpath)
     local deps = mklist(args.targets, args.output or {}).." : "..mklist(known_input_files, scripts)
+    fs.mkdirs(fs.dirname(name))
     fs.write(name, deps.."\n")
 end
 
