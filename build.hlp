@@ -1,0 +1,11 @@
+ypp
+
+Targets:
+  help      show this help message
+  compile   Compile ypp
+  all       Compile ypp
+  install   Install ypp
+  doc       Generate README.md
+  test      Run ypp tests
+  install   install ypp in $PREFIX or $HOME/.local
+  clean     clean generated files
