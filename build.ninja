@@ -111,8 +111,8 @@ build clean: phony clean-_builddir
 # Help
 ######################################################################
 
-rule help
-  description = $in
-  command = cat $in
+rule help-d5e682ea56ebfcc2
+  description = help
+  command = echo "ypp"; echo ""; echo "Targets:"; echo "  help      show this help message"; echo "  compile   Compile ypp"; echo "  all       Compile ypp"; echo "  install   Install ypp"; echo "  doc       Generate README.md"; echo "  test      Run ypp tests"; echo "  install   install ypp in $PREFIX or $HOME/.local"; echo "  clean     clean generated files";
 
-build help: help build.hlp
+build help: help-d5e682ea56ebfcc2
