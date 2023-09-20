@@ -27,52 +27,46 @@ builddir = .build
 ######################################################################
 
 rule luax
-  command = luax -q -o $out $in
-
-rule luax-luax
-  command = luax -q -t luax -o $out $in
-
-rule luax-lua
-  command = luax -q -t lua -o $out $in
-
-rule luax-pandoc
-  command = luax -q -t pandoc -o $out $in
+  command = luax -q $args -o $out $in
 
 build $builddir/ypp: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-build $builddir/ypp-luax: luax-luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-build $builddir/ypp-lua: luax-lua src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-build $builddir/ypp-pandoc: luax-pandoc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp-luax: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+  args = -t luax
+build $builddir/ypp-lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+  args = -t lua
+build $builddir/ypp-pandoc: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+  args = -t pandoc
 
-rule _builddir_src__YPP_VERSION.lua-827938c04770913a
-  command = ( set -eu; echo "--@LOAD"; echo "return [[$$(git describe --tags 2>/dev/null)]]"; ) > $out.tmp && mv $out.tmp $out
+rule _builddir_src__YPP_VERSION.lua
+  command = echo "return [[$$(git describe --tags)]] --@LOAD" > $out
 
-build $builddir/src/_YPP_VERSION.lua: _builddir_src__YPP_VERSION.lua-827938c04770913a | .git/refs/tags .git/index
+build $builddir/src/_YPP_VERSION.lua: _builddir_src__YPP_VERSION.lua | .git/refs/tags .git/index
 
 ######################################################################
 # Documentation
 ######################################################################
 
-rule README.md-0d34f84ff23366b6
-  command = export BUILD=$builddir; export YPP_IMG=doc/img; $builddir/ypp -t svg --MF $builddir/doc/$out.d --MD $in -o $builddir/doc/$out && pandoc --to gfm $builddir/doc/$out -o $out
+rule README.md
+  command = export BUILD=$builddir; export YPP_IMG=doc/img; $builddir/ypp -t svg --MF $depfile --MD $in -o $builddir/doc/$out && pandoc --to gfm $builddir/doc/$out -o $out
   depfile = $builddir/doc/$out.d
 
-build README.md: README.md-0d34f84ff23366b6 doc/ypp.md | $builddir/ypp
+build README.md: README.md doc/ypp.md | $builddir/ypp
 
 ######################################################################
 # Tests
 ######################################################################
 
 rule diff
-  command = diff $in && touch $out
+  command = diff $in > $out || (cat $out && false)
 
-build $builddir/test/test.ok: diff $builddir/test/test.md test/test_ref.md
-build $builddir/test/test.d.ok: diff $builddir/test/test.d test/test_ref.d
+build $builddir/test/test.diff: diff $builddir/test/test.md test/test_ref.md
+build $builddir/test/test.d.diff: diff $builddir/test/test.d test/test_ref.d
 
-rule _builddir_test_test.md-0401129bcb67c7c4
-  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc -t svg --MT target1 --MT target2 --MD -p test -l test.lua $in -o $out
+rule _builddir_test_test.md
+  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc -t svg --MD -p test -l test.lua $in -o $out
   depfile = $builddir/test/test.d
 
-build $builddir/test/test.md | $builddir/test/test.d: _builddir_test_test.md-0401129bcb67c7c4 test/test.md | $builddir/ypp-pandoc
+build $builddir/test/test.md | $builddir/test/test.d: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc |@ $builddir/test/test.diff $builddir/test/test.d.diff
 
 ######################################################################
 # Shortcuts
@@ -81,38 +75,40 @@ build $builddir/test/test.md | $builddir/test/test.d: _builddir_test_test.md-040
 build compile: phony $builddir/ypp $builddir/ypp-luax $builddir/ypp-lua $builddir/ypp-pandoc
 build all: phony compile
 build doc: phony README.md
-build test: phony $builddir/test/test.ok $builddir/test/test.d.ok
+build test: phony $builddir/test/test.md
+
+default compile
 
 ######################################################################
 # Installation
 ######################################################################
 
-prefix = $$HOME/.local
+prefix = ~/.local
 
-rule install-bin-daf5beff08f39ed0
+rule install-bin
   description = INSTALL $in to bin
   command = install -v -D -t $${PREFIX:-$prefix}/bin $in
 
-build install-bin: install-bin-daf5beff08f39ed0 $builddir/ypp $builddir/ypp-luax $builddir/ypp-lua $builddir/ypp-pandoc
+build install-bin: install-bin $builddir/ypp $builddir/ypp-luax $builddir/ypp-lua $builddir/ypp-pandoc
 build install: phony install-bin
 
 ######################################################################
 # Clean
 ######################################################################
 
-rule clean-_builddir-e7c9fd42467ee7fb
+rule clean-_builddir
   description = CLEAN $builddir
   command = rm -rf $builddir/*
 
-build clean-_builddir: clean-_builddir-e7c9fd42467ee7fb
+build clean-_builddir: clean-_builddir
 build clean: phony clean-_builddir
 
 ######################################################################
 # Help
 ######################################################################
 
-rule help-d5e682ea56ebfcc2
+rule help
   description = help
-  command = echo "ypp"; echo ""; echo "Targets:"; echo "  help      show this help message"; echo "  compile   Compile ypp"; echo "  all       Compile ypp"; echo "  install   Install ypp"; echo "  doc       Generate README.md"; echo "  test      Run ypp tests"; echo "  install   install ypp in $PREFIX or $HOME/.local"; echo "  clean     clean generated files";
+  command = echo "ypp"; echo ""; echo "Targets:"; echo "  help      show this help message"; echo "  compile   Compile ypp"; echo "  all       Compile ypp"; echo "  install   Install ypp"; echo "  doc       Generate README.md"; echo "  test      Run ypp tests"; echo "  install   install ypp in PREFIX or ~/.local"; echo "  clean     clean generated files";
 
-build help: help-d5e682ea56ebfcc2
+build help: help

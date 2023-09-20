@@ -31,7 +31,7 @@ local function traceback(tag, expr)
     if tag=="@" and expr:match("^[%w_.]*$") then return function() end end
     return function(message)
         local trace = F.flatten {
-            fs.basename(arg[0])..": "..message,
+            arg[0]:basename()..": "..message,
             F(debug.traceback())
                 : lines()
                 : take_while(function(line)

@@ -33,27 +33,17 @@ local sources = {
     "$builddir/src/_YPP_VERSION.lua",
 }
 
-rule "luax"         { command = "luax -q -o $out $in" }
-rule "luax-luax"    { command = "luax -q -t luax -o $out $in" }
-rule "luax-lua"     { command = "luax -q -t lua -o $out $in" }
-rule "luax-pandoc"  { command = "luax -q -t pandoc -o $out $in" }
+rule "luax" { command = "luax -q $args -o $out $in" }
 
 local compile = {
     build "$builddir/ypp"           { "luax", sources },
-    build "$builddir/ypp-luax"      { "luax-luax", sources },
-    build "$builddir/ypp-lua"       { "luax-lua", sources },
-    build "$builddir/ypp-pandoc"    { "luax-pandoc", sources },
+    build "$builddir/ypp-luax"      { "luax", sources, args="-t luax" },
+    build "$builddir/ypp-lua"       { "luax", sources, args="-t lua" },
+    build "$builddir/ypp-pandoc"    { "luax", sources, args="-t pandoc" },
 }
 
 build "$builddir/src/_YPP_VERSION.lua" {
-    command = {
-        "(",
-        "set -eu;",
-        'echo "--@LOAD";',
-        'echo "return [[$$(git describe --tags 2>/dev/null)]]";',
-        ") > $out.tmp",
-        "&& mv $out.tmp $out",
-    },
+    command = [=[echo "return [[$$(git describe --tags)]] --@LOAD" > $out]=],
     implicit_in = { ".git/refs/tags", ".git/index" },
 }
 
@@ -67,7 +57,7 @@ build "README.md" { "doc/ypp.md",
         "export YPP_IMG=doc/img;",
         "$builddir/ypp",
             "-t svg",
-            "--MF $builddir/doc/$out.d --MD",
+            "--MF $depfile --MD",
             "$in",
             "-o $builddir/doc/$out",
         "&& pandoc --to gfm $builddir/doc/$out -o $out",
@@ -82,31 +72,32 @@ build "README.md" { "doc/ypp.md",
 section "Tests"
 ---------------------------------------------------------------------
 
-rule "diff" { command = "diff $in && touch $out" }
+rule "diff" { command = "diff $in > $out || (cat $out && false)" }
 
 local tests = {
-    build "$builddir/test/test.ok" { "diff", "$builddir/test/test.md", "test/test_ref.md" },
-    build "$builddir/test/test.d.ok" { "diff", "$builddir/test/test.d", "test/test_ref.d" },
-}
-
-build "$builddir/test/test.md" { "test/test.md",
-    command = {
-        "export BUILD=$builddir;",
-        "export YPP_IMG=[$builddir/test/]ypp_images;",
-        "$builddir/ypp-pandoc",
-            "-t svg",
-            "--MT target1 --MT target2 --MD",
-            "-p", "test",
-            "-l", "test.lua",
-            "$in",
-            "-o $out",
-    },
-    depfile = "$builddir/test/test.d",
-    implicit_in = {
-        "$builddir/ypp-pandoc",
-    },
-    implicit_out = {
-        "$builddir/test/test.d",
+    build "$builddir/test/test.md" { "test/test.md",
+        command = {
+            "export BUILD=$builddir;",
+            "export YPP_IMG=[$builddir/test/]ypp_images;",
+            "$builddir/ypp-pandoc",
+                "-t svg",
+                "--MD",
+                "-p", "test",
+                "-l", "test.lua",
+                "$in",
+                "-o $out",
+        },
+        depfile = "$builddir/test/test.d",
+        implicit_in = {
+            "$builddir/ypp-pandoc",
+        },
+        implicit_out = {
+            "$builddir/test/test.d",
+        },
+        validations = {
+            build "$builddir/test/test.diff"   { "diff", "$builddir/test/test.md", "test/test_ref.md" },
+            build "$builddir/test/test.d.diff" { "diff", "$builddir/test/test.d",  "test/test_ref.d" },
+        },
     },
 }
 
@@ -128,3 +119,5 @@ phony "doc" { "README.md" }
 
 help "test" "Run $name tests"
 phony "test" (tests)
+
+default "compile"
