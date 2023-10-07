@@ -89,8 +89,8 @@ $ make test
        -p path               Add a path to package.path
        -o file               Redirect the output to 'file'
        -t {svg,pdf,png}      Set the default format of generated images
-       --MT target           Add `name` to the target list (see `--MD`)
-       --MF name             Set the dependency file name
+       --MT target           Add `name` to the target list (implies `--MD`)
+       --MF name             Set the dependency file name (implies `--MD`)
        --MD                  Generate a dependency file
 
     For more information, see https://github.com/CDSoft/ypp

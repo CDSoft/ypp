@@ -51,20 +51,23 @@ build "$builddir/src/_YPP_VERSION.lua" {
 section "Documentation"
 ---------------------------------------------------------------------
 
-build "README.md" { "doc/ypp.md",
-    command = {
-        "export BUILD=$builddir;",
-        "export YPP_IMG=doc/img;",
-        "$builddir/ypp",
-            "-t svg",
-            "--MF $depfile --MD",
-            "$in",
-            "-o $builddir/doc/$out",
-        "&& pandoc --to gfm $builddir/doc/$out -o $out",
-    },
-    depfile = "$builddir/doc/$out.d",
-    implicit_in = {
-        "$builddir/ypp",
+build "README.md" {
+    command = "pandoc --to gfm $in -o $out",
+
+    build "$builddir/doc/README.md" { "doc/ypp.md",
+        command = {
+            "export BUILD=$builddir;",
+            "export YPP_IMG=doc/img;",
+            "$builddir/ypp",
+                "-t svg",
+                "--MF $depfile",
+                "$in",
+                "-o $out",
+        },
+        depfile = "$out.d",
+        implicit_in = {
+            "$builddir/ypp",
+        },
     },
 }
 

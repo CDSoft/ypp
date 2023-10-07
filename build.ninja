@@ -46,11 +46,16 @@ build $builddir/src/_YPP_VERSION.lua: _builddir_src__YPP_VERSION.lua | .git/refs
 # Documentation
 ######################################################################
 
-rule README.md
-  command = export BUILD=$builddir; export YPP_IMG=doc/img; $builddir/ypp -t svg --MF $depfile --MD $in -o $builddir/doc/$out && pandoc --to gfm $builddir/doc/$out -o $out
-  depfile = $builddir/doc/$out.d
+rule _builddir_doc_README.md
+  command = export BUILD=$builddir; export YPP_IMG=doc/img; $builddir/ypp -t svg --MF $depfile $in -o $out
+  depfile = $out.d
 
-build README.md: README.md doc/ypp.md | $builddir/ypp
+build $builddir/doc/README.md: _builddir_doc_README.md doc/ypp.md | $builddir/ypp
+
+rule README.md
+  command = pandoc --to gfm $in -o $out
+
+build README.md: README.md $builddir/doc/README.md
 
 ######################################################################
 # Tests
