@@ -139,7 +139,7 @@ local function write_outputs(args)
 end
 
 local function write_dep_file(args)
-    if not (args.gendep or args.depfile or args.targets) then return end
+    if not (args.gendep or args.depfile or #args.targets>0) then return end
     local name = args.depfile or (args.output and fs.splitext(args.output)..".d")
     if not name then die("The dependency file name is unknown, use --MF or -o") end
     local function mklist(...)
