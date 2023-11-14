@@ -219,7 +219,7 @@ local function parse_args()
         : args "*"
         : action(function(_, _, names, _)
             if #names == 0 then names = {"-"} end
-            F.map(process_file, names)
+            F.foreach(names, process_file)
         end)
 
     return F.patch(parser:parse(), {output=output})

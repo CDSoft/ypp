@@ -33,7 +33,10 @@ local sources = {
     "$builddir/src/_YPP_VERSION.lua",
 }
 
-rule "luax" { command = "luax -q $args -o $out $in" }
+rule "luax" {
+    description = "LUAX $out",
+    command = "luax -q $args -o $out $in" ,
+}
 
 local compile = {
     build "$builddir/ypp"           { "luax", sources },
@@ -43,6 +46,7 @@ local compile = {
 }
 
 build "$builddir/src/_YPP_VERSION.lua" {
+    description = "VERSION $out",
     command = [=[echo "return [[$$(git describe --tags)]] --@LOAD" > $out]=],
     implicit_in = { ".git/refs/tags", ".git/index" },
 }
@@ -52,9 +56,11 @@ section "Documentation"
 ---------------------------------------------------------------------
 
 build "README.md" {
+    description = "PANDOC $out",
     command = "pandoc --to gfm $in -o $out",
 
     build "$builddir/doc/README.md" { "doc/ypp.md",
+        description = "YPP $in",
         command = {
             "export BUILD=$builddir;",
             "export YPP_IMG=doc/img;",
@@ -75,10 +81,14 @@ build "README.md" {
 section "Tests"
 ---------------------------------------------------------------------
 
-rule "diff" { command = "diff $in > $out || (cat $out && false)" }
+rule "diff" {
+    description = "DIFF $in",
+    command = "diff $in > $out || (cat $out && false)",
+}
 
 local tests = {
     build "$builddir/test/test.md" { "test/test.md",
+        description = "YPP $in",
         command = {
             "export BUILD=$builddir;",
             "export YPP_IMG=[$builddir/test/]ypp_images;",
