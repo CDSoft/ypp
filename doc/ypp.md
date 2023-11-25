@@ -57,16 +57,28 @@ Anybody can contribute on [GitHub] to:
 [ypp] requires [LuaX].
 
 ``` sh
-$ git clone https://github.com/CDSoft/luax.git && make -C luax install
+$ git clone https://github.com/CDSoft/luax.git && ninja -C luax install
 ...
 
 # install ypp in ~/.local/bin
-$ git clone https://github.com/CDSoft/ypp.git && make -C ypp install
+$ git clone https://github.com/CDSoft/ypp.git && ninja -C ypp install
 ```
 
-`make install` installs `ypp` in `~/.local/bin`.
+`ninja install` installs `ypp` in `~/.local/bin`.
 The `PREFIX` variable can be defined to install `ypp` to a different directory
-(e.g. `make install PREFIX=/usr` to install `ypp` in `/usr/bin`).
+(e.g. `PREFIX=/usr ninja` to install `ypp` in `/usr/bin`).
+
+
+**Precompiled binaries**
+
+In case precompiled binaries are needed (GNU/Linux, MacOS, Windows),
+some can be found at [cdelord.fr/hey](http://cdelord.fr/hey).
+These archives contain ypp as well as some other softwares more or less related to LuaX.
+
+**Warning**: There are Linux binaries linked with musl and glibc. The musl
+binaries are platform independent but can not load shared libraries. The glibc
+binaries can load shared libraries but may depend on some specific glibc
+versions on the host.
 
 # Test
 
