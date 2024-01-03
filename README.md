@@ -333,6 +333,10 @@ An optional table can be given before `source` to set some options:
   to a file named `output_name`. This can help distributing documents
   with user friendly image names.
 
+- `X {pp=func} (source)` renders `func(source)` instead of `source`.
+  E.g.: if `func` is `ypp` then `source` is preprocessed by `ypp` before
+  being rendered.
+
 | Image engine                                   | ypp function | Example                    |
 |------------------------------------------------|--------------|----------------------------|
 | [Asymptote](http://asymptote.sourceforge.net/) | `asy`        | `image.asy(source)`        |

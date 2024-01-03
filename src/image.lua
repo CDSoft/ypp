@@ -61,6 +61,9 @@ An optional table can be given before `source` to set some options:
 * `X {name="output_name"} (source)` renders `source` and save the image to a file named `output_name`.
   This can help distributing documents with user friendly image names.
 
+* `X {pp=func} (source)` renders `func(source)` instead of `source`.
+  E.g.: if `func` is `ypp` then `source` is preprocessed by `ypp` before being rendered.
+
 @@[===[
     local engine = {
         circo = "Graphviz",
@@ -194,6 +197,7 @@ local function diagram(exe, render, default_ext)
         if filename then
             contents = tostring(include.raw(filename))
         end
+        contents = (opts.pp or F.id)(contents)
         local input_ext = get_input_ext(render)
         local ext = get_ext(render, template)
         local hash = crypt.hash(render..contents)

@@ -106,10 +106,12 @@ local tests = {
         },
         implicit_out = {
             "$builddir/test/test.d",
+            "$builddir/test/ypp_images/hello.svg.meta",
         },
         validations = {
             build "$builddir/test/test.diff"   { "diff", "$builddir/test/test.md", "test/test_ref.md" },
             build "$builddir/test/test.d.diff" { "diff", "$builddir/test/test.d",  "test/test_ref.d" },
+            build "$builddir/test/hello.svg.meta.diff" { "diff", "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
         },
     },
 }

@@ -204,6 +204,11 @@ ypp_images/test-dot.svg
 
 ypp_images/398c8ba71be19f13.svg
 
+### Images preprocessed with ypp
+
+
+ypp_images/hello.svg
+
 ## Scripts loaded on the command line
 
 `test_loaded` = `true`

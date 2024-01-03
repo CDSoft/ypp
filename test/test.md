@@ -216,6 +216,15 @@ title ("erf (x) with text annotation");
 
 @image.dot "@test/test.dot"
 
+### Images preprocessed with ypp
+
+@@ name = "World"
+@image.dot {pp=ypp, name="hello"} [===[
+digraph {
+    "Hello" -> "@name!"
+}
+]===]
+
 ## Scripts loaded on the command line
 
 `test_loaded` = `@test_loaded`
