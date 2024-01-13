@@ -61,7 +61,7 @@ $ git clone https://github.com/CDSoft/ypp.git && ninja -C ypp install
 
 `ninja install` installs `ypp` in `~/.local/bin`. The `PREFIX` variable
 can be defined to install `ypp` to a different directory
-(e.g. `PREFIX=/usr ninja` to install `ypp` in `/usr/bin`).
+(e.g. `PREFIX=/usr ninja install` to install `ypp` in `/usr/bin`).
 
 **Precompiled binaries**
 
@@ -69,11 +69,6 @@ In case precompiled binaries are needed (GNU/Linux, MacOS, Windows),
 some can be found at [cdelord.fr/hey](http://cdelord.fr/hey). These
 archives contain ypp as well as some other softwares more or less
 related to LuaX.
-
-**Warning**: There are Linux binaries linked with musl and glibc. The
-musl binaries are platform independent but can not load shared
-libraries. The glibc binaries can load shared libraries but may depend
-on some specific glibc versions on the host.
 
 # Test
 
@@ -107,6 +102,11 @@ $ make test
 
     For more information, see https://github.com/CDSoft/ypp
 
+**Note for Windows users**: since Windows does not support shebangs,
+`ypp` shall be explicitly launched with `luax` (e.g.: `luax ypp`). If
+`ypp` is not found, it is searched in the installation directory of
+`luax` or in `$PATH`.
+
 # Documentation
 
 Lua expressions and chunks are embedded in the document to process.
@@ -123,7 +123,7 @@ The second one can be used to read a variable or execute a Lua function
 with a subset of the Lua grammar:
 
 - `@ident`: get the value of `ident` (which can be a field of a table.
-  e.g. `@math.pi`)
+  E.g. `@math.pi`)
 - `@func(...)`, `@func{...}`, `@@func(...)`, `@@func{...}`
 - `@func[===[ ... ]===]` or `@@func[===[ ... ]===]`
 

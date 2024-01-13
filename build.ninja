@@ -33,11 +33,9 @@ rule luax
   command = luax -q $args -o $out $in
 
 build $builddir/ypp: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-build $builddir/ypp-luax: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  args = -t luax
-build $builddir/ypp-lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp.lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
   args = -t lua
-build $builddir/ypp-pandoc: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp-pandoc.lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
   args = -t pandoc
 
 rule _builddir_src__YPP_VERSION.lua
@@ -77,16 +75,16 @@ build $builddir/test/hello.svg.meta.diff: diff $builddir/test/ypp_images/hello.s
 
 rule _builddir_test_test.md
   description = YPP $in
-  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc -t svg --MD -p test -l test.lua $in -o $out
+  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc.lua -t svg --MD -p test -l test.lua $in -o $out
   depfile = $builddir/test/test.d
 
-build $builddir/test/test.md | $builddir/test/test.d $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc |@ $builddir/test/test.diff $builddir/test/test.d.diff $builddir/test/hello.svg.meta.diff
+build $builddir/test/test.md | $builddir/test/test.d $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.diff $builddir/test/test.d.diff $builddir/test/hello.svg.meta.diff
 
 ######################################################################
 # Shortcuts
 ######################################################################
 
-build compile: phony $builddir/ypp $builddir/ypp-luax $builddir/ypp-lua $builddir/ypp-pandoc
+build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua
 build all: phony compile
 build doc: phony README.md
 build test: phony $builddir/test/test.md
@@ -103,7 +101,7 @@ rule install-bin
   description = INSTALL $in to bin
   command = install -v -D -t $${PREFIX:-$prefix}/bin $in
 
-build install-bin: install-bin $builddir/ypp $builddir/ypp-luax $builddir/ypp-lua $builddir/ypp-pandoc
+build install-bin: install-bin $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua
 build install: phony install-bin
 
 ######################################################################

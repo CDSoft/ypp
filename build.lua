@@ -39,10 +39,9 @@ rule "luax" {
 }
 
 local compile = {
-    build "$builddir/ypp"           { "luax", sources },
-    build "$builddir/ypp-luax"      { "luax", sources, args="-t luax" },
-    build "$builddir/ypp-lua"       { "luax", sources, args="-t lua" },
-    build "$builddir/ypp-pandoc"    { "luax", sources, args="-t pandoc" },
+    build "$builddir/ypp"             { "luax", sources },
+    build "$builddir/ypp.lua"         { "luax", sources, args="-t lua" },
+    build "$builddir/ypp-pandoc.lua"  { "luax", sources, args="-t pandoc" },
 }
 
 build "$builddir/src/_YPP_VERSION.lua" {
@@ -92,7 +91,7 @@ local tests = {
         command = {
             "export BUILD=$builddir;",
             "export YPP_IMG=[$builddir/test/]ypp_images;",
-            "$builddir/ypp-pandoc",
+            "$builddir/ypp-pandoc.lua",
                 "-t svg",
                 "--MD",
                 "-p", "test",
@@ -102,7 +101,7 @@ local tests = {
         },
         depfile = "$builddir/test/test.d",
         implicit_in = {
-            "$builddir/ypp-pandoc",
+            "$builddir/ypp-pandoc.lua",
         },
         implicit_out = {
             "$builddir/test/test.d",
