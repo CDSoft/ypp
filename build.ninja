@@ -69,16 +69,16 @@ rule diff
   description = DIFF $in
   command = diff $in > $out || (cat $out && false)
 
-build $builddir/test/test.diff: diff $builddir/test/test.md test/test_ref.md
+build $builddir/test/test.md.diff: diff $builddir/test/test.md test/test_ref.md
 build $builddir/test/test.d.diff: diff $builddir/test/test.d test/test_ref.d
-build $builddir/test/hello.svg.meta.diff: diff $builddir/test/ypp_images/hello.svg.meta test/hello.svg.meta
+build $builddir/test/ypp_images/hello.svg.meta.diff: diff $builddir/test/ypp_images/hello.svg.meta test/hello.svg.meta
 
 rule _builddir_test_test.md
   description = YPP $in
   command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc.lua -t svg --MD -p test -l test.lua $in -o $out
   depfile = $builddir/test/test.d
 
-build $builddir/test/test.md | $builddir/test/test.d $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.diff $builddir/test/test.d.diff $builddir/test/hello.svg.meta.diff
+build $builddir/test/test.md | $builddir/test/test.d $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.md.diff $builddir/test/test.d.diff $builddir/test/ypp_images/hello.svg.meta.diff
 
 ######################################################################
 # Shortcuts

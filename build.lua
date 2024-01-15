@@ -18,6 +18,8 @@ For further information about ypp you can visit
 http://cdelord.fr/ypp
 ]]
 
+local F = require "F"
+
 help.name "ypp"
 help.description "$name"
 
@@ -107,11 +109,13 @@ local tests = {
             "$builddir/test/test.d",
             "$builddir/test/ypp_images/hello.svg.meta",
         },
-        validations = {
-            build "$builddir/test/test.diff"   { "diff", "$builddir/test/test.md", "test/test_ref.md" },
-            build "$builddir/test/test.d.diff" { "diff", "$builddir/test/test.d",  "test/test_ref.d" },
-            build "$builddir/test/hello.svg.meta.diff" { "diff", "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
-        },
+        validations = F{
+            { "$builddir/test/test.md", "test/test_ref.md" },
+            { "$builddir/test/test.d", "test/test_ref.d" },
+            { "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end)
     },
 }
 
