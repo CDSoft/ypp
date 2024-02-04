@@ -32,6 +32,14 @@ rule luax
   description = LUAX $out
   command = luax -q $args -o $out $in
 
+pool luaxc
+  depth = 1
+
+rule luaxc
+  description = LUAXC $out
+  command = luaxc $arg -o $out $in
+  pool = luaxc
+
 build $builddir/ypp: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
 build $builddir/ypp.lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
   args = -t lua

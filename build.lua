@@ -30,6 +30,18 @@ clean "$builddir"
 section "Compilation"
 ---------------------------------------------------------------------
 
+local targets = F(require "sys".targets):map(F.partial(F.nth, "name"))
+local target, ext = nil, ""
+F(arg) : foreach(function(a)
+    if targets:elem(a) then
+        if target then F.error_without_stack_trace("multiple target definition", 2) end
+        target = a
+        if target:match"windows" then ext = ".exe" end
+    else
+        F.error_without_stack_trace(a..": unknown argument")
+    end
+end)
+
 local sources = {
     ls "src/*.lua",
     "$builddir/src/_YPP_VERSION.lua",
@@ -40,8 +52,18 @@ rule "luax" {
     command = "luax -q $args -o $out $in" ,
 }
 
+rule "luaxc" {
+    description = "LUAXC $out",
+    command = "luaxc $arg -o $out $in",
+    pool = pool "luaxc" { depth = 1 },
+}
+
 local compile = {
-    build "$builddir/ypp"             { "luax", sources },
+    build("$builddir/ypp"..ext) {
+        target and "luaxc" or "luax",
+        sources,
+        arg = target and {"-t", target},
+    },
     build "$builddir/ypp.lua"         { "luax", sources, args="-t lua" },
     build "$builddir/ypp-pandoc.lua"  { "luax", sources, args="-t pandoc" },
 }
@@ -132,10 +154,12 @@ phony "all" { "compile" }
 help "install" "Install $name"
 install "bin" (compile)
 
+if not target then
 help "doc" "Generate README.md"
 phony "doc" { "README.md" }
 
 help "test" "Run $name tests"
 phony "test" (tests)
+end
 
 default "compile"
