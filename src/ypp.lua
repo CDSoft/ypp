@@ -129,7 +129,7 @@ function ypp_mt.__call(_, content)
 end
 
 local function write_outputs(args)
-    local content = output_contents:unlines()
+    local content = output_contents:str()
     if not args.output or args.output == "-" then
         io.stdout:write(content)
     else

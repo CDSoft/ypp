@@ -218,4 +218,3 @@ ypp_images/hello.svg
 
 
 `test_2_loaded` = `true`
-
