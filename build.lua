@@ -54,13 +54,12 @@ rule "luax" {
 
 rule "luaxc" {
     description = "LUAXC $out",
-    command = "luaxc $arg -o $out $in",
-    pool = pool "luaxc" { depth = 1 },
+    command = "luaxc $arg -q -o $out $in",
 }
 
 local compile = {
     build("$builddir/ypp"..ext) {
-        target and "luaxc" or "luax",
+        "luaxc",
         sources,
         arg = target and {"-t", target},
     },
