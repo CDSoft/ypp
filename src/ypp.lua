@@ -43,6 +43,7 @@ local ypp = setmetatable({}, ypp_mt)
 local known_input_files = F{}
 local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
+local output_file = "-"
 
 local function die(msg, ...)
     io.stderr:write("ypp: ", msg:format(...), "\n")
@@ -122,6 +123,10 @@ function ypp.input_path(level)
     return fs.dirname(input_files[#input_files-(level or 0)])
 end
 
+function ypp.output_file()
+    return output_file
+end
+
 function ypp_mt.__call(_, content)
     if type(content) == "table" then return F.map(ypp, content) end
     local parser = require "parser"
@@ -136,6 +141,8 @@ local function write_outputs(args)
         fs.mkdirs(fs.dirname(args.output))
         fs.write(args.output, content)
     end
+    local file = require "file"
+    file.files:foreach(function(f) f:flush() end)
 end
 
 local function write_dep_file(args)
@@ -150,7 +157,8 @@ local function write_dep_file(args)
             :unwords()
     end
     local scripts = F.values(package.modpath)
-    local deps = mklist(args.targets, args.output or {}).." : "..mklist(known_input_files, scripts)
+    local file = require "file"
+    local deps = mklist(args.targets, args.output or {}, file.outputs).." : "..mklist(known_input_files, scripts)
     fs.mkdirs(fs.dirname(name))
     fs.write(name, deps.."\n")
 end
@@ -190,6 +198,7 @@ local function parse_args()
         : argname "file"
         : action(function(_, _, path, _)
             output = path
+            output_file = path
             require"image".output(output)
         end)
 

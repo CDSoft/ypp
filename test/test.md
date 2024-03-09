@@ -234,3 +234,14 @@ digraph {
 @@require "test/test2"
 
 `test_2_loaded` = `@test_2_loaded`
+
+## File creation
+
+@@ f = file(ypp.output_file():splitext().."-file.txt")
+@@ f [[
+first line : 1 + 2 = @(1+2)
+]]
+@@ f:ypp [[
+second line : 1 + 2 = @(1+2)
+]]
+check @f.name

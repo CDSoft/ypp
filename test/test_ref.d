@@ -1,1 +1,1 @@
-.build/test/test.md : test/test.c test/test.dot test/test.lua test/test.md test/test2.lua test/test_inc.md
+.build/test/test-file.txt .build/test/test.md : test/test.c test/test.dot test/test.lua test/test.md test/test2.lua test/test_inc.md

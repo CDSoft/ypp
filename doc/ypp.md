@@ -223,6 +223,7 @@ $\sum_{i=0}^100 = @sum$
 @module "q"
 @module "script"
 @module "when"
+@module "file"
 
 ## LuaX modules
 

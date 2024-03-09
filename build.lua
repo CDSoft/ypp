@@ -122,11 +122,13 @@ local tests = {
         },
         implicit_out = {
             "$builddir/test/test.d",
+            "$builddir/test/test-file.txt",
             "$builddir/test/ypp_images/hello.svg.meta",
         },
         validations = F{
             { "$builddir/test/test.md", "test/test_ref.md" },
             { "$builddir/test/test.d", "test/test_ref.d" },
+            { "$builddir/test/test-file.txt", "test/test-file.txt" },
             { "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
         } : map(function(files)
             return build(files[1]..".diff") { "diff", files }

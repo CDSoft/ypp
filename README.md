@@ -446,6 +446,13 @@ E.g.:
     The current language is English.
     ]===]
 
+### `file`
+
+- `f = file(name)`: return a file object that can be used to create
+  files incrementally. Files are only saved once ypp succeed
+- `f(s)`: add `s` to the file
+- `f:ypp(s)`: preprocess and add `s` to the file
+
 ## LuaX modules
 
 ypp is written in [Lua](http://www.lua.org/) and

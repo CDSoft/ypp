@@ -218,3 +218,10 @@ ypp_images/hello.svg
 
 
 `test_2_loaded` = `true`
+
+## File creation
+
+
+
+
+check .build/test/test-file.txt
