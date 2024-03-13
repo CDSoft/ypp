@@ -52,7 +52,7 @@ rule "luaxc" {
 }
 
 local compile = {
-    build("$builddir/ypp"..(target or sys.build).exe) {
+    build("$builddir/ypp"..(target or sys).exe) {
         "luaxc",
         sources,
         arg = target and {"-t", target.name},
