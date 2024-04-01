@@ -28,15 +28,15 @@ http://cdelord.fr/ypp
 * `ypp.input_path(n)`: return the path of the nth input file in the current *include* stack.
 @@@]]
 
+local F = require "F"
+local fs = require "fs"
+
 -- preload some LuaX modules
-_G.F = require "F"
+_G.F = F
 _G.crypt = require "crypt"
-_G.fs = require "fs"
+_G.fs = fs
 _G.sh = require "sh"
 _G.sys = require "sys"
-
-local F = _G.F
-local fs = _G.fs
 
 local ypp_mt = {__index={}}
 local ypp = setmetatable({}, ypp_mt)
