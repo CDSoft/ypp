@@ -254,14 +254,14 @@ The `convert` macro can also be called as a curried function (arguments
 can be swapped). E.g.:
 
     @convert {from="csv"} (script.python [===[
-    # python script that produces a CVS document
+    # python script that produces a CSV document
     ]===])
 
 Notice that `convert` can be implicitely called by `include` or `script`
 by giving the appropriate options. E.g.:
 
     @script.python {from="csv"} [===[
-    # python script that produces a CVS document
+    # python script that produces a CSV document
     ]===]
 
 ### `doc`
