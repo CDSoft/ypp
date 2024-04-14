@@ -39,7 +39,7 @@ _G.sh = require "sh"
 _G.sys = require "sys"
 
 local ypp_mt = {__index={}}
-local ypp = setmetatable({}, ypp_mt)
+local ypp = {}
 local known_input_files = F{}
 local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
@@ -156,7 +156,10 @@ local function write_dep_file(args)
             :sort()
             :unwords()
     end
-    local scripts = F.values(package.modpath)
+    local scripts = {
+        F.values(package.modpath),
+        require "import".files,
+    }
     local file = require "file"
     local deps = mklist(args.targets, args.output or {}, file.outputs).." : "..mklist(known_input_files, scripts)
     fs.mkdirs(fs.dirname(name))
@@ -234,7 +237,7 @@ local function parse_args()
     return F.patch(parser:parse(), {output=output})
 end
 
-_ENV.ypp = ypp
+_ENV.ypp = setmetatable(ypp, ypp_mt)
 local args = parse_args()
 require "atexit".run()
 write_dep_file(args)

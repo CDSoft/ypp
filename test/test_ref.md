@@ -219,6 +219,10 @@ ypp_images/hello.svg
 
 `test_2_loaded` = `true`
 
+
+
+`test3.test_3_loaded` = `true`
+
 ## File creation
 
 

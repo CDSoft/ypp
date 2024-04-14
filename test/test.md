@@ -235,6 +235,10 @@ digraph {
 
 `test_2_loaded` = `@test_2_loaded`
 
+@@ test3 = require "import" "test/test3.lua"
+
+`test3.test_3_loaded` = `@test3.test_3_loaded`
+
 ## File creation
 
 @@ f = file(ypp.output_file():splitext().."-file.txt")
