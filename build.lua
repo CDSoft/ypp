@@ -41,24 +41,19 @@ local sources = {
     "$builddir/src/_YPP_VERSION.lua",
 }
 
-rule "luax" {
-    description = "LUAX $out",
-    command = "luax -q $args -o $out $in" ,
-}
-
 rule "luaxc" {
     description = "LUAXC $out",
-    command = "luaxc $arg -q -o $out $in",
+    command = "luax compile $arg -q -o $out $in",
 }
 
 local compile = {
     build("$builddir/ypp"..(target or sys).exe) {
         "luaxc",
         sources,
-        arg = target and {"-t", target.name},
+        arg = { "-b", "-t", (target or sys).name },
     },
-    build "$builddir/ypp.lua"         { "luax", sources, args="-t lua" },
-    build "$builddir/ypp-pandoc.lua"  { "luax", sources, args="-t pandoc" },
+    build "$builddir/ypp.lua"         { "luaxc", sources, arg="-t lua" },
+    build "$builddir/ypp-pandoc.lua"  { "luaxc", sources, arg="-t pandoc" },
 }
 
 build "$builddir/src/_YPP_VERSION.lua" {

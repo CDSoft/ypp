@@ -28,19 +28,16 @@ builddir = .build
 # Compilation
 ######################################################################
 
-rule luax
-  description = LUAX $out
-  command = luax -q $args -o $out $in
-
 rule luaxc
   description = LUAXC $out
-  command = luaxc $arg -q -o $out $in
+  command = luax compile $arg -q -o $out $in
 
 build $builddir/ypp: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-build $builddir/ypp.lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  args = -t lua
-build $builddir/ypp-pandoc.lua: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  args = -t pandoc
+  arg = -b -t linux-x86_64
+build $builddir/ypp.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+  arg = -t lua
+build $builddir/ypp-pandoc.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+  arg = -t pandoc
 
 rule _builddir_src__YPP_VERSION.lua
   description = VERSION $out
