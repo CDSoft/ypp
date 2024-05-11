@@ -50,7 +50,7 @@ local compile = {
     build("$builddir/ypp"..(target or sys).exe) {
         "luaxc",
         sources,
-        arg = { "-b", "-t", (target or sys).name },
+        arg = { "-b", "-t", target and target.name or "native" },
     },
     build "$builddir/ypp.lua"         { "luaxc", sources, arg="-t lua" },
     build "$builddir/ypp-pandoc.lua"  { "luaxc", sources, arg="-t pandoc" },

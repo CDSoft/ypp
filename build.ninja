@@ -33,7 +33,7 @@ rule luaxc
   command = luax compile $arg -q -o $out $in
 
 build $builddir/ypp: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  arg = -b -t linux-x86_64
+  arg = -b -t native
 build $builddir/ypp.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
   arg = -t lua
 build $builddir/ypp-pandoc.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
