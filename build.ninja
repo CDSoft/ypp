@@ -28,16 +28,24 @@ builddir = .build
 # Compilation
 ######################################################################
 
-rule luaxc
-  description = LUAXC $out
-  command = luax compile $arg -q -o $out $in
+rule luax-native
+  description = luax-native $out
+  command = luax compile -t native $in -o $out -q
 
-build $builddir/ypp: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  arg = -b -t native
-build $builddir/ypp.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  arg = -t lua
-build $builddir/ypp-pandoc.lua: luaxc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-  arg = -t pandoc
+build $builddir/ypp: luax-native src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+
+rule luax-lua
+  description = luax-lua $out
+  command = luax compile -t lua $in -o $out -q
+
+build $builddir/ypp.lua: luax-lua src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp-pandoc.lua: luax-lua src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+
+rule luax
+  description = luax $out
+  command = luax compile -t luax $in -o $out -q
+
+build $builddir/ypp.luax: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
 
 rule _builddir_src__YPP_VERSION.lua
   description = VERSION $out
@@ -86,7 +94,7 @@ build $builddir/test/test.md | $builddir/test/test.d $builddir/test/test-file.tx
 # Shortcuts
 ######################################################################
 
-build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua
+build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua $builddir/ypp.luax
 build all: phony compile
 build doc: phony README.md
 build test: phony $builddir/test/test.md

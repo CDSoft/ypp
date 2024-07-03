@@ -41,20 +41,15 @@ local sources = {
     "$builddir/src/_YPP_VERSION.lua",
 }
 
-rule "luaxc" {
-    description = "LUAXC $out",
-    command = "luax compile $arg -q -o $out $in",
-}
+build.luax.add_global "flags" "-q"
 
 local compile = {
-    build("$builddir/ypp"..(target or sys).exe) {
-        "luaxc",
-        sources,
-        arg = { "-b", "-t", target and target.name or "native" },
-    },
-    build "$builddir/ypp.lua"         { "luaxc", sources, arg="-t lua" },
-    build "$builddir/ypp-pandoc.lua"  { "luaxc", sources, arg="-t pandoc" },
+    build.luax[target and target.name or "native"]("$builddir/ypp"..(target or sys).exe) { sources },
+    build.luax.lua "$builddir/ypp.lua"        { sources },
+    build.luax.lua "$builddir/ypp-pandoc.lua" { sources },
 }
+
+local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
 
 build "$builddir/src/_YPP_VERSION.lua" {
     description = "VERSION $out",
@@ -136,7 +131,7 @@ section "Shortcuts"
 ---------------------------------------------------------------------
 
 help "compile" "Compile $name"
-phony "compile" (compile)
+phony "compile" { compile, ypp_luax }
 
 help "all" "Compile $name"
 phony "all" { "compile" }
