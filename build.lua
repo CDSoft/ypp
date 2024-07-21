@@ -45,8 +45,8 @@ build.luax.add_global "flags" "-q"
 
 local compile = {
     build.luax[target and target.name or "native"]("$builddir/ypp"..(target or sys).exe) { sources },
-    build.luax.lua "$builddir/ypp.lua"        { sources },
-    build.luax.lua "$builddir/ypp-pandoc.lua" { sources },
+    build.luax.lua    "$builddir/ypp.lua"        { sources },
+    build.luax.pandoc "$builddir/ypp-pandoc.lua" { sources },
 }
 
 local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
