@@ -18,4 +18,13 @@ Callee:
 
 - `input_file()`: `@rel(ypp.input_file())`
 - `input_path()`: `@rel(ypp.input_path())`
+
+This part is not included: ignored {
+    not included { ... }
+}
+
+This part is also not included: ignored {
+    not included as well { ... }
+}
+
 ===

@@ -112,7 +112,11 @@ Macro char is <!> now in this file but not in the included files.
 foo = !foo
 foo = @foo
 
-!include "test_inc.md" {pattern="===(.-)===", shift=2}
+!include "test_inc.md" {
+    pattern = "===(.-)===",
+    exclude = "ignored%s*%b{}",
+    shift = 2,
+}
 
 foo = !foo
 foo = @foo

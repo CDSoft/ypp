@@ -390,6 +390,8 @@ is rendered as
   - `opts.pattern` is the Lua pattern used to identify the part of the
     file to include. If the pattern is not given, the whole file is
     included.
+  - `opts.exclude` is the Lua pattern used to identify parts of the file
+    to exclude. If the pattern is not given, the whole file is included.
   - `opts.from` is the format of the input file (e.g. `"markdown"`,
     `"rst"`, …). The default format is Markdown.
   - `opts.to` is the destination format (e.g. `"markdown"`, `"rst"`, …).

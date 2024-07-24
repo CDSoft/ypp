@@ -29,6 +29,7 @@ local convert = require "convert"
 * `include(filename, [opts])`: include the file `filename`.
 
     - `opts.pattern` is the Lua pattern used to identify the part of the file to include. If the pattern is not given, the whole file is included.
+    - `opts.exclude` is the Lua pattern used to identify parts of the file to exclude. If the pattern is not given, the whole file is included.
     - `opts.from` is the format of the input file (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.to` is the destination format (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.shift` is the offset applied to the header levels. The default offset is `0`.
@@ -48,9 +49,8 @@ local function include(filename, opts, prepro)
     opts = opts or {}
     local content = ypp.with_inputfile(filename, function(full_filepath)
         local s = ypp.read_file(full_filepath)
-        if opts.pattern then
-            s = s:match(opts.pattern)
-        end
+        if opts.pattern then s = s:match(opts.pattern) end
+        if opts.exclude then s = s:gsub(opts.exclude, "") end
         return ypp.lconf(prepro, s)
     end)
     content = convert.if_required(content, opts)

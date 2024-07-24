@@ -112,6 +112,10 @@ Callee:
 -   `input_file()`: `./test/test_inc.md`
 -   `input_path()`: `./test`
 
+This part is not included:
+
+This part is also not included:
+
 
 foo = bar
 foo = @foo
@@ -123,7 +127,7 @@ Macro char <@> is back.
 foo = !foo
 foo = bar
 
-lines: 19
+lines: 28
 
 ## Comments
 
