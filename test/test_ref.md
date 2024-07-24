@@ -89,6 +89,15 @@ d = 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
 
 ## File inclusion
 
+
+
+Macro char is <!> now in this file but not in the included files.
+
+
+
+foo = bar
+foo = @foo
+
 ### Included from another file
 
 This paragraph has been included.
@@ -103,6 +112,16 @@ Callee:
 -   `input_file()`: `./test/test_inc.md`
 -   `input_path()`: `./test`
 
+
+foo = bar
+foo = @foo
+
+
+
+Macro char <@> is back.
+
+foo = !foo
+foo = bar
 
 lines: 19
 

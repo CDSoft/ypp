@@ -26,6 +26,7 @@ http://cdelord.fr/ypp
 * `ypp.input_path()`: return the path of the current input file.
 * `ypp.input_file(n)`: return the name of the nth input file in the current *include* stack.
 * `ypp.input_path(n)`: return the path of the nth input file in the current *include* stack.
+* `ypp.macro(c)`: use the character `c` to start Lua expressions instead of `"@"` (and `cc` instead of `"@@"`).
 @@@]]
 
 local F = require "F"
@@ -38,8 +39,26 @@ _G.fs = fs
 _G.sh = require "sh"
 _G.sys = require "sys"
 
+local default_local_configuration = {
+    expr = "@",
+    stat = "@@",
+}
+
 local ypp_mt = {__index={}}
-local ypp = {}
+local ypp = {
+    gconf = {},                     -- global configuration
+    lconf = setmetatable({}, {      -- stack of local configurations
+        __index = {
+            top = function(self) return self[#self] end,
+        },
+        __call = function(self, f, ...)
+            self[#self+1] = F.clone(default_local_configuration)
+            local val = f(...)
+            self[#self] = nil
+            return val
+        end,
+    }),
+}
 local known_input_files = F{}
 local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
@@ -69,7 +88,7 @@ local function add_path(paths)
 end
 
 local function process(content)
-    output_contents[#output_contents+1] = ypp(content)
+    output_contents[#output_contents+1] = ypp.lconf(ypp, content)
 end
 
 local function read_file(filename)
@@ -127,10 +146,24 @@ function ypp.output_file()
     return output_file
 end
 
+local function set_macro_char(funcname, char)
+    if type(char) ~= "string" or not char:match "^[^?/]$" then
+        die(funcname.." expects a single character, except from ? and /")
+    end
+    local lconf = ypp.lconf:top()
+    lconf.expr = char
+    lconf.stat = char..char
+end
+
+function ypp.macro(char)
+    set_macro_char("ypp.macro", char)
+    return ""
+end
+
 function ypp_mt.__call(_, content)
     if type(content) == "table" then return F.map(ypp, content) end
     local parser = require "parser"
-    return parser(content)
+    return parser(content, ypp.lconf:top())
 end
 
 local function write_outputs(args)
@@ -225,6 +258,18 @@ local function parse_args()
     parser : flag "--MD"
         : description "Generate a dependency file"
         : target "gendep"
+
+    parser : option "-m"
+        : description "Set the default macro character (default: '@')"
+        : target "macro_char"
+        : argname "char"
+        : action(function(_, _, c, _)
+            if type(char) ~= "string" or not char:match "^[^?/]$" then
+                die("-m expects a single character, except from ? and /")
+            end
+            default_local_configuration.expr = c
+            default_local_configuration.stat = c..c
+        end)
 
     parser : argument "input"
         : description "Input file"

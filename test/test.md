@@ -103,7 +103,26 @@ d = @d
 
 ## File inclusion
 
-@include "test_inc.md" {pattern="===(.-)===", shift=2}
+@@ypp.macro "!"
+
+Macro char is <!> now in this file but not in the included files.
+
+!! foo = "bar"
+
+foo = !foo
+foo = @foo
+
+!include "test_inc.md" {pattern="===(.-)===", shift=2}
+
+foo = !foo
+foo = @foo
+
+!!ypp.macro "@"
+
+Macro char <@> is back.
+
+foo = !foo
+foo = @foo
 
 lines: @include "test_inc.md" : lines() : map(F.const(1)) : sum()
 

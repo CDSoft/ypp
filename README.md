@@ -79,7 +79,7 @@ $ make test
 # Usage
 
     Usage: ypp [-h] [-v] [-l script] [-e expression] [-p path] [-o file]
-           [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
+           [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD] [-m char]
            [<input>] ...
 
     ypp
@@ -99,6 +99,7 @@ $ make test
        --MT target           Add `name` to the target list (implies `--MD`)
        --MF name             Set the dependency file name (implies `--MD`)
        --MD                  Generate a dependency file
+       -m char               Set the default macro character (default: '@')
 
     For more information, see https://github.com/CDSoft/ypp
 
@@ -218,6 +219,8 @@ special `?` macro:
   current *include* stack.
 - `ypp.input_path(n)`: return the path of the nth input file in the
   current *include* stack.
+- `ypp.macro(c)`: use the character `c` to start Lua expressions instead
+  of `"@"` (and `cc` instead of `"@@"`).
 
 ## Builtin ypp modules
 
@@ -337,29 +340,29 @@ An optional table can be given before `source` to set some options:
   E.g.: if `func` is `ypp` then `source` is preprocessed by `ypp` before
   being rendered.
 
-| Image engine                                   | ypp function | Example                    |
-|------------------------------------------------|--------------|----------------------------|
-| [Asymptote](http://asymptote.sourceforge.net/) | `asy`        | `image.asy(source)`        |
-| [Blockdiag](http://blockdiag.com/)             | `actdiag`    | `image.actdiag(source)`    |
-| [Blockdiag](http://blockdiag.com/)             | `blockdiag`  | `image.blockdiag(source)`  |
-| [Blockdiag](http://blockdiag.com/)             | `nwdiag`     | `image.nwdiag(source)`     |
-| [Blockdiag](http://blockdiag.com/)             | `packetdiag` | `image.packetdiag(source)` |
-| [Blockdiag](http://blockdiag.com/)             | `rackdiag`   | `image.rackdiag(source)`   |
-| [Blockdiag](http://blockdiag.com/)             | `seqdiag`    | `image.seqdiag(source)`    |
-| [Graphviz](http://graphviz.org/)               | `circo`      | `image.circo(source)`      |
-| [Graphviz](http://graphviz.org/)               | `dot`        | `image.dot(source)`        |
-| [Graphviz](http://graphviz.org/)               | `fdp`        | `image.fdp(source)`        |
-| [Graphviz](http://graphviz.org/)               | `neato`      | `image.neato(source)`      |
-| [Graphviz](http://graphviz.org/)               | `osage`      | `image.osage(source)`      |
-| [Graphviz](http://graphviz.org/)               | `patchwork`  | `image.patchwork(source)`  |
-| [Graphviz](http://graphviz.org/)               | `sfdp`       | `image.sfdp(source)`       |
-| [Graphviz](http://graphviz.org/)               | `twopi`      | `image.twopi(source)`      |
-| [Mermaid](https://mermaidjs.github.io/)        | `mmdc`       | `image.mmdc(source)`       |
-| [PlantUML](http://plantuml.sourceforge.net/)   | `plantuml`   | `image.plantuml(source)`   |
-| [ditaa](http://ditaa.sourceforge.net/)         | `ditaa`      | `image.ditaa(source)`      |
-| [gnuplot](http://www.gnuplot.info/)            | `gnuplot`    | `image.gnuplot(source)`    |
-| [lsvg](http://cdelord.fr/lsvg/)                | `lsvg`       | `image.lsvg(source)`       |
-| [octave](https://octave.org/)                  | `octave`     | `image.octave(source)`     |
+| Image engine | ypp function | Example |
+|----|----|----|
+| [Asymptote](http://asymptote.sourceforge.net/) | `asy` | `image.asy(source)` |
+| [Blockdiag](http://blockdiag.com/) | `actdiag` | `image.actdiag(source)` |
+| [Blockdiag](http://blockdiag.com/) | `blockdiag` | `image.blockdiag(source)` |
+| [Blockdiag](http://blockdiag.com/) | `nwdiag` | `image.nwdiag(source)` |
+| [Blockdiag](http://blockdiag.com/) | `packetdiag` | `image.packetdiag(source)` |
+| [Blockdiag](http://blockdiag.com/) | `rackdiag` | `image.rackdiag(source)` |
+| [Blockdiag](http://blockdiag.com/) | `seqdiag` | `image.seqdiag(source)` |
+| [Graphviz](http://graphviz.org/) | `circo` | `image.circo(source)` |
+| [Graphviz](http://graphviz.org/) | `dot` | `image.dot(source)` |
+| [Graphviz](http://graphviz.org/) | `fdp` | `image.fdp(source)` |
+| [Graphviz](http://graphviz.org/) | `neato` | `image.neato(source)` |
+| [Graphviz](http://graphviz.org/) | `osage` | `image.osage(source)` |
+| [Graphviz](http://graphviz.org/) | `patchwork` | `image.patchwork(source)` |
+| [Graphviz](http://graphviz.org/) | `sfdp` | `image.sfdp(source)` |
+| [Graphviz](http://graphviz.org/) | `twopi` | `image.twopi(source)` |
+| [Mermaid](https://mermaidjs.github.io/) | `mmdc` | `image.mmdc(source)` |
+| [PlantUML](http://plantuml.sourceforge.net/) | `plantuml` | `image.plantuml(source)` |
+| [ditaa](http://ditaa.sourceforge.net/) | `ditaa` | `image.ditaa(source)` |
+| [gnuplot](http://www.gnuplot.info/) | `gnuplot` | `image.gnuplot(source)` |
+| [lsvg](http://cdelord.fr/lsvg/) | `lsvg` | `image.lsvg(source)` |
+| [octave](https://octave.org/) | `octave` | `image.octave(source)` |
 
 Example:
 

@@ -27,8 +27,8 @@ local function format_value(x)
     return tostring(x)
 end
 
-local function traceback(tag, expr)
-    if tag=="@" and expr:match("^[%w_.]*$") then return function() end end
+local function traceback(tag, expr, conf)
+    if tag==conf.expr and expr:match("^[%w_.]*$") then return function() end end
     return function(message)
         local trace = F.flatten {
             arg[0]:basename()..": "..message,
@@ -50,8 +50,10 @@ end
 
 local function eval(s, tag, expr, state)
     if state.on then
-        local msgh = traceback(tag, expr)
-        local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag=="@" and "return " or "")..expr, expr, "t")
+        local msgh = traceback(tag, expr, state.conf)
+        local expr_tag = state.conf.expr -- must be read before eval since they may be modified by the macro function
+        local stat_tag = state.conf.stat
+        local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag==expr_tag and "return " or "")..expr, expr, "t")
         if not ok_compile then return s end -- load execution error
         if not chunk then -- compilation error
             msgh(compile_error)
@@ -59,8 +61,8 @@ local function eval(s, tag, expr, state)
         end
         local ok_eval, val = xpcall(chunk, msgh)
         if not ok_eval then return s end
-        if val == nil and tag=="@" and expr:match("^[%w_]+$") then return s end
-        if tag == "@@" then
+        if val == nil and tag==expr_tag and expr:match("^[%w_]+$") then return s end
+        if tag == stat_tag then
             if val ~= nil then
                 return format_value(val)
             else
@@ -266,12 +268,15 @@ end
 
 local function parse(s, i0, state)
 
+    local expr_tag = state.conf.expr
+    local stat_tag = state.conf.stat
+
     -- find the start of the next expression
-    local i1, tag, i2 = s:match("()([@?/]+)()", i0)
+    local i1, tag, i2 = s:match("()(["..expr_tag.."?/]+)()", i0)
     if not i1 then return #s+1, #s+1, "" end
 
     -- S -> "@/"
-    if tag == "@/" then
+    if tag == expr_tag.."/" then
         return i1, i2, state.on and "" or tag
     end
 
@@ -285,7 +290,7 @@ local function parse(s, i0, state)
     end
 
     -- S -> "@@ LHS = RHS
-    if tag == "@@" then
+    if tag == stat_tag then
         local i3, i4 = parse_lhs(s, i2)
         if i3 then
             local i5 = s:match("^%s*=()", i4)
@@ -299,7 +304,7 @@ local function parse(s, i0, state)
     end
 
     -- S -> "@@?..."
-    if tag == "@" or tag == "@@" then
+    if tag == expr_tag or tag == stat_tag then
         -- S -> "@@?(...)"
         do
             local _, i3, expr = parse_parentheses(s, i2)
@@ -329,9 +334,9 @@ local function parse(s, i0, state)
 
 end
 
-return function(s)
+return function(s, conf)
     local ts = {}
-    local state = {on=true}
+    local state = {on=true, conf=conf}
     local i = 1
     while i <= #s do
         local i1, i2, out = parse(s, i, state)

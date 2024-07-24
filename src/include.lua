@@ -51,7 +51,7 @@ local function include(filename, opts, prepro)
         if opts.pattern then
             s = s:match(opts.pattern)
         end
-        return prepro(s)
+        return ypp.lconf(prepro, s)
     end)
     content = convert.if_required(content, opts)
     return content
