@@ -72,7 +72,7 @@ The `PREFIX` variable can be defined to install `ypp` to a different directory
 **Precompiled binaries**
 
 In case precompiled binaries are needed (GNU/Linux, MacOS, Windows),
-some can be found at [cdelord.fr/hey](http://cdelord.fr/hey).
+some can be found at [cdelord.fr/pub](http://cdelord.fr/pub).
 These archives contain ypp as well as some other softwares more or less related to LuaX.
 
 # Test
