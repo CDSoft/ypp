@@ -120,6 +120,16 @@ This part is also not included:
 foo = bar
 foo = @foo
 
+Using a special character with ypp.macro:
+     ^ => bar     
+     $ => bar     
+     % => bar     
+     . => bar   
+     * => bar     
+     + => bar     
+     - => bar     
+     ? => bar     
+
 
 
 Macro char <@> is back.

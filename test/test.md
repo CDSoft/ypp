@@ -121,6 +121,16 @@ foo = @foo
 foo = !foo
 foo = @foo
 
+Using a special character with ypp.macro:
+!!ypp.macro "^"     ^ => ^foo     ^ypp.macro "!"
+!!ypp.macro "$"     $ => $foo     $ypp.macro "!"
+!!ypp.macro "%"     % => %foo     %ypp.macro "!"
+!!ypp.macro "."     . => .(foo)   .ypp.macro "!"
+!!ypp.macro "*"     * => *foo     *ypp.macro "!"
+!!ypp.macro "+"     + => +foo     +ypp.macro "!"
+!!ypp.macro "-"     - => -foo     -ypp.macro "!"
+!!ypp.macro "?"     ? => ?foo     ?ypp.macro "!"
+
 !!ypp.macro "@"
 
 Macro char <@> is back.

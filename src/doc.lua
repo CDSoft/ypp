@@ -40,11 +40,14 @@ The `doc` macro can also be called as a curried function (arguments can be swapp
 ]=====]
 @@@]]
 
-local default_pattern = ("@"):rep(3).."(.-)"..("@"):rep(3)
+local function default_pattern()
+    local tag = ("@"):rep(3)
+    return tag.."(.-)"..tag
+end
 
 return flex.str(function(filename, opts)
     opts = opts or {}
-    local pattern = opts.pattern or default_pattern
+    local pattern = opts.pattern or default_pattern()
     local content = ypp.with_inputfile(filename, function(full_filepath)
         local s = ypp.read_file(full_filepath)
         local output = F{}

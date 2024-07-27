@@ -265,10 +265,11 @@ end
 local function parse(s, i0, state)
 
     local expr_tag = state.conf.expr
+    local esc_expr_tag = state.conf.esc_expr
     local stat_tag = state.conf.stat
 
     -- find the start of the next expression
-    local i1, tag, i2 = s:match("()("..expr_tag.."+)()", i0)
+    local i1, tag, i2 = s:match("()("..esc_expr_tag.."+)()", i0)
     if not i1 then return #s+1, #s+1, "" end
 
     -- S -> "@@ LHS = RHS

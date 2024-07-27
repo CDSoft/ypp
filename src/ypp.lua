@@ -43,8 +43,8 @@ _G.sh = require "sh"
 _G.sys = require "sys"
 
 local default_local_configuration = {
-    expr = "@",
-    stat = "@@",
+    expr = "@",     esc_expr = "@",
+    stat = "@@",    esc_stat = "@@",
 }
 
 local lconf = setmetatable({}, {      -- stack of local configurations
@@ -152,13 +152,39 @@ function ypp.output_file()
     return output_file
 end
 
-local function set_macro_char(funcname, char)
-    if type(char) ~= "string" or not char:match "^[^?/]$" then
-        die(funcname.." expects a single character, except from ? and /")
+local escaped_macro_char = {
+    ["^"] = "%^",
+    ["$"] = "%$",
+    ["%"] = "%%",
+    ["."] = "%.",
+    ["*"] = "%*",
+    ["+"] = "%+",
+    ["-"] = "%-",
+    ["?"] = "%?",
+}
+
+local forbidden_macro_char = {
+    ["("] = true, [")"] = true,
+    ["["] = true, ["]"] = true,
+    ["{"] = true, ["}"] = true,
+}
+
+local function update_macro_char(funcname, conf, char)
+    if type(char) ~= "string" or #char ~= 1 then
+        die("%s expects a single character", funcname)
     end
-    local conf = lconf:top()
+    if forbidden_macro_char[char] then
+        die("%q: invalid macro character", char)
+    end
     conf.expr = char
     conf.stat = char..char
+    local esc_char = escaped_macro_char[char] or char
+    conf.esc_expr = esc_char
+    conf.esc_stat = esc_char..esc_char
+end
+
+local function set_macro_char(funcname, char)
+    update_macro_char(funcname, lconf:top(), char)
 end
 
 function ypp.macro(char)
@@ -270,11 +296,7 @@ local function parse_args()
         : target "macro_char"
         : argname "char"
         : action(function(_, _, c, _)
-            if type(char) ~= "string" or not char:match "^[^?/]$" then
-                die("-m expects a single character, except from ? and /")
-            end
-            default_local_configuration.expr = c
-            default_local_configuration.stat = c..c
+            update_macro_char("-m", default_local_configuration, c)
         end)
 
     parser : argument "input"
