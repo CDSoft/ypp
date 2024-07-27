@@ -26,6 +26,9 @@ http://cdelord.fr/ypp
 * `ypp.input_path()`: return the path of the current input file.
 * `ypp.input_file(n)`: return the name of the nth input file in the current *include* stack.
 * `ypp.input_path(n)`: return the path of the nth input file in the current *include* stack.
+* `ypp.output_file`: name of the output file.
+* `ypp.find_file(filename)`: return the full path name of `filename` that can be in the current input file directory or in the current directory.
+* `ypp.read_file(filename)`: return the content of the file `filename` and adds this file to the dependency file.
 * `ypp.macro(c)`: use the character `c` to start Lua expressions instead of `"@"` (and `cc` instead of `"@@"`).
 @@@]]
 
@@ -44,21 +47,24 @@ local default_local_configuration = {
     stat = "@@",
 }
 
-local ypp_mt = {__index={}}
-local ypp = {
-    gconf = {},                     -- global configuration
-    lconf = setmetatable({}, {      -- stack of local configurations
-        __index = {
-            top = function(self) return self[#self] end,
-        },
-        __call = function(self, f, ...)
-            self[#self+1] = F.clone(default_local_configuration)
-            local val = f(...)
-            self[#self] = nil
-            return val
-        end,
-    }),
+local lconf = setmetatable({}, {      -- stack of local configurations
+    __index = {
+        top = function(self) return self[#self] end,
+    },
+    __call = function(self, f, ...)
+        self[#self+1] = F.clone(default_local_configuration)
+        local val = f(...)
+        self[#self] = nil
+        return val
+    end,
+})
+
+local ypp_mt = {
+    __index={
+        lconf = lconf,
+    },
 }
+local ypp = {}
 local known_input_files = F{}
 local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
@@ -88,7 +94,7 @@ local function add_path(paths)
 end
 
 local function process(content)
-    output_contents[#output_contents+1] = ypp.lconf(ypp, content)
+    output_contents[#output_contents+1] = lconf(ypp, content)
 end
 
 local function read_file(filename)
@@ -110,7 +116,7 @@ local function find_file(filename)
     local full_filepath = F{
         fs.join(input_path, filename),
         filename,
-    } : filter(fs.is_file) : head()
+    } : find(fs.is_file)
     assert(full_filepath, filename..": file not found")
     return full_filepath
 end
@@ -150,9 +156,9 @@ local function set_macro_char(funcname, char)
     if type(char) ~= "string" or not char:match "^[^?/]$" then
         die(funcname.." expects a single character, except from ? and /")
     end
-    local lconf = ypp.lconf:top()
-    lconf.expr = char
-    lconf.stat = char..char
+    local conf = lconf:top()
+    conf.expr = char
+    conf.stat = char..char
 end
 
 function ypp.macro(char)
@@ -163,7 +169,7 @@ end
 function ypp_mt.__call(_, content)
     if type(content) == "table" then return F.map(ypp, content) end
     local parser = require "parser"
-    return parser(content, ypp.lconf:top())
+    return parser(content, lconf:top())
 end
 
 local function write_outputs(args)
