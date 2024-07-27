@@ -31,7 +31,7 @@ This function requires a Pandoc Lua interpreter. The conversion is made by [Pand
 The `opts` parameter is optional.
 By default Pandoc converts documents from and to Markdown and the header level is not modified.
 
-?(false)
+@q[=====[
 The `convert` macro can also be called as a curried function (arguments can be swapped). E.g.:
 
     @convert {from="csv"} (script.python [===[
@@ -44,7 +44,7 @@ Notice that `convert` can be implicitely called by `include` or `script` by givi
     # python script that produces a CSV document
     ]===]
 
-?(true)
+]=====]
 @@@]]
 
 local convert = flex.str(function(content, opts)

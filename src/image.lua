@@ -106,7 +106,7 @@ An optional table can be given before `source` to set some options:
 
 Example:
 
-?(false)
+@q[=====[
 ``` markdown
 ![ypp image generation example](@image.dot [===[
 digraph {
@@ -116,7 +116,7 @@ digraph {
 }
 ]===])
 ```
-?(true)
+]=====]
 
 is rendered as
 

@@ -25,14 +25,14 @@ http://cdelord.fr/ypp
 
 E.g.:
 
-?(false)
+@q[=====[
 ```
 @when(lang=="en")
 [===[
 The current language is English.
 ]===]
 ```
-?(true)
+]=====]
 @@@]]
 
 local F = require "F"

@@ -32,13 +32,9 @@ function call: @math.deg(math.pi/2)
 chaining methods: @F.range(1, 10):sum()
 chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")
 chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ") : reverse()
-chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ") @/ : reverse()
+chaining methods: @(string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")) : reverse()
 
 escaping: `@q"@F.range(1, 10):sum()"`
-
-### pattern_0
-
-?(false)`"1+1=@(1+1)"`?(true) => `"1+1=@(1+1)"`
 
 ### pattern_1
 
@@ -81,6 +77,10 @@ undefined variable: @undefined
 
 @@ golden_ratio = 16e-1
 $golden\_ratio = @golden_ratio$
+
+@@ vrai = true
+@@ faux = false
+vrai = @vrai, faux = @false
 
 @@ a = (2*(3+4))
 a = @a

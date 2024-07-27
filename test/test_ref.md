@@ -35,13 +35,9 @@ function call: 90.0
 chaining methods: 55
 chaining methods: WORLD! <- HELLO
 chaining methods: OLLEH -< !DLROW
-chaining methods: WORLD! <- HELLO  : reverse()
+chaining methods: WORLD! <- HELLO : reverse()
 
 escaping: `@F.range(1, 10):sum()`
-
-### pattern_0
-
-`"1+1=@(1+1)"` => `"1+1=2"`
 
 ### pattern_1
 
@@ -73,6 +69,10 @@ undefined variable: @undefined
 
 
 $golden\_ratio = 1.6$
+
+
+
+vrai = true, faux = false
 
 
 a = 14

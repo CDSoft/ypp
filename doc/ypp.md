@@ -93,7 +93,7 @@ found, it is searched in the installation directory of `luax` or in `$PATH`.
 
 # Documentation
 
-?(false)
+@q[=====[
 
 Lua expressions and chunks are embedded in the document to process.
 Expressions are introduced by `@` and chunks by `@@`.
@@ -146,8 +146,6 @@ assignment ::= <identifier> ('.' <identifier>)* '='
 
 Note: the number or equal signs in long strings is variable, as in Lua long strings
 
-The special macro `@/` is used to explicitly end an expression when the context is ambiguous.
-
 The Lua code can be delimited with parentheses or long brackets.
 The code delimited with parentheses shall only contain well-balanced parentheses.
 The long bracket delimiters shall have the same number of equal signs (which can be null),
@@ -166,11 +164,6 @@ to their types:
 - other types are formatted by the default `tostring` function.
 
 For documentation purpose, ypp macros can be enable/disabled with the special `?` macro:
-
-?(true)
-- @(q"`?(false)`"): disable ypp
-- @(q"`?(true)`"): enable ypp
-?(false)
 
 ## Examples
 
@@ -196,7 +189,7 @@ $\sum_{i=0}^100 = @(F.range(100):sum())$
 $\sum_{i=0}^100 = @sum$
 ```
 
-?(true)
+]=====]
 
 ## Builtin ypp functions
 

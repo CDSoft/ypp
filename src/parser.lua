@@ -49,30 +49,26 @@ local function traceback(tag, expr, conf)
 end
 
 local function eval(s, tag, expr, state)
-    if state.on then
-        local msgh = traceback(tag, expr, state.conf)
-        local expr_tag = state.conf.expr -- must be read before eval since they may be modified by the macro function
-        local stat_tag = state.conf.stat
-        local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag==expr_tag and "return " or "")..expr, expr, "t")
-        if not ok_compile then return s end -- load execution error
-        if not chunk then -- compilation error
-            msgh(compile_error)
-            return s
-        end
-        local ok_eval, val = xpcall(chunk, msgh)
-        if not ok_eval then return s end
-        if val == nil and tag==expr_tag and expr:match("^[%w_]+$") then return s end
-        if tag == stat_tag then
-            if val ~= nil then
-                return format_value(val)
-            else
-                return ""
-            end
-        end
-        return format_value(val)
-    else
+    local msgh = traceback(tag, expr, state.conf)
+    local expr_tag = state.conf.expr -- must be read before eval since they may be modified by the macro function
+    local stat_tag = state.conf.stat
+    local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag==expr_tag and "return " or "")..expr, expr, "t")
+    if not ok_compile then return s end -- load execution error
+    if not chunk then -- compilation error
+        msgh(compile_error)
         return s
     end
+    local ok_eval, val = xpcall(chunk, msgh)
+    if not ok_eval then return s end
+    if val == nil and tag==expr_tag and expr:match("^[%w_]+$") then return s end
+    if tag == stat_tag then
+        if val ~= nil then
+            return format_value(val)
+        else
+            return ""
+        end
+    end
+    return format_value(val)
 end
 
 -- a parser is a function that takes a string, a position and returns the start and stop of the next expression and the expression
@@ -272,22 +268,8 @@ local function parse(s, i0, state)
     local stat_tag = state.conf.stat
 
     -- find the start of the next expression
-    local i1, tag, i2 = s:match("()(["..expr_tag.."?/]+)()", i0)
+    local i1, tag, i2 = s:match("()("..expr_tag.."+)()", i0)
     if not i1 then return #s+1, #s+1, "" end
-
-    -- S -> "@/"
-    if tag == expr_tag.."/" then
-        return i1, i2, state.on and "" or tag
-    end
-
-    -- S -> "?%b()"
-    if tag == "?" then
-        local _, i3, cond = parse_parentheses(s, i2)
-        if cond then
-            state.on = assert(load("return "..cond, cond, "t"))()
-            return i1, i3, ""
-        end
-    end
 
     -- S -> "@@ LHS = RHS
     if tag == stat_tag then
@@ -336,7 +318,7 @@ end
 
 return function(s, conf)
     local ts = {}
-    local state = {on=true, conf=conf}
+    local state = {conf=conf}
     local i = 1
     while i <= #s do
         local i1, i2, out = parse(s, i, state)

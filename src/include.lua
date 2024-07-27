@@ -36,13 +36,13 @@ local convert = require "convert"
 
 * `include.raw(filename, [opts])`: like `include` but the content of the file is not preprocessed with `ypp`.
 
-?(false)
+@q[=====[
 The `include` macro can also be called as a curried function (arguments can be swapped). E.g.:
 
     @include "file.csv" {from="csv"}
     @include {from="csv"} "file.csv"
 
-?(true)
+]=====]
 @@@]]
 
 local function include(filename, opts, prepro)

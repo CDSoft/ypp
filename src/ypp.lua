@@ -266,7 +266,7 @@ local function parse_args()
         : target "gendep"
 
     parser : option "-m"
-        : description "Set the default macro character (default: '@')"
+        : description("Set the default macro character (default: '"..default_local_configuration.expr.."')")
         : target "macro_char"
         : argname "char"
         : action(function(_, _, c, _)

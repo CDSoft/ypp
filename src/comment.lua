@@ -25,14 +25,14 @@ http://cdelord.fr/ypp
 
 E.g.:
 
-?(false)
+@q[=====[
 ```
 @comment [===[
 This paragraph is a comment
 and is not part of the output document.
 ]===]
 ```
-?(true)
+]=====]
 @@@]]
 
 local F = require "F"

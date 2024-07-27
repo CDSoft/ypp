@@ -32,12 +32,12 @@ local convert = require "convert"
     - `opts.to` is the destination format of the documentation (e.g. `"markdown"`, `"rst"`, ...). The default format is Markdown.
     - `opts.shift` is the offset applied to the header levels. The default offset is `0`.
 
-?(false)
+@q[=====[
 The `doc` macro can also be called as a curried function (arguments can be swapped). E.g.:
 
     @doc "file.c" {pattern="///(.-)///"}
 
-?(true)
+]=====]
 @@@]]
 
 local default_pattern = ("@"):rep(3).."(.-)"..("@"):rep(3)
