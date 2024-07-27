@@ -234,7 +234,6 @@ Here are some LuaX modules that can be useful in ypp documents:
 end)
 
 - @[[luaxdoc "F"       "functional programming inspired functions"]]
-- @[[luaxdoc "L"       "`pandoc.List` module from the Pandoc Lua interpreter"]]
 - @[[luaxdoc "fs"      "file system management"]]
 - @[[luaxdoc "sh"      "shell command execution"]]
 - @[[luaxdoc "mathx"   "complete math library for Lua"]]
@@ -243,8 +242,8 @@ end)
 - @[[luaxdoc "complex" "math library for complex numbers based on C99"]]
 - @[[luaxdoc "crypt"   "cryptography module"]]
 - @[[luaxdoc "lpeg"    "Parsing Expression Grammars For Lua"]]
-- @[[luaxdoc "inspect" "Human-readable representation of Lua tables"]]
 - @[[luaxdoc "serpent" "Lua serializer and pretty printer"]]
+- @[[luaxdoc "json"    "JSON encoder/decoder"]]
 
 More information here: <http://cdelord.fr/luax>
 

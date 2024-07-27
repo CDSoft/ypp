@@ -474,8 +474,6 @@ are some LuaX modules that can be useful in ypp documents:
 
 - [F](https://github.com/CDSoft/luax/blob/master/doc/F.md): functional
   programming inspired functions
-- [L](https://github.com/CDSoft/luax/blob/master/doc/L.md):
-  `pandoc.List` module from the Pandoc Lua interpreter
 - [fs](https://github.com/CDSoft/luax/blob/master/doc/fs.md): file
   system management
 - [sh](https://github.com/CDSoft/luax/blob/master/doc/sh.md): shell
@@ -492,10 +490,10 @@ are some LuaX modules that can be useful in ypp documents:
   cryptography module
 - [lpeg](https://github.com/CDSoft/luax/blob/master/doc/lpeg.md):
   Parsing Expression Grammars For Lua
-- [inspect](https://github.com/CDSoft/luax/blob/master/doc/inspect.md):
-  Human-readable representation of Lua tables
 - [serpent](https://github.com/CDSoft/luax/blob/master/doc/serpent.md):
   Lua serializer and pretty printer
+- [json](https://github.com/CDSoft/luax/blob/master/doc/json.md): JSON
+  encoder/decoder
 
 More information here: <http://cdelord.fr/luax>
 
