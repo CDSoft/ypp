@@ -163,7 +163,13 @@ to their types:
 - arrays (with no `__tostring` metamethod): items are concatenated (one line per item)
 - other types are formatted by the default `tostring` function.
 
-For documentation purpose, ypp macros can be enable/disabled with the special `?` macro:
+For documentation purpose, ypp macros can be disabled with the `q` macro:
+
+```
+@q[[
+Here, @ has no special meaning.
+]]
+```
 
 ## Examples
 
@@ -233,17 +239,17 @@ Here are some LuaX modules that can be useful in ypp documents:
     return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
 end)
 
-- @[[luaxdoc "F"       "functional programming inspired functions"]]
-- @[[luaxdoc "fs"      "file system management"]]
-- @[[luaxdoc "sh"      "shell command execution"]]
-- @[[luaxdoc "mathx"   "complete math library for Lua"]]
-- @[[luaxdoc "imath"   "arbitrary precision integer and rational arithmetic library"]]
-- @[[luaxdoc "qmath"   "rational number library"]]
-- @[[luaxdoc "complex" "math library for complex numbers based on C99"]]
-- @[[luaxdoc "crypt"   "cryptography module"]]
-- @[[luaxdoc "lpeg"    "Parsing Expression Grammars For Lua"]]
-- @[[luaxdoc "serpent" "Lua serializer and pretty printer"]]
-- @[[luaxdoc "json"    "JSON encoder/decoder"]]
+- @luaxdoc "F"       "functional programming inspired functions"
+- @luaxdoc "fs"      "file system management"
+- @luaxdoc "sh"      "shell command execution"
+- @luaxdoc "mathx"   "complete math library for Lua"
+- @luaxdoc "imath"   "arbitrary precision integer and rational arithmetic library"
+- @luaxdoc "qmath"   "rational number library"
+- @luaxdoc "complex" "math library for complex numbers based on C99"
+- @luaxdoc "crypt"   "cryptography module"
+- @luaxdoc "lpeg"    "Parsing Expression Grammars For Lua"
+- @luaxdoc "serpent" "Lua serializer and pretty printer"
+- @luaxdoc "json"    "JSON encoder/decoder"
 
 More information here: <http://cdelord.fr/luax>
 

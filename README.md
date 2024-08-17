@@ -179,8 +179,12 @@ according to their types:
   line per item)
 - other types are formatted by the default `tostring` function.
 
-For documentation purpose, ypp macros can be enable/disabled with the
-special `?` macro:
+For documentation purpose, ypp macros can be disabled with the `q`
+macro:
+
+    @q[[
+    Here, @ has no special meaning.
+    ]]
 
 ## Examples
 
