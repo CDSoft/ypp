@@ -215,10 +215,9 @@ local function write_dep_file(args)
     local name = args.depfile or (args.output and fs.splitext(args.output)..".d")
     if not name then die("The dependency file name is unknown, use --MF or -o") end
     local function mklist(...)
-        return F{...}:flatten():from_set(F.const(true)):keys()
+        return F{...}:flatten():nub()
             :filter(function(p) return p ~= "-" end)
             :map(function(p) return p:gsub("^%."..fs.sep, "") end)
-            :sort()
             :unwords()
     end
     local scripts = {

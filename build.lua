@@ -113,6 +113,9 @@ local tests = {
         implicit_out = {
             "$builddir/test/test.d",
             "$builddir/test/test-file.txt",
+            -- Images meta files are not touched when their contents are not changed
+            -- Ninja will consider them as always dirty => "ninja test" may always have something to do
+            -- This is for test purpose only. In normal usage, meta files are internal files, not output files.
             "$builddir/test/ypp_images/hello.svg.meta",
         },
         validations = F{
