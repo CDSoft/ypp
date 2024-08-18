@@ -6,10 +6,9 @@
 # Targets:
 #   help      show this help message
 #   compile   Compile ypp
-#   all       Compile ypp
-#   install   Install ypp
 #   doc       Generate README.md
 #   test      Run ypp tests
+#   all       Compile ypp, run test and generate doc
 #   install   install ypp in PREFIX or ~/.local
 #   clean     clean generated files
 
@@ -118,11 +117,12 @@ build $builddir/test/test.md | $builddir/test/test.d $builddir/test/test-file.tx
 ######################################################################
 
 build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua $builddir/ypp.luax
-build all: phony compile
-build doc: phony README.md
-build test: phony $builddir/test/test.md
 
 default compile
+
+build doc: phony README.md
+build test: phony $builddir/test/test.md
+build all: phony compile test doc
 
 ######################################################################
 # Installation
@@ -159,10 +159,9 @@ rule help
             echo "Targets:"; $
             echo "  help      show this help message"; $
             echo "  compile   Compile ypp"; $
-            echo "  all       Compile ypp"; $
-            echo "  install   Install ypp"; $
             echo "  doc       Generate README.md"; $
             echo "  test      Run ypp tests"; $
+            echo "  all       Compile ypp, run test and generate doc"; $
             echo "  install   install ypp in PREFIX or ~/.local"; $
             echo "  clean     clean generated files"
 

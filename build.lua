@@ -132,19 +132,24 @@ section "Shortcuts"
 
 help "compile" "Compile $name"
 phony "compile" { compile, ypp_luax }
+default "compile"
 
-help "all" "Compile $name"
-phony "all" { "compile" }
+if target then
 
-help "install" "Install $name"
-install "bin" (compile)
+    help "all" "Compile $name"
+    phony "all" { "compile" }
 
-if not target then
-help "doc" "Generate README.md"
-phony "doc" { "README.md" }
+else
 
-help "test" "Run $name tests"
-phony "test" (tests)
+    help "doc" "Generate README.md"
+    phony "doc" { "README.md" }
+
+    help "test" "Run $name tests"
+    phony "test" (tests)
+
+    help "all" "Compile $name, run test and generate doc"
+    phony "all" { "compile", "test", "doc" }
+
 end
 
-default "compile"
+install "bin" (compile)
