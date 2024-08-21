@@ -220,10 +220,7 @@ local function write_dep_file(args)
             :map(function(p) return p:gsub("^%."..fs.sep, "") end)
             :unwords()
     end
-    local scripts = {
-        F.values(package.modpath),
-        require "import".files,
-    }
+    local scripts = F.values(package.modpath)
     local file = require "file"
     local deps = mklist(args.targets, args.output or {}, file.outputs).." : "..mklist(known_input_files, scripts)
     fs.mkdirs(fs.dirname(name))
