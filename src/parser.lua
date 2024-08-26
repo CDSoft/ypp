@@ -20,6 +20,8 @@ http://cdelord.fr/ypp
 
 --@LIB
 
+local term = require "term"
+
 local function format_value(x)
     local mt = getmetatable(x)
     if mt and mt.__tostring then return tostring(x) end
@@ -30,8 +32,16 @@ end
 local function traceback(tag, expr, conf)
     if tag==conf.expr and expr:match("^[%w_.]*$") then return function() end end
     return function(message)
+        local lineno = tonumber(message:match":(%d+):")
+        local color = term.isatty(io.stderr) and function(i, s)
+            return (i==lineno and term.color.red or term.color.green)(s)
+        end or function(_, s) return s end
         local trace = F.flatten {
-            arg[0]:basename()..": "..message,
+            arg[0]:basename()..": "..color(lineno, message),
+            expr : lines() : mapi(function(i, l)
+                local sep = i==lineno and "=>" or "| "
+                return ("%3i %s %s"):format(i, sep, color(i, l))
+            end),
             F(debug.traceback())
                 : lines()
                 : take_while(function(line)
