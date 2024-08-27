@@ -125,7 +125,8 @@ local tests = {
             { "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
         } : map(function(files)
             return build(files[1]..".diff") { "diff", files }
-        end)
+        end),
+        pool = "console",
     },
 }
 

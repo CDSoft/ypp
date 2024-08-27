@@ -132,13 +132,14 @@ The expression grammar is:
 
     expression ::= <identifier> continuation
 
-    continuation ::= '.' expression
-                   | ':' expression
-                   | '(' well parenthesized substring ')' continuation
+    continuation ::= '(' well parenthesized substring ')' continuation
                    | '{' well bracketed substring '}' continuation
                    | <single quoted string> continuation
                    | <double quoted string> continuation
                    | <long string> continuation
+                   | '[' well bracketed substring ']' continuation
+                   | '.' expression
+                   | ':' expression
                    | <empty string>
 
 And the third one is an assignment to Lua variables:
@@ -147,7 +148,10 @@ And the third one is an assignment to Lua variables:
 
 The assignment grammar is:
 
-    assignment ::= <identifier> ('.' <identifier>)* '='
+    assignment ::= <identifier> ( '.' <identifier>
+                                | '[' well bracketed expression ']'
+                                )*
+                   '='
                    ( <number>
                    | 'true' | 'false'
                    | '(' well parenthesized substring ')'

@@ -99,6 +99,14 @@ local function parse_brackets(s, i0)
     end
 end
 
+local function parse_square_brackets(s, i0)
+    -- [...]
+    local i1, expr, i2 = s:match("^%s*()(%b[])()", i0)
+    if expr then
+        return i1, i2, expr:sub(2, -2)
+    end
+end
+
 local function parse_long_string(s, i0)
     -- [==[ ... ]==]
     local i1, sep, i2 = s:match("^%s*()%[(=-)%[()", i0)
@@ -139,14 +147,6 @@ local function parse_expr(s, i0)
 end
 
 parse_sexpr = function(s, i0)
-    -- SE -> [.:] E
-    do
-        local i1 = s:match("^%s*[.:]()", i0)
-        if i1 then
-            local _, i2, _ = parse_expr(s, i1)
-            if i2 then return i2 end
-        end
-    end
     -- SE -> (...) SE
     do
         local _, i1, _ = parse_parentheses(s, i0)
@@ -187,6 +187,22 @@ parse_sexpr = function(s, i0)
             if i2 then return i2 end
         end
     end
+    -- SE -> [...] SE
+    do
+        local _, i1, _ = parse_square_brackets(s, i0)
+        if i1 then
+            local i2 = parse_sexpr(s, i1)
+            if i2 then return i2 end
+        end
+    end
+    -- SE -> [.:] E
+    do
+        local i1 = s:match("^%s*[.:]()", i0)
+        if i1 then
+            local _, i2, _ = parse_expr(s, i1)
+            if i2 then return i2 end
+        end
+    end
     -- SE -> nil
     do
         return i0
@@ -194,16 +210,21 @@ parse_sexpr = function(s, i0)
 end
 
 local function parse_lhs(s, i0)
-    -- LHS -> identifier ('.' identifier)*
+    -- LHS -> identifier ([...] | '.' identifier)*
     local i1, i2 = s:match("^%s*()[%w_]+()", i0)
     if i1 then
         local i = i2
         while true do
-            local i3, i4 = s:match("^%s*()%.%s*[%w_]+()", i)
+            local i3, i4 = s:match("^%s*()%b[]()", i)
             if i3 then
                 i = i4
             else
-                return i1, i
+                local i5, i6 = s:match("^%s*()%.%s*[%w_]+()", i)
+                if i5 then
+                    i = i6
+                else
+                    return i1, i
+                end
             end
         end
     end

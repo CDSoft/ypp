@@ -61,6 +61,10 @@ F.maximum{2, 3, 1} = 3
 func(1, 2)[[three]] = three = 1 + 2
 functb{1, 2}[[three]] = three = 1 + 2
 string.upper[=[ Hello World! ]=] = HELLO WORLD!
+t.u[1].x = x
+t.u[10-9].x = x
+t.u[10-9].f(10) = 100
+t.u[10-9]:g(10) = 1000
 
 ignored pattern: someone@example.com
 undefined variable: @undefined
@@ -86,6 +90,15 @@ c = a long string
 
 
 d = 1, 4, 9, 16, 25, 36, 49, 64, 81, 100
+
+
+
+
+
+
+
+
+t = {nil, 2, {...}, 4, x="x", y="y", z="z"}
 
 ## File inclusion
 

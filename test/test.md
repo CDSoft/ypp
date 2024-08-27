@@ -61,6 +61,15 @@ escaping: `@q"@F.range(1, 10):sum()"`
             return s.." = "..F.str(xs, " + ")
         end
     end
+    t = {
+        u = {
+            {
+                x = "x",
+                f = function(x) return 10*x end,
+                g = function(self, x) return 100*x end,
+            },
+        },
+    }
 ]===]
 
 pi = @math.pi
@@ -69,6 +78,10 @@ F.maximum{2, 3, 1} = @F.maximum{2, 3, 1}
 func(1, 2)[[three]] = @func(1, 2)[[three]]
 functb{1, 2}[[three]] = @functb{1, 2}[[three]]
 string.upper[=[ Hello World! ]=] = @string.upper[=[Hello World!]=]
+t.u[1].x = @t.u[1].x
+t.u[10-9].x = @t.u[10-9].x
+t.u[10-9].f(10) = @t.u[10-9].f(10)
+t.u[10-9]:g(10) = @t.u[10-9]:g(10)
 
 ignored pattern: someone@example.com
 undefined variable: @undefined
@@ -100,6 +113,15 @@ c = @c
         : map(function(x) return x*x end)
         : str(", ")
 d = @d
+
+@@ t = {}
+@@ t.x = "x"
+@@ t[2] = 2
+@@ t[3] = t
+@@ t[3][4] = 4
+@@ t[3].y = "y"
+@@ t[3][3].z = "z"
+t = @F.show(t)
 
 ## File inclusion
 

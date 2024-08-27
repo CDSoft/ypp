@@ -109,6 +109,7 @@ rule _builddir_test_test.md
   description = YPP $in
   command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc.lua -t svg --MD -p test -l test.lua $in -o $out
   depfile = $builddir/test/test.d
+  pool = console
 
 build $builddir/test/test.md | $builddir/test/test.d $builddir/test/test-file.txt $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.md.diff $builddir/test/test.d.diff $builddir/test/test-file.txt.diff $builddir/test/ypp_images/hello.svg.meta.diff
 
