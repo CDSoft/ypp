@@ -32,28 +32,38 @@ end
 local function traceback(tag, expr, conf)
     if tag==conf.expr and expr:match("^[%w_.]*$") then return function() end end
     return function(message)
-        local lineno = tonumber(message:match":(%d+):")
-        local color = term.isatty(io.stderr) and function(i, s)
-            return (i==lineno and term.color.red or term.color.green)(s)
-        end or function(_, s) return s end
-        local trace = F.flatten {
-            arg[0]:basename()..": "..color(lineno, message),
-            expr : lines() : mapi(function(i, l)
-                local sep = i==lineno and "=>" or "| "
-                return ("%3i %s %s"):format(i, sep, color(i, l))
-            end),
-            F(debug.traceback())
-                : lines()
-                : take_while(function(line)
-                    return not line:find("[C]: in function 'xpcall'", 1, true)
-                    and not line:find("src/parser%.lua:%d+: in local 'msgh'")
+        local context = 5
+        local red      = term.isatty(io.stderr) and term.color.red                 or F.id
+        local lightred = term.isatty(io.stderr) and term.color.red+term.color.bold or F.id
+        local green    = term.isatty(io.stderr) and term.color.green               or F.id
+        local function write(s) io.stderr:write(s, "\n") end
+
+        write(arg[0]:basename()..": "..red(message))
+        for level = 1, math.huge do
+            local info = debug.getinfo(level)
+            if not info then break end
+            local user_script =
+                    not info.short_src : has_prefix "$ypp:"
+                and not info.short_src : has_prefix "$luax:"
+                and info.short_src ~= "[C]"
+            if user_script then
+                local source = info.source
+                local filename = source:match "^@(.*)"
+                if filename then source = fs.read(filename) or source end
+                write("")
+                write(info.short_src..":"..info.currentline..":")
+                source : lines() : foreachi(function(i, l)
+                    if math.abs(i - info.currentline) <= context then
+                        if i == info.currentline then
+                            write(lightred(("%4i => %s"):format(i, l)))
+                        else
+                            write(("%4i |  %s"):format(i, green(l)))
+                        end
+                    end
                 end)
-                : filter(function(line)
-                    return not line:find("src/parser%.lua:%d+:")
-                end),
-        }
-        io.stderr:write(trace:unlines())
-        io.stderr:flush()
+            end
+        end
+
         os.exit(1)
     end
 end
