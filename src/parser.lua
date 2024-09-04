@@ -31,36 +31,49 @@ end
 
 local function traceback(tag, expr, conf)
     if tag==conf.expr and expr:match("^[%w_.]*$") then return function() end end
-    return function(message)
+    return function(message, opts)
         local context = 5
-        local red      = term.isatty(io.stderr) and term.color.red                 or F.id
-        local lightred = term.isatty(io.stderr) and term.color.red+term.color.bold or F.id
-        local green    = term.isatty(io.stderr) and term.color.green               or F.id
+        local red   = term.isatty(io.stderr) and term.color.red   or F.id
+        local green = term.isatty(io.stderr) and term.color.green or F.id
         local function write(s) io.stderr:write(s, "\n") end
 
-        write(arg[0]:basename()..": "..red(message))
-        for level = 1, math.huge do
-            local info = debug.getinfo(level)
-            if not info then break end
-            local user_script =
-                    not info.short_src : has_prefix "$ypp:"
-                and not info.short_src : has_prefix "$luax:"
-                and info.short_src ~= "[C]"
-            if user_script then
-                local source = info.source
-                local filename = source:match "^@(.*)"
-                if filename then source = fs.read(filename) or source end
+        local filename, err_line, err = message : match "^(.-):(%d+):%s*(.*)$"
+
+        local function print_source(source, source_name, line, err_msg)
+            if err_msg then
+                write(source_name..":"..line..": "..red(err_msg))
+            else
                 write("")
-                write(info.short_src..":"..info.currentline..":")
-                source : lines() : foreachi(function(i, l)
-                    if math.abs(i - info.currentline) <= context then
-                        if i == info.currentline then
-                            write(lightred(("%4i => %s"):format(i, l)))
-                        else
-                            write(("%4i |  %s"):format(i, green(l)))
-                        end
-                    end
-                end)
+                write(source_name..":"..line..":")
+            end
+            (source or "") : lines() : foreachi(function(i, l)
+                if math.abs(i - line) > context then return end
+                if i == line then
+                    write(red(("%4d => %s"):format(i, l)))
+                else
+                    write(("%4d |  %s"):format(i, green(l)))
+                end
+            end)
+        end
+
+        if opts and opts.erroneous_source then
+            -- Compilation error
+            print_source(expr, filename, tonumber(err_line), err)
+        else
+            -- Execution error => print the traceback
+            local err_msg = err
+            for level = 1, math.huge do
+                local info = debug.getinfo(level)   if not info then break end
+                                                    if info.short_src:head() == "$" then goto next_frame end
+                                                    if info.short_src == "[C]"      then goto next_frame end
+                local source = info.source:head()=="@" and fs.read(info.source:tail()) or info.source
+                print_source(source, info.short_src, info.currentline, err_msg)
+                err_msg = nil -- print the error message on the first frame only
+            ::next_frame::
+            end
+            if err_msg ~= nil then
+                -- no frame found ???
+                print_source(fs.read(filename), filename, tonumber(err_line), err)
             end
         end
 
@@ -75,7 +88,7 @@ local function eval(s, tag, expr, state)
     local ok_compile, chunk, compile_error = xpcall(load, msgh, (tag==expr_tag and "return " or "")..expr, expr, "t")
     if not ok_compile then return s end -- load execution error
     if not chunk then -- compilation error
-        msgh(compile_error)
+        msgh(compile_error, {erroneous_source=expr})
         return s
     end
     local ok_eval, val = xpcall(chunk, msgh)
@@ -91,7 +104,8 @@ local function eval(s, tag, expr, state)
     return format_value(val)
 end
 
--- a parser is a function that takes a string, a position and returns the start and stop of the next expression and the expression
+-- a parser is a function that takes a string and a position
+-- and returns the start and stop of the next expression and the expression
 
 local function parse_parentheses(s, i0)
     -- (...)
