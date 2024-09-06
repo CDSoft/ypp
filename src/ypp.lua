@@ -34,6 +34,7 @@ http://cdelord.fr/ypp
 
 local F = require "F"
 local fs = require "fs"
+local term = require "term"
 
 -- preload some LuaX modules
 _G.F = F
@@ -70,8 +71,59 @@ local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
 local output_file = "-"
 
-local function die(msg, ...)
-    io.stderr:write("ypp: ", msg:format(...), "\n")
+local red  = term.isatty(io.stderr) and term.color.red  or F.id
+local cyan = term.isatty(io.stderr) and term.color.cyan or F.id
+
+local function print_frame(source, source_name, line)
+    local context = 5
+    io.stderr:write("\n", cyan(source_name..":"..line..":"), "\n")
+    source = source or ""
+    source : lines() : foreachi(function(i, l)
+        if math.abs(i - line) > context then return end
+        if i == line then
+            io.stderr:write(red(("%4d => %s"):format(i, l)), "\n")
+        else
+            io.stderr:write(("%4d |  %s"):format(i, l), "\n")
+        end
+    end)
+end
+
+local function print_traceback()
+    for level = 1, math.huge do
+        local info = debug.getinfo(level)   if not info then break end
+                                            if info.short_src:head() == "$" then goto next_frame end
+                                            if info.short_src == "[C]"      then goto next_frame end
+        local source = info.source:head()=="@" and fs.read(info.source:tail()) or info.source
+        print_frame(source, info.short_src, info.currentline)
+    ::next_frame::
+    end
+end
+
+local function parse_error(msg, ...)
+    msg = msg : format(...)
+    local filename, err_line, err = msg : match "^(.-):(%d+):%s*(.*)$"
+    return filename, tonumber(err_line), err or msg
+end
+
+local function print_error(filename, err_line, msg)
+    if err_line then
+        io.stderr:write(cyan(filename..":"..err_line..":"), " ", red"error:", " ", msg, "\n")
+    else
+        io.stderr:write(red"error:", " ", msg, "\n")
+    end
+end
+
+function ypp_mt.__index.error(msg, ...)
+    local filename, err_line, err = parse_error(msg, ...)
+    print_error(filename, err_line, err)
+    print_traceback()
+    os.exit(1)
+end
+
+function ypp_mt.__index.error_in(source, msg, ...)
+    local filename, err_line, err = parse_error(msg, ...)
+    print_error(filename, err_line, err)
+    print_frame(source, filename, err_line)
     os.exit(1)
 end
 
@@ -102,7 +154,8 @@ local function read_file(filename)
     if filename == "-" then
         content = io.stdin:read "a"
     else
-        content = assert(fs.read(filename))
+        content = fs.read(filename)
+        if not content then ypp.error("%s: can not read file", filename) end
         known_input_files[#known_input_files+1] = filename:gsub("^"..fs.getcwd()..fs.sep, "")
     end
     return content
@@ -117,7 +170,7 @@ local function find_file(filename)
         fs.join(input_path, filename),
         filename,
     } : find(fs.is_file)
-    assert(full_filepath, filename..": file not found")
+    if not full_filepath then ypp.error("%s: file not found", filename) end
     return full_filepath
 end
 
@@ -171,10 +224,10 @@ local forbidden_macro_char = {
 
 local function update_macro_char(funcname, conf, char)
     if type(char) ~= "string" or #char ~= 1 then
-        die("%s expects a single character", funcname)
+        ypp.error("%s expects a single character", funcname)
     end
     if forbidden_macro_char[char] then
-        die("%q: invalid macro character", char)
+        ypp.error("%q: invalid macro character", char)
     end
     conf.expr = char
     conf.stat = char..char
@@ -213,7 +266,7 @@ end
 local function write_dep_file(args)
     if not (args.gendep or args.depfile or #args.targets>0) then return end
     local name = args.depfile or (args.output and fs.splitext(args.output)..".d")
-    if not name then die("The dependency file name is unknown, use --MF or -o") end
+    if not name then ypp.error("the dependency file name is unknown, use --MF or -o") end
     local function mklist(...)
         return F{...}:flatten():nub()
             :filter(function(p) return p ~= "-" end)

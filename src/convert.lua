@@ -48,7 +48,9 @@ Notice that `convert` can be implicitely called by `include` or `script` by givi
 @@@]]
 
 local convert = flex.str(function(content, opts)
-    assert(pandoc, "The convert macro requires a Pandoc Lua interpreter")
+    if not pandoc then
+        ypp.error "the convert macro requires a Pandoc Lua interpreter"
+    end
     opts = opts or {}
     local doc = pandoc.read(tostring(content), opts.from)
     local div = pandoc.Div(doc.blocks)

@@ -51,7 +51,7 @@ function flex_str_mt:__call(x)
     if type(x) ~= "table" or (xmt and xmt.__tostring) then
         -- called with a string or a table with a __tostring metamethod
         -- ==> store the string
-        assert(self.s == F.Nil, "Multiple argument")
+        if self.s ~= F.Nil then ypp.error "multiple argument" end
         return setmetatable({s=tostring(x), opt=self.opt, f=self.f}, flex_str_mt)
     else
         -- called with an option table
@@ -63,7 +63,7 @@ end
 function flex_str_mt:__tostring()
     -- string value requested
     -- convert to string and call f on this string
-    assert(self.s ~= F.Nil, "Missing argument")
+    if self.s == F.Nil then ypp.error "missing argument" end
     return tostring(self.f(tostring(self.s), self.opt))
 end
 

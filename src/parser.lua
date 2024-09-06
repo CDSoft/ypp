@@ -20,7 +20,7 @@ http://cdelord.fr/ypp
 
 --@LIB
 
-local term = require "term"
+local F = require "F"
 
 local function format_value(x)
     local mt = getmetatable(x)
@@ -30,53 +30,15 @@ local function format_value(x)
 end
 
 local function traceback(tag, expr, conf)
-    if tag==conf.expr and expr:match("^[%w_.]*$") then return function() end end
+    if tag==conf.expr and expr:match("^[%w_.]*$") then return F.const() end
     return function(message, opts)
-        local context = 5
-        local red   = term.isatty(io.stderr) and term.color.red   or F.id
-        local green = term.isatty(io.stderr) and term.color.green or F.id
-        local function write(s) io.stderr:write(s, "\n") end
-
-        local filename, err_line, err = message : match "^(.-):(%d+):%s*(.*)$"
-
-        local function print_source(source, source_name, line, err_msg)
-            if err_msg then
-                write(source_name..":"..line..": "..red(err_msg))
-            else
-                write("")
-                write(source_name..":"..line..":")
-            end
-            (source or "") : lines() : foreachi(function(i, l)
-                if math.abs(i - line) > context then return end
-                if i == line then
-                    write(red(("%4d => %s"):format(i, l)))
-                else
-                    write(("%4d |  %s"):format(i, green(l)))
-                end
-            end)
-        end
-
         if opts and opts.erroneous_source then
             -- Compilation error
-            print_source(expr, filename, tonumber(err_line), err)
+            ypp.error_in(opts.erroneous_source, "%s", message)
         else
             -- Execution error => print the traceback
-            local err_msg = err
-            for level = 1, math.huge do
-                local info = debug.getinfo(level)   if not info then break end
-                                                    if info.short_src:head() == "$" then goto next_frame end
-                                                    if info.short_src == "[C]"      then goto next_frame end
-                local source = info.source:head()=="@" and fs.read(info.source:tail()) or info.source
-                print_source(source, info.short_src, info.currentline, err_msg)
-                err_msg = nil -- print the error message on the first frame only
-            ::next_frame::
-            end
-            if err_msg ~= nil then
-                -- no frame found ???
-                print_source(fs.read(filename), filename, tonumber(err_line), err)
-            end
+            ypp.error("%s", message)
         end
-
         os.exit(1)
     end
 end

@@ -162,7 +162,7 @@ end
 
 local function render_diagram(cmd)
     -- stdout shall be discarded otherwise ypp can not be used in a pipe
-    assert(sh.read(cmd), "Diagram error")
+    if not sh.read(cmd) then ypp.error "diagram error" end
 end
 
 local output_file -- filename given by the -o option
@@ -223,8 +223,8 @@ local function diagram(exe, render, default_ext)
                 local templated_contents = template
                     : gsub("%%o", out)
                     : gsub("%%s", contents)
-                assert(fs.write(name_ext, templated_contents), "Can not create "..name_ext)
-                assert(fs.write(meta, meta_content), "Can not create "..meta)
+                if not fs.write(name_ext, templated_contents) then ypp.error("can not create %s", name_ext) end
+                if not fs.write(meta, meta_content) then ypp.error("can not create %s", meta) end
                 local render_cmd = make_diagram_cmd(name, out, render)
                 render_diagram(render_cmd)
             end)
