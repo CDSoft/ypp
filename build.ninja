@@ -100,18 +100,31 @@ rule diff
   description = DIFF $in
   command = diff $in > $out || (cat $out && false)
 
-build $builddir/test/test.md.diff: diff $builddir/test/test.md test/test_ref.md
-build $builddir/test/test.d.diff: diff $builddir/test/test.d test/test_ref.d
+build $builddir/test/test.md.diff: diff $builddir/test/test.md test/test-ref.md
+build $builddir/test/test.md.d.diff: diff $builddir/test/test.md.d test/test-ref.d
 build $builddir/test/test-file.txt.diff: diff $builddir/test/test-file.txt test/test-file.txt
 build $builddir/test/ypp_images/hello.svg.meta.diff: diff $builddir/test/ypp_images/hello.svg.meta test/hello.svg.meta
 
 rule _builddir_test_test.md
   description = YPP $in
-  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc.lua -t svg --MD -p test -l test.lua $in -o $out
-  depfile = $builddir/test/test.d
-  pool = console
+  command = export BUILD=$builddir; export YPP_IMG=[$builddir/test/]ypp_images; $builddir/ypp-pandoc.lua -t svg --MF $out.d -p test -l test.lua $in -o $out
+  depfile = $out.d
 
-build $builddir/test/test.md | $builddir/test/test.d $builddir/test/test-file.txt $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.md.diff $builddir/test/test.d.diff $builddir/test/test-file.txt.diff $builddir/test/ypp_images/hello.svg.meta.diff
+build $builddir/test/test.md | $builddir/test/test.md.d $builddir/test/test-file.txt $builddir/test/ypp_images/hello.svg.meta: _builddir_test_test.md test/test.md | $builddir/ypp-pandoc.lua |@ $builddir/test/test.md.diff $builddir/test/test.md.d.diff $builddir/test/test-file.txt.diff $builddir/test/ypp_images/hello.svg.meta.diff
+build $builddir/test/test-error.err.diff: diff $builddir/test/test-error.err test/test-error-ref.err
+
+rule _builddir_test_test-error.err
+  description = YPP $in
+  command = $builddir/ypp.lua -p test -l test.lua $in 2> $out ; test $$? -ne 0
+
+build $builddir/test/test-error.err: _builddir_test_test-error.err test/test-error.md | $builddir/ypp.lua |@ $builddir/test/test-error.err.diff
+build $builddir/test/test-syntax-error.err.diff: diff $builddir/test/test-syntax-error.err test/test-syntax-error-ref.err
+
+rule _builddir_test_test-syntax-error.err
+  description = YPP $in
+  command = $builddir/ypp.lua $in 2> $out ; test $$? -ne 0
+
+build $builddir/test/test-syntax-error.err: _builddir_test_test-syntax-error.err test/test-syntax-error.md | $builddir/ypp.lua |@ $builddir/test/test-syntax-error.err.diff
 
 ######################################################################
 # Shortcuts
@@ -122,7 +135,7 @@ build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua $b
 default compile
 
 build doc: phony README.md
-build test: phony $builddir/test/test.md
+build test: phony $builddir/test/test.md $builddir/test/test-error.err $builddir/test/test-syntax-error.err
 build all: phony compile test doc
 
 ######################################################################

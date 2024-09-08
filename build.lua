@@ -98,18 +98,18 @@ local tests = {
             "export YPP_IMG=[$builddir/test/]ypp_images;",
             "$builddir/ypp-pandoc.lua",
                 "-t svg",
-                "--MD",
+                "--MF $out.d",
                 "-p", "test",
                 "-l", "test.lua",
                 "$in",
                 "-o $out",
         },
-        depfile = "$builddir/test/test.d",
+        depfile = "$out.d",
         implicit_in = {
             "$builddir/ypp-pandoc.lua",
         },
         implicit_out = {
-            "$builddir/test/test.d",
+            "$builddir/test/test.md.d",
             "$builddir/test/test-file.txt",
             -- Images meta files are not touched when their contents are not changed
             -- Ninja will consider them as always dirty => "ninja test" may always have something to do
@@ -117,14 +117,51 @@ local tests = {
             "$builddir/test/ypp_images/hello.svg.meta",
         },
         validations = F{
-            { "$builddir/test/test.md", "test/test_ref.md" },
-            { "$builddir/test/test.d", "test/test_ref.d" },
+            { "$builddir/test/test.md", "test/test-ref.md" },
+            { "$builddir/test/test.md.d", "test/test-ref.d" },
             { "$builddir/test/test-file.txt", "test/test-file.txt" },
             { "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
         } : map(function(files)
             return build(files[1]..".diff") { "diff", files }
         end),
-        pool = "console",
+    },
+    build "$builddir/test/test-error.err" { "test/test-error.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp.lua",
+                "-p", "test",
+                "-l", "test.lua",
+                "$in",
+                "2> $out",
+                ";",
+            "test $$? -ne 0",
+        },
+        implicit_in = {
+            "$builddir/ypp.lua",
+        },
+        validations = F{
+            { "$builddir/test/test-error.err", "test/test-error-ref.err" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
+    },
+    build "$builddir/test/test-syntax-error.err" { "test/test-syntax-error.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp.lua",
+                "$in",
+                "2> $out",
+                ";",
+            "test $$? -ne 0",
+        },
+        implicit_in = {
+            "$builddir/ypp.lua",
+        },
+        validations = F{
+            { "$builddir/test/test-syntax-error.err", "test/test-syntax-error-ref.err" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
     },
 }
 

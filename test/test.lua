@@ -21,3 +21,12 @@ http://cdelord.fr/ypp
 -- This module shall be loaded by ypp before processing test.md
 
 test_loaded = true
+
+-- buggy function to test error messages
+function bar()
+    local t = {}
+    for i = 1, 10 do
+        t[i] = x[i]
+    end
+    return t
+end
