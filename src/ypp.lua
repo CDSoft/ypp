@@ -42,6 +42,7 @@ _G.crypt = require "crypt"
 _G.fs = fs
 _G.sh = require "sh"
 _G.sys = require "sys"
+_G.import = require "import"
 
 _G._YPP_VERSION = require "_YPP_VERSION"
 
