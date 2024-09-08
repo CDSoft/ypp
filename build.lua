@@ -38,24 +38,22 @@ section "Compilation"
 
 local sources = {
     ls "src/*.lua",
-    "$builddir/src/_YPP_VERSION.lua",
+    build "$builddir/_YPP_VERSION" {
+        description = "VERSION $out",
+        command = "git describe --tags > $out",
+        implicit_in = { ".git/refs/tags", ".git/index" },
+    },
 }
 
 build.luax.add_global "flags" "-q"
 
-local compile = {
+local binaries = {
     build.luax[target and target.name or "native"]("$builddir/ypp"..(target or sys).exe) { sources },
     build.luax.lua    "$builddir/ypp.lua"        { sources },
     build.luax.pandoc "$builddir/ypp-pandoc.lua" { sources },
 }
 
 local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
-
-build "$builddir/src/_YPP_VERSION.lua" {
-    description = "VERSION $out",
-    command = [=[echo "return [[$$(git describe --tags)]] --@LOAD" > $out]=],
-    implicit_in = { ".git/refs/tags", ".git/index" },
-}
 
 ---------------------------------------------------------------------
 section "Documentation"
@@ -135,7 +133,7 @@ section "Shortcuts"
 ---------------------------------------------------------------------
 
 help "compile" "Compile $name"
-phony "compile" { compile, ypp_luax }
+phony "compile" { binaries, ypp_luax }
 default "compile"
 
 if target then
@@ -156,4 +154,4 @@ else
 
 end
 
-install "bin" (compile)
+install "bin" (binaries)

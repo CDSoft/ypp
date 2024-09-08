@@ -45,35 +45,35 @@ builddir = .build
 # Compilation
 ######################################################################
 
+rule _builddir__YPP_VERSION
+  description = VERSION $out
+  command = git describe --tags > $out
+
+build $builddir/_YPP_VERSION: _builddir__YPP_VERSION | .git/refs/tags .git/index
+
 rule luax-native
   description = luax-native $out
   command = luax compile -t native $in -o $out -q
 
-build $builddir/ypp: luax-native src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp: luax-native src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/_YPP_VERSION
 
 rule luax-lua
   description = luax-lua $out
   command = luax compile -t lua $in -o $out -q
 
-build $builddir/ypp.lua: luax-lua src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp.lua: luax-lua src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/_YPP_VERSION
 
 rule luax-pandoc
   description = luax-pandoc $out
   command = luax compile -t pandoc $in -o $out -q
 
-build $builddir/ypp-pandoc.lua: luax-pandoc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
+build $builddir/ypp-pandoc.lua: luax-pandoc src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/_YPP_VERSION
 
 rule luax
   description = luax $out
   command = luax compile -t luax $in -o $out -q
 
-build $builddir/ypp.luax: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/src/_YPP_VERSION.lua
-
-rule _builddir_src__YPP_VERSION.lua
-  description = VERSION $out
-  command = echo "return [[$$(git describe --tags)]] --@LOAD" > $out
-
-build $builddir/src/_YPP_VERSION.lua: _builddir_src__YPP_VERSION.lua | .git/refs/tags .git/index
+build $builddir/ypp.luax: luax src/atexit.lua src/comment.lua src/convert.lua src/doc.lua src/file.lua src/flex.lua src/image.lua src/include.lua src/parser.lua src/q.lua src/script.lua src/when.lua src/ypp.lua $builddir/_YPP_VERSION
 
 ######################################################################
 # Documentation

@@ -43,6 +43,8 @@ _G.fs = fs
 _G.sh = require "sh"
 _G.sys = require "sys"
 
+_G._YPP_VERSION = require "_YPP_VERSION"
+
 local default_local_configuration = {
     expr = "@",     esc_expr = "@",
     stat = "@@",    esc_stat = "@@",
