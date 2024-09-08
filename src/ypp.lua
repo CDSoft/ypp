@@ -287,7 +287,7 @@ local function parse_args()
         : epilog "For more information, see https://github.com/CDSoft/ypp"
 
     parser : flag "-v"
-        : description "Show yyp version"
+        : description "Show ypp version"
         : action(function(_, _, _, _) print(_YPP_VERSION); os.exit() end)
 
     parser : option "-l"

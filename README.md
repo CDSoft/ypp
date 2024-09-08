@@ -90,7 +90,7 @@ $ make test
 
     Options:
        -h, --help            Show this help message and exit.
-       -v                    Show yyp version
+       -v                    Show ypp version
        -l script             Execute a Lua script
        -e expression         Execute a Lua expression
        -p path               Add a path to package.path
