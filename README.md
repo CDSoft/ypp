@@ -162,7 +162,7 @@ The assignment grammar is:
                    | expression
                    )
 
-Note: the number or equal signs in long strings is variable, as in Lua
+Note: the number of equal signs in long strings is variable, as in Lua
 long strings
 
 The Lua code can be delimited with parentheses or long brackets. The
@@ -201,11 +201,10 @@ macro:
 ### Lua chunk
 
     @@[[
-        local sum = 0
+        sum = 0
         for i = 1, 100 do
             sum = sum + i
         end
-        return sum
     ]]
 
     $\sum_{i=0}^100 = @sum$

@@ -148,7 +148,7 @@ assignment ::= <identifier> ( '.' <identifier>
                )
 ```
 
-Note: the number or equal signs in long strings is variable, as in Lua long strings
+Note: the number of equal signs in long strings is variable, as in Lua long strings
 
 The Lua code can be delimited with parentheses or long brackets.
 The code delimited with parentheses shall only contain well-balanced parentheses.
@@ -189,11 +189,10 @@ $\sum_{i=0}^100 = @(F.range(100):sum())$
 
 ```
 @@[[
-    local sum = 0
+    sum = 0
     for i = 1, 100 do
         sum = sum + i
     end
-    return sum
 ]]
 
 $\sum_{i=0}^100 = @sum$
