@@ -46,6 +46,11 @@ source software. Anybody can contribute on
 - find new usages
 - …
 
+If you like ypp (or LuaX) and are willing to support its development,
+please consider donating via
+[Github](https://github.com/sponsors/CDSoft?o=esc) or
+[Liberapay](https://liberapay.com/LuaX/donate).
+
 # Installation
 
 [ypp](http://cdelord.fr/ypp "Yet another PreProcessor") requires
