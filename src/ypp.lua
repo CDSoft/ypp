@@ -74,8 +74,15 @@ local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
 local output_file = "-"
 
-local red  = term.isatty(io.stderr) and term.color.red  or F.id
-local cyan = term.isatty(io.stderr) and term.color.cyan or F.id
+local red  = F.id   ---@type function | table
+local cyan = F.id   ---@type function | table
+
+local function colorize()
+    red  = term.color.red
+    cyan = term.color.cyan
+end
+
+if term.isatty(io.stderr) then colorize() end
 
 local function print_frame(source, source_name, line)
     local context = 5
@@ -292,6 +299,11 @@ local function parse_args()
     parser : flag "-v"
         : description "Show ypp version"
         : action(function(_, _, _, _) print(_YPP_VERSION); os.exit() end)
+
+    parser : flag "-a"
+        : description "Force colorization using ANSI codes"
+        : target "color"
+        : action(function(_, _, _, _) colorize() end)
 
     parser : option "-l"
         : description "Execute a Lua script"

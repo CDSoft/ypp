@@ -145,6 +145,27 @@ local tests = {
             return build(files[1]..".diff") { "diff", files }
         end),
     },
+    build "$builddir/test/test-error-color.err" { "test/test-error.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp.lua",
+                "-a",
+                "-p", "test",
+                "-l", "test.lua",
+                "$in",
+                "2> $out",
+                ";",
+            "test $$? -ne 0",
+        },
+        implicit_in = {
+            "$builddir/ypp.lua",
+        },
+        validations = F{
+            { "$builddir/test/test-error-color.err", "test/test-error-color-ref.err" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
+    },
     build "$builddir/test/test-syntax-error.err" { "test/test-syntax-error.md",
         description = "YPP $in",
         command = {
@@ -159,6 +180,25 @@ local tests = {
         },
         validations = F{
             { "$builddir/test/test-syntax-error.err", "test/test-syntax-error-ref.err" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
+    },
+    build "$builddir/test/test-syntax-error-color.err" { "test/test-syntax-error.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp.lua",
+                "-a",
+                "$in",
+                "2> $out",
+                ";",
+            "test $$? -ne 0",
+        },
+        implicit_in = {
+            "$builddir/ypp.lua",
+        },
+        validations = F{
+            { "$builddir/test/test-syntax-error-color.err", "test/test-syntax-error-color-ref.err" },
         } : map(function(files)
             return build(files[1]..".diff") { "diff", files }
         end),

@@ -83,9 +83,9 @@ $ make test
 
 # Usage
 
-    Usage: ypp [-h] [-v] [-l script] [-e expression] [-p path] [-o file]
-           [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD] [-m char]
-           [<input>] ...
+    Usage: ypp [-h] [-v] [-a] [-l script] [-e expression] [-p path]
+           [-o file] [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
+           [-m char] [<input>] ...
 
     ypp
     Yet a PreProcessor
@@ -96,6 +96,7 @@ $ make test
     Options:
        -h, --help            Show this help message and exit.
        -v                    Show ypp version
+       -a                    Force colorization using ANSI codes
        -l script             Execute a Lua script
        -e expression         Execute a Lua expression
        -p path               Add a path to package.path

@@ -118,6 +118,13 @@ rule _builddir_test_test-error.err
   command = $builddir/ypp.lua -p test -l test.lua $in 2> $out ; test $$? -ne 0
 
 build $builddir/test/test-error.err: _builddir_test_test-error.err test/test-error.md | $builddir/ypp.lua |@ $builddir/test/test-error.err.diff
+build $builddir/test/test-error-color.err.diff: diff $builddir/test/test-error-color.err test/test-error-color-ref.err
+
+rule _builddir_test_test-error-color.err
+  description = YPP $in
+  command = $builddir/ypp.lua -a -p test -l test.lua $in 2> $out ; test $$? -ne 0
+
+build $builddir/test/test-error-color.err: _builddir_test_test-error-color.err test/test-error.md | $builddir/ypp.lua |@ $builddir/test/test-error-color.err.diff
 build $builddir/test/test-syntax-error.err.diff: diff $builddir/test/test-syntax-error.err test/test-syntax-error-ref.err
 
 rule _builddir_test_test-syntax-error.err
@@ -125,6 +132,13 @@ rule _builddir_test_test-syntax-error.err
   command = $builddir/ypp.lua $in 2> $out ; test $$? -ne 0
 
 build $builddir/test/test-syntax-error.err: _builddir_test_test-syntax-error.err test/test-syntax-error.md | $builddir/ypp.lua |@ $builddir/test/test-syntax-error.err.diff
+build $builddir/test/test-syntax-error-color.err.diff: diff $builddir/test/test-syntax-error-color.err test/test-syntax-error-color-ref.err
+
+rule _builddir_test_test-syntax-error-color.err
+  description = YPP $in
+  command = $builddir/ypp.lua -a $in 2> $out ; test $$? -ne 0
+
+build $builddir/test/test-syntax-error-color.err: _builddir_test_test-syntax-error-color.err test/test-syntax-error.md | $builddir/ypp.lua |@ $builddir/test/test-syntax-error-color.err.diff
 
 ######################################################################
 # Shortcuts
@@ -135,7 +149,7 @@ build compile: phony $builddir/ypp $builddir/ypp.lua $builddir/ypp-pandoc.lua $b
 default compile
 
 build doc: phony README.md
-build test: phony $builddir/test/test.md $builddir/test/test-error.err $builddir/test/test-syntax-error.err
+build test: phony $builddir/test/test.md $builddir/test/test-error.err $builddir/test/test-error-color.err $builddir/test/test-syntax-error.err $builddir/test/test-syntax-error-color.err
 build all: phony compile test doc
 
 ######################################################################
