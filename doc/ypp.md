@@ -72,13 +72,6 @@ $ git clone https://github.com/CDSoft/ypp.git && ninja -C ypp install
 The `PREFIX` variable can be defined to install `ypp` to a different directory
 (e.g. `PREFIX=/usr ninja install` to install `ypp` in `/usr/bin`).
 
-
-**Precompiled binaries**
-
-In case precompiled binaries are needed (GNU/Linux, MacOS, Windows),
-some can be found at [cdelord.fr/pub](http://cdelord.fr/pub).
-These archives contain ypp as well as some other softwares more or less related to LuaX.
-
 # Test
 
 ``` sh

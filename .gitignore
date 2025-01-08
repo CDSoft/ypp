@@ -1,2 +1,3 @@
 .build
+build.ninja
 doc/img/*.meta

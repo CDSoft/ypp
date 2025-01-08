@@ -55,6 +55,11 @@ local binaries = {
 
 local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
 
+require "build-release" {
+    name = "ypp",
+    sources = sources,
+}
+
 ---------------------------------------------------------------------
 section "Documentation"
 ---------------------------------------------------------------------
