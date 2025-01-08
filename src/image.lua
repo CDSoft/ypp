@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
 For further information about ypp you can visit
-http://cdelord.fr/ypp
+https://github.com/cdsoft/ypp
 --]]
 
 --@LOAD

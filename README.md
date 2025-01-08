@@ -1,14 +1,14 @@
 # Yet a PreProcessor
 
 `ypp` is yet another preprocessor. It’s an attempt to merge
-[UPP](http://cdelord.fr/upp "Universal PreProcessor") and
-[Panda](http://cdelord.fr/panda "Pandoc add-ons (Lua filters for Pandoc)").
+[UPP](https://github.com/cdsoft/upp "Universal PreProcessor") and
+[Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)").
 It acts as a generic text preprocessor as
-[UPP](http://cdelord.fr/upp "Universal PreProcessor") and comes with
-macros reimplementing most of the
-[Panda](http://cdelord.fr/panda "Pandoc add-ons (Lua filters for Pandoc)")
+[UPP](https://github.com/cdsoft/upp "Universal PreProcessor") and comes
+with macros reimplementing most of the
+[Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
 functionalities
-(i.e. [Panda](http://cdelord.fr/panda "Pandoc add-ons (Lua filters for Pandoc)")
+(i.e. [Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
 facilities not restricted to
 [Pandoc](https://pandoc.org "A universal document converter") but also
 available to softwares like
@@ -19,7 +19,7 @@ Ypp is a minimalist and generic text preprocessor using Lua macros.
 It provides several interesting features:
 
 - full
-  [Lua](http://www.lua.org/)/[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter")
+  [Lua](http://www.lua.org/)/[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter")
   interpreter
 - variable expansion (minimalistic templating)
 - conditional blocks
@@ -30,13 +30,14 @@ It provides several interesting features:
   [Asymptote](http://asymptote.sourceforge.net/),
   [blockdiag](http://blockdiag.com/),
   [mermaid](https://mermaidjs.github.io/),
-  [Octave](https://octave.org/), [lsvg](http://cdelord.fr/lsvg/), …)
+  [Octave](https://octave.org/),
+  [lsvg](https://github.com/cdsoft/lsvg/), …)
 - documentation extraction (e.g. from comments in source files)
 
 # Open source
 
-[ypp](http://cdelord.fr/ypp "Yet another PreProcessor") is an Open
-source software. Anybody can contribute on
+[ypp](https://github.com/cdsoft/ypp "Yet another PreProcessor") is an
+Open source software. Anybody can contribute on
 [GitHub](https://github.com/CDSoft/ypp) to:
 
 - suggest or add new features
@@ -53,8 +54,8 @@ please consider donating via
 
 # Installation
 
-[ypp](http://cdelord.fr/ypp "Yet another PreProcessor") requires
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter").
+[ypp](https://github.com/cdsoft/ypp "Yet another PreProcessor") requires
+[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter").
 
 ``` sh
 $ git clone https://github.com/CDSoft/luax.git && ninja -C luax install
@@ -367,7 +368,7 @@ An optional table can be given before `source` to set some options:
 | [PlantUML](http://plantuml.sourceforge.net/) | `plantuml` | `image.plantuml(source)` |
 | [ditaa](http://ditaa.sourceforge.net/) | `ditaa` | `image.ditaa(source)` |
 | [gnuplot](http://www.gnuplot.info/) | `gnuplot` | `image.gnuplot(source)` |
-| [lsvg](http://cdelord.fr/lsvg/) | `lsvg` | `image.lsvg(source)` |
+| [lsvg](https://github.com/cdsoft/lsvg/) | `lsvg` | `image.lsvg(source)` |
 | [octave](https://octave.org/) | `octave` | `image.octave(source)` |
 
 Example:
@@ -467,11 +468,11 @@ E.g.:
 ## LuaX modules
 
 ypp is written in [Lua](http://www.lua.org/) and
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter"). All Lua and
-LuaX libraries are available to ypp.
+[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter"). All
+Lua and LuaX libraries are available to ypp.
 
-[LuaX](http://cdelord.fr/luax "Lua eXtended interpreter") is a Lua
-interpreter and REPL based on Lua 5.4, augmented with some useful
+[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter") is a
+Lua interpreter and REPL based on Lua 5.4, augmented with some useful
 packages.
 
 LuaX comes with a standard Lua interpreter and provides some libraries
@@ -501,7 +502,7 @@ are some LuaX modules that can be useful in ypp documents:
 - [json](https://github.com/CDSoft/luax/blob/master/doc/json.md): JSON
   encoder/decoder
 
-More information here: <http://cdelord.fr/luax>
+More information here: <https://github.com/cdsoft/luax>
 
 # License
 
@@ -519,9 +520,9 @@ More information here: <http://cdelord.fr/luax>
     along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
     For further information about ypp you can visit
-    http://cdelord.fr/ypp
+    https://github.com/cdsoft/ypp
 
 # Feedback
 
 Your feedback and contributions are welcome. You can contact me at
-[cdelord.fr](http://cdelord.fr).
+[CDSoft](https://CDSoft.github.io).

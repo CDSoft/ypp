@@ -1,13 +1,13 @@
 # Yet a PreProcessor
 
-[ypp]: http://cdelord.fr/ypp "Yet another PreProcessor"
-[UPP]: http://cdelord.fr/upp "Universal PreProcessor"
-[Panda]: http://cdelord.fr/panda "Pandoc add-ons (Lua filters for Pandoc)"
+[ypp]: https://github.com/cdsoft/ypp "Yet another PreProcessor"
+[UPP]: https://github.com/cdsoft/upp "Universal PreProcessor"
+[Panda]: https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)"
 [Pandoc]: https://pandoc.org "A universal document converter"
 [Typst]: https://typst.app/ "Compose papers faster"
 [Lua]: http://www.lua.org/
 [GitHub]: https://github.com/CDSoft/ypp
-[cdelord.fr]: http://cdelord.fr
+[CDSoft]: https://CDSoft.github.io
 [GraphViz]: http://graphviz.org/
 [PlantUML]: http://plantuml.sourceforge.net/
 [ditaa]: http://ditaa.sourceforge.net/
@@ -18,9 +18,9 @@
 [Python]: https://www.python.org/
 [Lua]: http://www.lua.org/
 [gnuplot]: http://www.gnuplot.info/
-[lsvg]: http://cdelord.fr/lsvg/
-[LuaX]: http://cdelord.fr/luax "Lua eXtended interpreter"
-[LuaX documentation]: http://cdelord.fr/luax/luax.lua.html
+[lsvg]: https://github.com/cdsoft/lsvg/
+[LuaX]: https://github.com/cdsoft/luax "Lua eXtended interpreter"
+[LuaX documentation]: https://github.com/cdsoft/luax
 [Octave]: https://octave.org/
 
 `ypp` is yet another preprocessor. It's an attempt to merge [UPP] and [Panda].
@@ -251,7 +251,7 @@ end)
 - @luaxdoc "serpent" "Lua serializer and pretty printer"
 - @luaxdoc "json"    "JSON encoder/decoder"
 
-More information here: <http://cdelord.fr/luax>
+More information here: <https://github.com/cdsoft/luax>
 
 # License
 
@@ -269,10 +269,10 @@ More information here: <http://cdelord.fr/luax>
     along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
     For further information about ypp you can visit
-    http://cdelord.fr/ypp
+    https://github.com/cdsoft/ypp
 
 Feedback
 ========
 
 Your feedback and contributions are welcome.
-You can contact me at [cdelord.fr].
+You can contact me at [CDSoft].
