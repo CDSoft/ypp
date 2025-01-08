@@ -19,17 +19,11 @@ https://github.com/cdsoft/ypp
 ]]
 
 local F = require "F"
-local sys = require "sys"
 
 help.name "ypp"
 help.description "$name"
 
-local target, args = target(arg)
-if #args > 0 then
-    F.error_without_stack_trace(args:unwords()..": unexpected arguments")
-end
-
-var "builddir" (".build"/(target and target.name))
+var "builddir" ".build"
 clean "$builddir"
 
 ---------------------------------------------------------------------
@@ -48,7 +42,7 @@ local sources = {
 build.luax.add_global "flags" "-q"
 
 local binaries = {
-    build.luax[target and target.name or "native"]("$builddir/ypp"..(target or sys).exe) { sources },
+    build.luax.native "$builddir/ypp"            { sources },
     build.luax.lua    "$builddir/ypp.lua"        { sources },
     build.luax.pandoc "$builddir/ypp-pandoc.lua" { sources },
 }
@@ -218,22 +212,13 @@ help "compile" "Compile $name"
 phony "compile" { binaries, ypp_luax }
 default "compile"
 
-if target then
+help "doc" "Generate README.md"
+phony "doc" { "README.md" }
 
-    help "all" "Compile $name"
-    phony "all" { "compile" }
+help "test" "Run $name tests"
+phony "test" (tests)
 
-else
-
-    help "doc" "Generate README.md"
-    phony "doc" { "README.md" }
-
-    help "test" "Run $name tests"
-    phony "test" (tests)
-
-    help "all" "Compile $name, run test and generate doc"
-    phony "all" { "compile", "test", "doc" }
-
-end
+help "all" "Compile $name, run test and generate doc"
+phony "all" { "compile", "test", "doc" }
 
 install "bin" (binaries)
