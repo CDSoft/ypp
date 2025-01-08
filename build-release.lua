@@ -46,7 +46,7 @@ return function(t)
         return build("$release"/version/name..".tar.gz") { "release-tar",
             build.luax[target_name]("$release/.build"/target_name/t.name..ext) { t.sources },
             prefix = "$release/.build"/target_name,
-            dest = t.name/"bin",
+            dest = name/"bin",
         }
     end
 
