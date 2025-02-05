@@ -97,7 +97,7 @@ local tests = {
             "export YPP_IMG=[$builddir/test/]ypp_images;",
             "$builddir/ypp-pandoc.lua",
                 "-t svg",
-                "--MF $out.d",
+                "--MF $depfile",
                 "-p", "test",
                 "-l", "test.lua",
                 "$in",
