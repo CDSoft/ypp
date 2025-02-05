@@ -69,213 +69,168 @@ end
 -- a parser is a function that takes a string and a position
 -- and returns the start and stop of the next expression and the expression
 
-local function parse_parentheses(s, i0)
-    -- (...)
-    local i1, expr, i2 = s:match("^%s*()(%b())()", i0)
-    if expr then
-        return i1, i2, expr:sub(2, -2)
+local function parse_token(skip)
+    return function(x, f)
+        local pattern = "^"..skip.."()("..x..")()"
+        f = f or F.id
+        return function(s, i0)
+            if not i0 then return end
+            local i1, v, i2 = s:match(pattern, i0)
+            if not i1 then return end
+            return i1, i2, f(v)
+        end
     end
 end
 
-local function parse_brackets(s, i0)
-    -- {...}
-    local i1, expr, i2 = s:match("^%s*()(%b{})()", i0)
-    if expr then
-        return i1, i2, expr:sub(2, -2)
-    end
-end
+local token         = parse_token "%s*"
+local jump_to_token = parse_token ".-"
 
-local function parse_square_brackets(s, i0)
-    -- [...]
-    local i1, expr, i2 = s:match("^%s*()(%b[])()", i0)
-    if expr then
-        return i1, i2, expr:sub(2, -2)
-    end
+local parse_parentheses     = token("%b()", function(v) return v:sub(2, -2) end) -- (...)
+local parse_brackets        = token("%b{}", function(v) return v:sub(2, -2) end) -- {...}
+local parse_square_brackets = token("%b[]", function(v) return v:sub(2, -2) end) -- [...]
+
+local Nop = F.const()
+local parse_long_string_open = token"%[=-%["
+local parse_long_string_close = function(open)
+    if not open then return Nop end
+    return jump_to_token("]"..open:sub(2, -2).."]")
 end
 
 local function parse_long_string(s, i0)
     -- [==[ ... ]==]
-    local i1, sep, i2 = s:match("^%s*()%[(=-)%[()", i0)
-    if sep then
-        local i3, i4 = s:match("()%]"..sep.."%]()", i2)
-        if i3 then
-            return i1, i4, s:sub(i2, i3-1)
+    local o1, o2, open = parse_long_string_open(s, i0)
+    local c1, c2 = parse_long_string_close(open)(s, o2)
+    if c1 then return o1, c2, s:sub(o2, c1-1) end
+end
+
+local function parse_quoted_string(c)
+    local boundary = token(c)
+    return function(s, i0)
+        local i1, i2 = boundary(s, i0)
+        if not i1 then return end
+        local i = i2
+        while i <= #s do
+            local ci = s:sub(i, i)
+            if ci == c then return i1, i+1, s:sub(i2, i-1) end
+            if ci == '\\' then i = i + 1 end
+            i = i + 1
         end
     end
 end
 
-local function parse_quoted_string(s, i0, c)
-    -- "..."
-    local i1 = s:match('^%s*()'..c, i0)
-    if i1 then
-        local i = i1+1
-        while i <= #s do
-            if s:sub(i, i) == c then
-                return i1, i+1, s:sub(i1+1, i-1)
-            end
-            if s:sub(i, i) == '\\' then
-                i = i+1
-            end
-            i = i+1
-        end
-    end
-end
+local parse_single_quoted_string = parse_quoted_string "'"
+local parse_double_quoted_string = parse_quoted_string '"'
+local parse_ident = token"[%w_]+"
+local parse_field_access = token"[.:]"
+local parse_dot = token"%."
+local parse_eq = token"="
 
 local parse_sexpr
 
 local function parse_expr(s, i0)
     -- E -> ident SE
-    local i1, ident, i2 = s:match("^%s*()([%w_]+)()", i0)
-    if ident then
-        local i3 = parse_sexpr(s, i2)
-        if i3 then return i1, i3, s:sub(i1, i3-1) end
-    end
+    local i1, i2 = parse_ident(s, i0)
+    local i3, i4 = parse_sexpr(s, i2)
+    if i3 then return i1, i4, s:sub(i1, i4-1) end
 end
 
 parse_sexpr = function(s, i0)
-    -- SE -> (...) SE
-    do
-        local _, i1, _ = parse_parentheses(s, i0)
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    if not i0 then return end
+    do -- SE -> (...) SE
+        local i1, i2 = parse_parentheses(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> {...} SE
-    do
-        local _, i1, _ = parse_brackets(s, i0)
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> {...} SE
+        local i1, i2 = parse_brackets(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> "..." SE
-    do
-        local _, i1, _ = parse_quoted_string(s, i0, '"')
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> "..." SE
+        local i1, i2 = parse_double_quoted_string(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> '...' SE
-    do
-        local _, i1, _ = parse_quoted_string(s, i0, "'")
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> '...' SE
+        local i1, i2 = parse_single_quoted_string(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> [[...]] SE
-    do
-        local _, i1, _ = parse_long_string(s, i0)
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> [[...]] SE
+        local i1, i2 = parse_long_string(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> [...] SE
-    do
-        local _, i1, _ = parse_square_brackets(s, i0)
-        if i1 then
-            local i2 = parse_sexpr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> [...] SE
+        local i1, i2 = parse_square_brackets(s, i0)
+        local i3, i4 = parse_sexpr(s, i2)
+        if i3 then return i1, i4 end
     end
-    -- SE -> [.:] E
-    do
-        local i1 = s:match("^%s*[.:]()", i0)
-        if i1 then
-            local _, i2, _ = parse_expr(s, i1)
-            if i2 then return i2 end
-        end
+    do -- SE -> [.:] E
+        local i1, i2 = parse_field_access(s, i0)
+        local i3, i4 = parse_expr(s, i2)
+        if i3 then return i1, i4 end
     end
     -- SE -> nil
-    do
-        return i0
-    end
+    return i0, i0
 end
 
 local function parse_lhs(s, i0)
     -- LHS -> identifier ([...] | '.' identifier)*
-    local i1, i2 = s:match("^%s*()[%w_]+()", i0)
-    if i1 then
-        local i = i2
-        while true do
-            local i3, i4 = s:match("^%s*()%b[]()", i)
-            if i3 then
-                i = i4
-            else
-                local i5, i6 = s:match("^%s*()%.%s*[%w_]+()", i)
-                if i5 then
-                    i = i6
-                else
-                    return i1, i
-                end
-            end
-        end
-    end
+    local i1, i2 = parse_ident(s, i0)
+    if not i1 then return end
+    local i = i2
+    ::loop::
+    local i3, i4 = parse_square_brackets(s, i)
+    if i3 then i = i4; goto loop end
+    local i5, i6 = parse_dot(s, i) ---@diagnostic disable-line: unused-local
+    local i7, i8 = parse_ident(s, i6)
+    if i7 then i = i8; goto loop end
+    return i1, i
 end
 
 local atoms = {
-    "^%s*()%-?%d+%.%d+e%-?%d+()",
-    "^%s*()%-?%d+%.e%-?%d+()",
-    "^%s*()%-?%.%d+e%-?%d+()",
-    "^%s*()%-?%d+e%-?%d+()",
-    "^%s*()%-?%d+%.%d+()",
-    "^%s*()%-?%d+%.()",
-    "^%s*()%-?%.%d+()",
-    "^%s*()%-?%d+()",
-    "^%s*()true()",
-    "^%s*()false()",
+    token"%-?%d+%.%d+e%-?%d+",
+    token"%-?%d+%.e%-?%d+",
+    token"%-?%.%d+e%-?%d+",
+    token"%-?%d+e%-?%d+",
+    token"%-?%d+%.%d+",
+    token"%-?%d+%.",
+    token"%-?%.%d+",
+    token"%-?%d+",
+    token"true",
+    token"false",
 }
 
 local function parse_rhs(s, i0)
     -- RHS -> number | bool
     for _, atom in ipairs(atoms) do
-        local i1, i2 = s:match(atom, i0)
+        local i1, i2 = atom(s, i0)
         if i1 then return i1, i2 end
     end
-    -- RHS = (...)
-    do
-        local i1, i2, _ = parse_parentheses(s, i0)
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS = (...)
+        local i1, i2 = parse_parentheses(s, i0)
+        if i1 then return i1, i2 end
     end
-    -- RHS = {...}
-    do
-        local i1, i2, _ = parse_brackets(s, i0)
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS = {...}
+        local i1, i2 = parse_brackets(s, i0)
+        if i1 then return i1, i2 end
     end
-    -- RHS = "..."
-    do
-        local i1, i2, _ = parse_quoted_string(s, i0, '"')
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS = "..."
+        local i1, i2 = parse_double_quoted_string(s, i0)
+        if i1 then return i1, i2 end
     end
-    -- RHS = '...'
-    do
-        local i1, i2, _ = parse_quoted_string(s, i0, "'")
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS = '...'
+        local i1, i2 = parse_single_quoted_string(s, i0)
+        if i1 then return i1, i2 end
     end
-    -- RHS = [=[ ... ]=]
-    do
-        local i1, i2, _ = parse_long_string(s, i0)
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS = [=[ ... ]=]
+        local i1, i2 = parse_long_string(s, i0)
+        if i1 then return i1, i2 end
     end
-    -- RHS -> expr
-    do
-        local i1, i2, _ = parse_expr(s, i0)
-        if i1 then
-            return i1, i2
-        end
+    do -- RHS -> expr
+        local i1, i2 = parse_expr(s, i0)
+        if i1 then return i1, i2 end
     end
 end
 
@@ -285,48 +240,34 @@ local function parse(s, i0, state)
     local esc_expr_tag = state.conf.esc_expr
     local stat_tag = state.conf.stat
 
+    local parse_tag = jump_to_token(esc_expr_tag.."+")
+
     -- find the start of the next expression
-    local i1, tag, i2 = s:match("()("..esc_expr_tag.."+)()", i0)
+    local i1, i2, tag = parse_tag(s, i0)
     if not i1 then return #s+1, #s+1, "" end
 
     -- S -> "@@ LHS = RHS
     if tag == stat_tag then
         local i3, i4 = parse_lhs(s, i2)
-        if i3 then
-            local i5 = s:match("^%s*=()", i4)
-            if i5 then
-                local i6, i7 = parse_rhs(s, i5)
-                if i6 then
-                    return i1, i7, eval(s:sub(i1, i7-1), tag, s:sub(i3, i7-1), state)
-                end
-            end
-        end
+        local i5, i6 = parse_eq(s, i4) ---@diagnostic disable-line: unused-local
+        local i7, i8 = parse_rhs(s, i6)
+        if i7 then return i1, i8, eval(s:sub(i1, i8-1), tag, s:sub(i3, i8-1), state) end
     end
 
-    -- S -> "@@?..."
+    -- S -> "(@|@@)..."
     if tag == expr_tag or tag == stat_tag then
-        -- S -> "@@?(...)"
-        do
-            local _, i3, expr = parse_parentheses(s, i2)
-            if expr then
-                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
-            end
+        do -- S -> "(@|@@)(...)"
+            local i3, i4, expr = parse_parentheses(s, i2)
+            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
         end
-        -- S -> "@@?[==[...]==]"
-        do
-            local _, i3, expr = parse_long_string(s, i2)
-            if expr then
-                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
-            end
+        do -- S -> "(@|@@)[==[...]==]"
+            local i3, i4, expr = parse_long_string(s, i2)
+            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
         end
-        -- S -> "@@?"expr
-        do
-            local _, i3, expr = parse_expr(s, i2)
-            if expr then
-                return i1, i3, eval(s:sub(i1, i3-1), tag, expr, state)
-            end
+        do -- S -> "(@|@@)"expr
+            local i3, i4, expr = parse_expr(s, i2)
+            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
         end
-
     end
 
     -- S -> {}
@@ -340,16 +281,13 @@ return function(s, conf)
     local i = 1
     while i <= #s do
         local i1, i2, out = parse(s, i, state)
-        if i1 then
-            if i1 > i then
-                ts[#ts+1] = s:sub(i, i1-1)
-            end
-            ts[#ts+1] = out
-            i = i2
-        else
+        if not i1 then
             ts[#ts+1] = s:sub(i, #s)
-            i = #s+1
+            break
         end
+        if i1 > i then ts[#ts+1] = s:sub(i, i1-1) end
+        ts[#ts+1] = out
+        i = i2 ---@diagnostic disable-line: cast-local-type
     end
     return table.concat(ts)
 end
