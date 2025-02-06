@@ -67,17 +67,33 @@ local function eval(s, tag, expr, state)
 end
 
 -- a parser is a function that takes a string and a position
--- and returns the start and stop of the next expression and the expression
+-- and returns the start and stop of the next expression
+
+local function empty(_, i0) return i0, i0 end
 
 local function parse_token(skip)
-    return function(x, f)
-        local pattern = "^"..skip.."()("..x..")()"
-        f = f or F.id
+    return function(x)
+        local pattern = "^"..skip.."()"..x.."()"
         return function(s, i0)
             if not i0 then return end
-            local i1, v, i2 = s:match(pattern, i0)
-            if not i1 then return end
-            return i1, i2, f(v)
+            return s:match(pattern, i0)
+        end
+    end
+end
+
+local function seq2(p1, p2)
+    return function(s, i0)
+        local i1, i2 = p1(s, i0)
+        local i3, i4 = p2(s, i2)
+        if i3 then return i1, i4 end
+    end
+end
+
+local function alt(ps)
+    return function(s, i0)
+        for _, p in ipairs(ps) do
+            local i1, i2 = p(s, i0)
+            if i1 then return i1, i2 end
         end
     end
 end
@@ -85,22 +101,19 @@ end
 local token         = parse_token "%s*"
 local jump_to_token = parse_token ".-"
 
-local parse_parentheses     = token("%b()", function(v) return v:sub(2, -2) end) -- (...)
-local parse_brackets        = token("%b{}", function(v) return v:sub(2, -2) end) -- {...}
-local parse_square_brackets = token("%b[]", function(v) return v:sub(2, -2) end) -- [...]
+local parse_parentheses     = token "%b()" -- (...)
+local parse_brackets        = token "%b{}" -- {...}
+local parse_square_brackets = token "%b[]" -- [...]
 
-local Nop = F.const()
 local parse_long_string_open = token"%[=-%["
-local parse_long_string_close = function(open)
-    if not open then return Nop end
-    return jump_to_token("]"..open:sub(2, -2).."]")
-end
+local parse_long_string_close = function(level) return jump_to_token("]"..level.."]") end
 
 local function parse_long_string(s, i0)
     -- [==[ ... ]==]
-    local o1, o2, open = parse_long_string_open(s, i0)
-    local c1, c2 = parse_long_string_close(open)(s, o2)
-    if c1 then return o1, c2, s:sub(o2, c1-1) end
+    local o1, o2 = parse_long_string_open(s, i0)
+    if not o1 then return end
+    local c1, c2 = parse_long_string_close(s:sub(o1+1, o2-2))(s, o2)
+    if c1 then return o1, c2 end
 end
 
 local function parse_quoted_string(c)
@@ -111,7 +124,7 @@ local function parse_quoted_string(c)
         local i = i2
         while i <= #s do
             local ci = s:sub(i, i)
-            if ci == c then return i1, i+1, s:sub(i2, i-1) end
+            if ci == c then return i1, i+1 end
             if ci == '\\' then i = i + 1 end
             i = i + 1
         end
@@ -125,55 +138,26 @@ local parse_field_access = token"[.:]"
 local parse_dot = token"%."
 local parse_eq = token"="
 
-local parse_sexpr
+local sexpr_parsers
 
-local function parse_expr(s, i0)
-    -- E -> ident SE
-    local i1, i2 = parse_ident(s, i0)
-    local i3, i4 = parse_sexpr(s, i2)
-    if i3 then return i1, i4, s:sub(i1, i4-1) end
-end
-
-parse_sexpr = function(s, i0)
+local function parse_sexpr(s, i0)
     if not i0 then return end
-    do -- SE -> (...) SE
-        local i1, i2 = parse_parentheses(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> {...} SE
-        local i1, i2 = parse_brackets(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> "..." SE
-        local i1, i2 = parse_double_quoted_string(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> '...' SE
-        local i1, i2 = parse_single_quoted_string(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> [[...]] SE
-        local i1, i2 = parse_long_string(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> [...] SE
-        local i1, i2 = parse_square_brackets(s, i0)
-        local i3, i4 = parse_sexpr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    do -- SE -> [.:] E
-        local i1, i2 = parse_field_access(s, i0)
-        local i3, i4 = parse_expr(s, i2)
-        if i3 then return i1, i4 end
-    end
-    -- SE -> nil
-    return i0, i0
+    return alt(sexpr_parsers)(s, i0)
 end
+
+-- E -> ident SE
+local parse_expr = seq2(parse_ident, parse_sexpr)
+
+sexpr_parsers = {
+    seq2(parse_parentheses, parse_sexpr),           -- SE -> (...) SE
+    seq2(parse_brackets, parse_sexpr),              -- SE -> {...} SE
+    seq2(parse_double_quoted_string, parse_sexpr),  -- SE -> "..." SE
+    seq2(parse_single_quoted_string, parse_sexpr),  -- SE -> '...' SE
+    seq2(parse_long_string, parse_sexpr),           -- SE -> [[...]] SE
+    seq2(parse_square_brackets, parse_sexpr),       -- SE -> [...] SE
+    seq2(parse_field_access, parse_expr),           -- SE -> [.:] E
+    empty,                                          -- SE -> empty
+}
 
 local function parse_lhs(s, i0)
     -- LHS -> identifier ([...] | '.' identifier)*
@@ -189,50 +173,26 @@ local function parse_lhs(s, i0)
     return i1, i
 end
 
-local atoms = {
-    token"%-?%d+%.%d+e%-?%d+",
-    token"%-?%d+%.e%-?%d+",
-    token"%-?%.%d+e%-?%d+",
-    token"%-?%d+e%-?%d+",
-    token"%-?%d+%.%d+",
-    token"%-?%d+%.",
-    token"%-?%.%d+",
-    token"%-?%d+",
-    token"true",
-    token"false",
+local rhs_parsers = {
+    token"%-?%d+%.%d+e%-?%d+",          -- RHS -> number
+    token"%-?%d+%.e%-?%d+",             -- RHS -> number
+    token"%-?%.%d+e%-?%d+",             -- RHS -> number
+    token"%-?%d+e%-?%d+",               -- RHS -> number
+    token"%-?%d+%.%d+",                 -- RHS -> number
+    token"%-?%d+%.",                    -- RHS -> number
+    token"%-?%.%d+",                    -- RHS -> number
+    token"%-?%d+",                      -- RHS -> number
+    token"true",                        -- RHS -> boolean
+    token"false",                       -- RHS -> boolean
+    parse_parentheses,                  -- RHS -> (...)
+    parse_brackets,                     -- RHS -> {...}
+    parse_double_quoted_string,         -- RHS -> "..."
+    parse_single_quoted_string,         -- RHS -> '..."
+    parse_long_string,                  -- RHS -> [=[ ... ]=]
+    parse_expr,                         -- RHS -> expr
 }
 
-local function parse_rhs(s, i0)
-    -- RHS -> number | bool
-    for _, atom in ipairs(atoms) do
-        local i1, i2 = atom(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS = (...)
-        local i1, i2 = parse_parentheses(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS = {...}
-        local i1, i2 = parse_brackets(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS = "..."
-        local i1, i2 = parse_double_quoted_string(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS = '...'
-        local i1, i2 = parse_single_quoted_string(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS = [=[ ... ]=]
-        local i1, i2 = parse_long_string(s, i0)
-        if i1 then return i1, i2 end
-    end
-    do -- RHS -> expr
-        local i1, i2 = parse_expr(s, i0)
-        if i1 then return i1, i2 end
-    end
-end
+local parse_rhs = alt(rhs_parsers)
 
 local function parse(s, i0, state)
 
@@ -243,8 +203,9 @@ local function parse(s, i0, state)
     local parse_tag = jump_to_token(esc_expr_tag.."+")
 
     -- find the start of the next expression
-    local i1, i2, tag = parse_tag(s, i0)
+    local i1, i2 = parse_tag(s, i0)
     if not i1 then return #s+1, #s+1, "" end
+    local tag = s:sub(i1, i2-1)
 
     -- S -> "@@ LHS = RHS
     if tag == stat_tag then
@@ -257,21 +218,24 @@ local function parse(s, i0, state)
     -- S -> "(@|@@)..."
     if tag == expr_tag or tag == stat_tag then
         do -- S -> "(@|@@)(...)"
-            local i3, i4, expr = parse_parentheses(s, i2)
-            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
+            local i3, i4 = parse_parentheses(s, i2)
+            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, s:sub(i3+1, i4-2), state) end
         end
         do -- S -> "(@|@@)[==[...]==]"
-            local i3, i4, expr = parse_long_string(s, i2)
-            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
+            local i3, i4 = parse_long_string(s, i2)
+            if i3 then
+                local expr = s:sub(i3, i4-1):gsub("^%[=*%[(.*)%]=*%]$", "%1")
+                return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state)
+            end
         end
         do -- S -> "(@|@@)"expr
-            local i3, i4, expr = parse_expr(s, i2)
-            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, expr, state) end
+            local i3, i4 = parse_expr(s, i2)
+            if i3 then return i1, i4, eval(s:sub(i1, i4-1), tag, s:sub(i3, i4-1), state) end
         end
     end
 
-    -- S -> {}
-    return i2, i2, ""
+    -- S -> @+ (return the invalid tag unchanged)
+    return i1, i2, tag
 
 end
 
