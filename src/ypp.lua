@@ -355,6 +355,18 @@ local function parse_args()
         : description "Generate a dependency file"
         : target "gendep"
 
+    parser : option "--img"
+        : description "Set the path for generated images"
+        : target "imgpath"
+        : argname "path"
+        : action(function(_, _, path, _) require "image".set_img_path(path) end)
+
+    parser : option "--meta"
+        : description "Set the path for generated meta image files"
+        : target "metapath"
+        : argname "path"
+        : action(function(_, _, path, _) require "image".set_meta_path(path) end)
+
     parser : option "-m"
         : description("Set the default macro character (default: '"..default_local_configuration.expr.."')")
         : target "macro_char"

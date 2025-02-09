@@ -32,6 +32,7 @@ It contains some parameters:
 
 Images are generated in a directory given by:
 
+- the directory name given by the `--img` option
 - the environment variable `YPP_IMG` if it is defined
 - the directory name of the output file if the `-o` option is given
 - the `img` directory in the current directory
@@ -47,6 +48,11 @@ E.g. if `YPP_IMG=[prefix]path` then images will be generated in `prefix/path`
 and the link used in the output document will be `path`.
 
 The file format (extension) must be in `render`, after the `%o` tag (e.g.: `%o.png`).
+
+To avoid useless regenerations, a `.meta` file is created in the same directory than the image.
+This file contains image information (source of the image, ypp parameters...).
+The image is regenerated only if this information changes.
+The `--meta` option can be used to save meta files in a different directory.
 
 If the program requires a specific input file extension, it can be specified in `render`,
 after the `%i` tag (e.g.: `%i.xyz`).
@@ -136,6 +142,8 @@ local sh = require "sh"
 
 local output_path   -- actual directory where images are saved
 local link_path     -- directory added to image filenames
+local img_path      -- default path for generated images
+local meta_path     -- default path for meta image files
 
 local function parse_output_path(path)
     local prefix, link = path : match "^%[(.-)%](.*)"
@@ -171,7 +179,8 @@ local function default_image_output()
     if not output_path then
         local env = os.getenv "YPP_IMG"
         parse_output_path(
-            (env and env ~= "" and env)
+            img_path
+            or (env and env ~= "" and env)
             or (output_file and fs.join(fs.dirname(output_file), "img"))
             or "img")
     end
@@ -203,9 +212,10 @@ local function diagram(exe, render, default_ext)
         local hash = crypt.hash(render..contents)
         default_image_output()
         fs.mkdirs(output_path)
-        local out = fs.join(output_path, opts.name or hash)
+        local img_name = opts.name or hash
+        local out = fs.join(output_path, img_name)
         local link = fs.join(link_path, fs.basename(out))
-        local meta = out..ext..".meta"
+        local meta = (meta_path and meta_path/img_name or out)..ext..".meta"
         local meta_content = F.unlines {
             "hash: "..hash,
             "render: "..render,
@@ -307,5 +317,7 @@ return define {
     __index = {
         format = function(fmt) default_ext = fmt end,
         output = function(path) output_file = path end,
+        set_img_path = function(path) img_path = path end,
+        set_meta_path = function(path) meta_path = path end,
     },
 }

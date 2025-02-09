@@ -79,7 +79,7 @@ $ make test
 
     Usage: ypp [-h] [-v] [-a] [-l script] [-e expression] [-p path]
            [-o file] [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
-           [-m char] [<input>] ...
+           [--img path] [--meta path] [-m char] [<input>] ...
 
     ypp
     Yet a PreProcessor
@@ -99,6 +99,8 @@ $ make test
        --MT target           Add `name` to the target list (implies `--MD`)
        --MF name             Set the dependency file name (implies `--MD`)
        --MD                  Generate a dependency file
+       --img path            Set the path for generated images
+       --meta path           Set the path for generated meta image files
        -m char               Set the default macro character (default: '@')
 
     For more information, see https://github.com/CDSoft/ypp
@@ -311,6 +313,7 @@ to generate the image. It contains some parameters:
 
 Images are generated in a directory given by:
 
+- the directory name given by the `--img` option
 - the environment variable `YPP_IMG` if it is defined
 - the directory name of the output file if the `-o` option is given
 - the `img` directory in the current directory
@@ -328,6 +331,12 @@ and the link used in the output document will be `path`.
 
 The file format (extension) must be in `render`, after the `%o` tag
 (e.g.: `%o.png`).
+
+To avoid useless regenerations, a `.meta` file is created in the same
+directory than the image. This file contains image information (source
+of the image, ypp parameters…). The image is regenerated only if this
+information changes. The `--meta` option can be used to save meta files
+in a different directory.
 
 If the program requires a specific input file extension, it can be
 specified in `render`, after the `%i` tag (e.g.: `%i.xyz`).
