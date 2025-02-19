@@ -19,6 +19,7 @@ https://github.com/cdsoft/ypp
 ]]
 
 local F = require "F"
+local sh = require "sh"
 
 help.name "ypp"
 help.description "$name"
@@ -30,12 +31,14 @@ clean "$builddir"
 section "Compilation"
 ---------------------------------------------------------------------
 
+var "git_version" { sh "git describe --tags" }
+generator { implicit_in = ".git/refs/tags" }
+
 local sources = {
     ls "src/*.lua",
     build "$builddir/_YPP_VERSION" {
         description = "VERSION $out",
-        command = "git describe --tags > $out",
-        implicit_in = { ".git/refs/tags", ".git/index" },
+        command = "echo $git_version > $out",
     },
 }
 
@@ -49,9 +52,19 @@ local binaries = {
 
 local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
 
-require "build-release" {
-    name = "ypp",
-    sources = sources,
+phony "release" {
+    build.tar "$builddir/release/${git_version}/ypp-${git_version}-lua.tar.gz" {
+        base = "$builddir/release/.build",
+        name = "ypp-${git_version}-lua",
+        build.luax.lua("$builddir/release/.build/ypp-${git_version}-lua/bin/ypp.lua") { sources },
+    },
+    require "targets" : map(function(target)
+        return build.tar("$builddir/release/${git_version}/ypp-${git_version}-"..target.name..".tar.gz") {
+            base = "$builddir/release/.build",
+            name = "ypp-${git_version}-"..target.name,
+            build.luax[target.name]("$builddir/release/.build/ypp-${git_version}-"..target.name/"bin/ypp") { sources },
+        }
+    end),
 }
 
 ---------------------------------------------------------------------
