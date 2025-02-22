@@ -40,6 +40,27 @@ It provides several interesting features:
 - diagrams ([Graphviz], [PlantUML], [Asymptote], [blockdiag], [mermaid], [Octave], [lsvg], ...)
 - documentation extraction (e.g. from comments in source files)
 
+# Pricing
+
+Ypp is a free and open source software.
+But it has a cost. It takes time to develop, maintain and support.
+
+To help Ypp remain free, open source and supported,
+users are cordially invited to contribute financially to its development.
+
+| LuaX price         | Europe        | United States | Rest of the World |
+| ------------------ | ------------- | ------------- | ----------------- |
+| Personal usage     | Free donation | Free donation | Free donation     |
+| Academic usage     | €10 or more   | $20 or more   | $15 or more       |
+| Professional usage | €20 or more   | $40 or more   | $25 or more       |
+
+These prices are per month and per tools (see [`PRICING`](PRICING)).
+
+- donate with Liberapay: <https://liberapay.com/LuaX/donate>
+- donate with GitHub Sponsor: <https://github.com/sponsors/CDSoft>
+
+Feel free to promote Ypp!
+
 # Open source
 
 [ypp] is an Open source software.
