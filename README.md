@@ -98,9 +98,10 @@ $ make test
 
 # Usage
 
-    Usage: ypp [-h] [-v] [-a] [-l script] [-e expression] [-p path]
-           [-o file] [-t {svg,pdf,png}] [--MT target] [--MF name] [--MD]
-           [--img path] [--meta path] [-m char] [<input>] ...
+    Usage: ypp [-h] [-v] [-a] [-l script] [-e statement] [-D definition]
+           [-p path] [-o file] [-t {svg,pdf,png}] [--MT target]
+           [--MF name] [--MD] [--img path] [--meta path] [-m char]
+           [<input>] ...
 
     ypp
     Yet a PreProcessor
@@ -113,11 +114,12 @@ $ make test
        -v                    Show ypp version
        -a                    Force colorization using ANSI codes
        -l script             Execute a Lua script
-       -e expression         Execute a Lua expression
+       -e statement          Execute a Lua statement
+       -D definition         Define a Lua variable (-DNAME="string")
        -p path               Add a path to package.path
        -o file               Redirect the output to 'file'
        -t {svg,pdf,png}      Set the default format of generated images
-       --MT target           Add `name` to the target list (implies `--MD`)
+       --MT target           Add `target` to the target list (implies `--MD`)
        --MF name             Set the dependency file name (implies `--MD`)
        --MD                  Generate a dependency file
        --img path            Set the path for generated images
@@ -130,6 +132,23 @@ $ make test
 `ypp` shall be explicitly launched with `luax` (e.g.: `luax ypp`). If
 `ypp` is not found, it is searched in the installation directory of
 `luax` or in `$PATH`.
+
+| Option | Description |
+|----|----|
+| `-v` | Prints ypp version |
+| `-a` | Forces message colorization even is not writing to a terminal |
+| `-l` | Loads a module or an external Lua script with `require` |
+| `-e stat` | Executes a Lua statement `stat` in the ypp Lua interpreter |
+| `-D name=val` | Defines a Lua variable (shortcut for `-e 'name="val"'`) |
+| `p path` | Adds a search path to `package.path` |
+| `-o file` | Redirects the output to `file` instead of the standard output |
+| `-t {svg,pdf,png}` | Sets the default format of generated images |
+| `--MT target` | Adds `target` to the target list (implies `--MD`) |
+| `--MF name` | Sets the dependency file name (implies `--MD`) |
+| `--MD` | Generates a dependency file |
+| `--img path` | Sets the path for generated images |
+| `--meta path` | Sets the path for generated meta image files |
+| `-m char` | Sets the default macro character (default: ‘@’) |
 
 # Documentation
 

@@ -1,5 +1,14 @@
 # ypp tests
 
+## Variables defined on the command line
+
+VAR1 = <@VAR1>      @@ assert(type(VAR1) == "number")
+VAR2 = <@VAR2>      @@ assert(type(VAR2) == "string")
+VAR3 = <@VAR3>      @@ assert(type(VAR3) == "string")
+VAR4 = <@VAR4>      @@ assert(type(VAR4) == "string")
+VAR5 = <@VAR5>      @@ assert(type(VAR5) == "string")
+VAR6 = <@VAR6>      @@ assert(type(VAR6) == "string")
+
 ## Basic text substitution
 
 $1 + 2 = @(1 + 2)$

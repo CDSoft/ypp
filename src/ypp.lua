@@ -142,8 +142,13 @@ local function load_script(filename)
     _G[modname] = require(modname)
 end
 
-local function eval_expr(expr)
-    assert(load(expr, expr, "t"))()
+local function eval_stat(stat)
+    assert(load(stat, stat, "t"))()
+end
+
+local function eval_definition(def)
+    local name, value = def : split("=", 1) : unpack()
+    _G[name] = value or ""
 end
 
 local function add_path(paths)
@@ -312,10 +317,16 @@ local function parse_args()
         : action(function(_, _, name, _) load_script(name) end)
 
     parser : option "-e"
-        : description "Execute a Lua expression"
-        : argname "expression"
+        : description "Execute a Lua statement"
+        : argname "statement"
         : count "*"
-        : action(function(_, _, expr, _) eval_expr(expr) end)
+        : action(function(_, _, stat, _) eval_stat(stat) end)
+
+    parser : option "-D"
+        : description "Define a Lua variable (-DNAME=\"string\")"
+        : argname "definition"
+        : count "*"
+        : action(function(_, _, def, _) eval_definition(def) end)
 
     parser : option "-p"
         : description "Add a path to package.path"
@@ -341,7 +352,7 @@ local function parse_args()
         : action(function(_, _, fmt, _) require"image".format(fmt) end)
 
     parser : option "--MT"
-        : description "Add `name` to the target list (implies `--MD`)"
+        : description "Add `target` to the target list (implies `--MD`)"
         : target "targets"
         : argname "target"
         : count "*"

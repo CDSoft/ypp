@@ -1,5 +1,14 @@
 # ypp tests
 
+## Variables defined on the command line
+
+VAR1 = <42>      
+VAR2 = <43>      
+VAR3 = <44>      
+VAR4 = <val4>      
+VAR5 = <>      
+VAR6 = <>      
+
 ## Basic text substitution
 
 $1 + 2 = 3$
