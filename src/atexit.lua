@@ -24,16 +24,20 @@ https://github.com/cdsoft/ypp
 * `atexit(func)`: execute `func` when the whole output is computed, before actually writing the output.
 @@@]]
 
-local _functions = {}
+local F = require "F"
+
+local _functions = F{}
 
 return setmetatable({}, {
     __call = function(_, func)
-        table.insert(_functions, func)
+        _functions[#_functions+1] = func
     end,
     __index = {
         run = function(_)
             while #_functions > 0 do
-                table.remove(_functions, #_functions)()
+                local fs = _functions
+                _functions = F{}
+                fs:foreach(F.call)
             end
         end,
     },
