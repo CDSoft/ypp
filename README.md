@@ -137,7 +137,9 @@ $ make test
 |----|----|
 | `-v` | Prints ypp version |
 | `-a` | Forces message colorization even is not writing to a terminal |
-| `-l` | Loads a module or an external Lua script with `require` |
+| `-l module` | Loads a module or an external Lua script with `require`, the module is stored in the global variable `module` |
+| `-l name=module` | Loads a module or an external Lua script, the module is stored in the global variable `name` |
+| `-l _=module` | Loads a module or an external Lua script, the module is not stored in a global variable |
 | `-e stat` | Executes a Lua statement `stat` in the ypp Lua interpreter |
 | `-D name=val` | Defines a Lua variable (shortcut for `-e 'name="val"'`) |
 | `p path` | Adds a search path to `package.path` |

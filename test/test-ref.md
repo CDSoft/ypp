@@ -268,6 +268,10 @@ ypp_images/hello.svg
 
 `test_loaded` = `true`
 
+`mod1_loaded` = `true`      `mod1.name` = `Mod1`
+`mod2_loaded` = `true`      `mod2.name` = `@mod2.name`  `mymod.name` = `Mod2`
+`mod3_loaded` = `true`      `mod3.name` = `@mod3.name`
+
 ## Scripts loaded by test.md
 
 

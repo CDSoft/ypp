@@ -293,6 +293,10 @@ digraph {
 
 `test_loaded` = `@test_loaded`
 
+`mod1_loaded` = `@mod1_loaded`      `mod1.name` = `@mod1.name`
+`mod2_loaded` = `@mod2_loaded`      `mod2.name` = `@mod2.name`  `mymod.name` = `@mymod.name`
+`mod3_loaded` = `@mod3_loaded`      `mod3.name` = `@mod3.name`
+
 ## Scripts loaded by test.md
 
 @@require "test/test2"

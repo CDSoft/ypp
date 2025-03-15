@@ -137,9 +137,16 @@ function ypp_mt.__index.error_in(source, msg, ...)
     os.exit(1)
 end
 
-local function load_script(filename)
-    local modname = filename:gsub("%.lua$", "")
-    _G[modname] = require(modname)
+local function load_script(script)
+    script = script:gsub("%.lua$", "")
+    local modname, filename = script:match "(.-)=(.+)"
+    if not modname then
+        modname, filename = script, script
+    end
+    local mod = require(filename)
+    if modname ~= "_" then
+        _G[modname] = mod
+    end
 end
 
 local function eval_stat(stat)
@@ -314,7 +321,7 @@ local function parse_args()
         : description "Execute a Lua script"
         : argname "script"
         : count "*"
-        : action(function(_, _, name, _) load_script(name) end)
+        : action(function(_, _, script, _) load_script(script) end)
 
     parser : option "-e"
         : description "Execute a Lua statement"
