@@ -126,13 +126,13 @@ This paragraph has been included.
 
 Caller:
 
--   `input_file(1)`: `./test/test.md`
--   `input_path(1)`: `./test`
+- `input_file(1)`: `./test/test.md`
+- `input_path(1)`: `./test`
 
 Callee:
 
--   `input_file()`: `./test/test_inc.md`
--   `input_path()`: `./test`
+- `input_file()`: `./test/test_inc.md`
+- `input_path()`: `./test`
 
 This part is not included:
 
