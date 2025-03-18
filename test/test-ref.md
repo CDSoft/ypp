@@ -247,6 +247,10 @@ const char *answer(const char *question)
 - .build/test/ypp_images/9a8a73b7973f99e3.svg
 
 
+### Images generated with Asymptote
+
+ypp_images/test-asy.svg
+
 ### Images generated with Octave
 
 ypp_images/test-octave.svg

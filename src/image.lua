@@ -169,6 +169,12 @@ local function make_diagram_cmd(src, out, render)
 end
 
 local function render_diagram(cmd)
+    if cmd:match "^asy " then
+        -- for asymptote, the -o option is the output name without its extension
+        cmd = cmd:gsub("(-o )(%S+)", function(opt, name)
+            return opt..name:splitext()
+        end)
+    end
     -- stdout shall be discarded otherwise ypp can not be used in a pipe
     if not sh.read(cmd) then ypp.error "diagram error" end
 end

@@ -242,6 +242,10 @@ digraph {
 
 @F.map(F.prefix "- ", {image("dot -T%ext -o %o %i", "svg") (example)})
 
+### Images generated with Asymptote
+
+@image.asy {name="test-asy"} "dot(0);"
+
 ### Images generated with Octave
 
 @image.octave {name="test-octave"} [===[

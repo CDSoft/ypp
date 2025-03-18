@@ -75,15 +75,36 @@ please consider donating via
 
 # Installation
 
-[ypp](https://github.com/cdsoft/ypp "Yet another PreProcessor") requires
-[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter").
+Ypp is written in LuaX. It can be compiled with
+[Ninja](https://ninja-build.org),
+[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter") and
+[bang](https://github.com/cdsoft/bang "Ninja file generator").
+
+## LuaX
 
 ``` sh
-$ git clone https://github.com/CDSoft/luax.git && ninja -C luax install
-...
+$ git clone https://github.com/CDSoft/luax
+$ cd luax
+$ ./bootstrap.sh
+$ ninja install     # install LuaX to ~/.local/bin
+```
 
-# install ypp in ~/.local/bin
-$ git clone https://github.com/CDSoft/ypp.git && ninja -C ypp install
+## Bang
+
+``` sh
+$ git clone https://github.com/CDSoft/bang
+$ cd bang
+$ ./boot.lua
+$ ninja install     # build bang with Ninja and install it to ~/.local/bin
+```
+
+## Ypp
+
+``` sh
+$ git clone https://github.com/CDSoft/ypp
+$ cd ypp
+$ bang
+$ ninja install     # build ypp with Ninja and install it to ~/.local/bin
 ```
 
 `ninja install` installs `ypp` in `~/.local/bin`. The `PREFIX` variable
