@@ -1,14 +1,14 @@
 # Yet a PreProcessor
 
 `ypp` is yet another preprocessor. It’s an attempt to merge
-[UPP](https://github.com/cdsoft/upp "Universal PreProcessor") and
-[Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)").
+[UPP](https://codeberg.org/cdsoft/upp "Universal PreProcessor") and
+[Panda](https://codeberg.org/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)").
 It acts as a generic text preprocessor as
-[UPP](https://github.com/cdsoft/upp "Universal PreProcessor") and comes
-with macros reimplementing most of the
-[Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
+[UPP](https://codeberg.org/cdsoft/upp "Universal PreProcessor") and
+comes with macros reimplementing most of the
+[Panda](https://codeberg.org/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
 functionalities
-(i.e. [Panda](https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
+(i.e. [Panda](https://codeberg.org/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)")
 facilities not restricted to
 [Pandoc](https://pandoc.org "A universal document converter") but also
 available to softwares like
@@ -19,7 +19,7 @@ Ypp is a minimalist and generic text preprocessor using Lua macros.
 It provides several interesting features:
 
 - full
-  [Lua](http://www.lua.org/)/[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter")
+  [Lua](http://www.lua.org/)/[LuaX](https://codeberg.org/cdsoft/luax "Lua eXtended interpreter")
   interpreter
 - variable expansion (minimalistic templating)
 - conditional blocks
@@ -31,7 +31,7 @@ It provides several interesting features:
   [blockdiag](http://blockdiag.com/),
   [mermaid](https://mermaidjs.github.io/),
   [Octave](https://octave.org/),
-  [lsvg](https://github.com/cdsoft/lsvg/), …)
+  [lsvg](https://codeberg.org/cdsoft/lsvg/), …)
 - documentation extraction (e.g. from comments in source files)
 
 # Pricing
@@ -52,15 +52,14 @@ These prices are per month and per tools (see [`PRICING`](PRICING)).
 
 <a href='https://liberapay.com/LuaX/donate' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://liberapay.com/assets/widgets/donate.svg' border='0' alt='Donate using Liberapay' /></a>
 <a href='https://ko-fi.com/K3K11CD108' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-<a href='https://github.com/sponsors/CDSoft' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86' border='0' alt='Donate using Github' /></a>
 
 Feel free to promote Ypp!
 
 # Open source
 
-[ypp](https://github.com/cdsoft/ypp "Yet another PreProcessor") is an
+[ypp](https://codeberg.org/cdsoft/ypp "Yet another PreProcessor") is an
 Open source software. Anybody can contribute on
-[GitHub](https://github.com/CDSoft/ypp) to:
+[Codeberg](https://codeberg.org/cdsoft/ypp) to:
 
 - suggest or add new features
 - report or fix bugs
@@ -69,22 +68,17 @@ Open source software. Anybody can contribute on
 - find new usages
 - …
 
-If you like ypp (or LuaX) and are willing to support its development,
-please consider donating via
-[Github](https://github.com/sponsors/CDSoft?o=esc) or
-[Liberapay](https://liberapay.com/LuaX/donate).
-
 # Installation
 
 Ypp is written in LuaX. It can be compiled with
 [Ninja](https://ninja-build.org),
-[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter") and
-[bang](https://github.com/cdsoft/bang "Ninja file generator").
+[LuaX](https://codeberg.org/cdsoft/luax "Lua eXtended interpreter") and
+[bang](https://codeberg.org/cdsoft/bang "Ninja file generator").
 
 ## LuaX
 
 ``` sh
-$ git clone https://github.com/CDSoft/luax
+$ git clone https://codeberg.org/cdsoft/luax
 $ cd luax
 $ ./bootstrap.sh
 $ ninja install     # install LuaX to ~/.local/bin
@@ -93,7 +87,7 @@ $ ninja install     # install LuaX to ~/.local/bin
 ## Bang
 
 ``` sh
-$ git clone https://github.com/CDSoft/bang
+$ git clone https://codeberg.org/cdsoft/bang
 $ cd bang
 $ ./boot.lua
 $ ninja install     # build bang with Ninja and install it to ~/.local/bin
@@ -102,7 +96,7 @@ $ ninja install     # build bang with Ninja and install it to ~/.local/bin
 ## Ypp
 
 ``` sh
-$ git clone https://github.com/CDSoft/ypp
+$ git clone https://codeberg.org/cdsoft/ypp
 $ cd ypp
 $ bang
 $ ninja install     # build ypp with Ninja and install it to ~/.local/bin
@@ -148,7 +142,7 @@ $ make test
        --meta path           Set the path for generated meta image files
        -m char               Set the default macro character (default: '@')
 
-    For more information, see https://github.com/CDSoft/ypp
+    For more information, see https://codeberg.org/cdsoft/ypp
 
 **Note for Windows users**: since Windows does not support shebangs,
 `ypp` shall be explicitly launched with `luax` (e.g.: `luax ypp`). If
@@ -441,7 +435,7 @@ An optional table can be given before `source` to set some options:
 | [PlantUML](http://plantuml.sourceforge.net/) | `plantuml` | `image.plantuml(source)` |
 | [ditaa](http://ditaa.sourceforge.net/) | `ditaa` | `image.ditaa(source)` |
 | [gnuplot](http://www.gnuplot.info/) | `gnuplot` | `image.gnuplot(source)` |
-| [lsvg](https://github.com/cdsoft/lsvg/) | `lsvg` | `image.lsvg(source)` |
+| [lsvg](https://codeberg.org/cdsoft/lsvg/) | `lsvg` | `image.lsvg(source)` |
 | [octave](https://octave.org/) | `octave` | `image.octave(source)` |
 
 Example:
@@ -541,10 +535,10 @@ E.g.:
 ## LuaX modules
 
 ypp is written in [Lua](http://www.lua.org/) and
-[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter"). All
+[LuaX](https://codeberg.org/cdsoft/luax "Lua eXtended interpreter"). All
 Lua and LuaX libraries are available to ypp.
 
-[LuaX](https://github.com/cdsoft/luax "Lua eXtended interpreter") is a
+[LuaX](https://codeberg.org/cdsoft/luax "Lua eXtended interpreter") is a
 Lua interpreter and REPL based on Lua 5.4, augmented with some useful
 packages.
 
@@ -552,30 +546,30 @@ LuaX comes with a standard Lua interpreter and provides some libraries
 (embedded in a single executable, no external dependency required). Here
 are some LuaX modules that can be useful in ypp documents:
 
-- [F](https://github.com/CDSoft/luax/blob/master/doc/F.md): functional
+- [F](https://codeberg.org/cdsoft/luax/blob/master/doc/F.md): functional
   programming inspired functions
-- [fs](https://github.com/CDSoft/luax/blob/master/doc/fs.md): file
+- [fs](https://codeberg.org/cdsoft/luax/blob/master/doc/fs.md): file
   system management
-- [sh](https://github.com/CDSoft/luax/blob/master/doc/sh.md): shell
+- [sh](https://codeberg.org/cdsoft/luax/blob/master/doc/sh.md): shell
   command execution
-- [mathx](https://github.com/CDSoft/luax/blob/master/doc/mathx.md):
+- [mathx](https://codeberg.org/cdsoft/luax/blob/master/doc/mathx.md):
   complete math library for Lua
-- [imath](https://github.com/CDSoft/luax/blob/master/doc/imath.md):
+- [imath](https://codeberg.org/cdsoft/luax/blob/master/doc/imath.md):
   arbitrary precision integer and rational arithmetic library
-- [qmath](https://github.com/CDSoft/luax/blob/master/doc/qmath.md):
+- [qmath](https://codeberg.org/cdsoft/luax/blob/master/doc/qmath.md):
   rational number library
-- [complex](https://github.com/CDSoft/luax/blob/master/doc/complex.md):
+- [complex](https://codeberg.org/cdsoft/luax/blob/master/doc/complex.md):
   math library for complex numbers based on C99
-- [crypt](https://github.com/CDSoft/luax/blob/master/doc/crypt.md):
+- [crypt](https://codeberg.org/cdsoft/luax/blob/master/doc/crypt.md):
   cryptography module
-- [lpeg](https://github.com/CDSoft/luax/blob/master/doc/lpeg.md):
+- [lpeg](https://codeberg.org/cdsoft/luax/blob/master/doc/lpeg.md):
   Parsing Expression Grammars For Lua
-- [serpent](https://github.com/CDSoft/luax/blob/master/doc/serpent.md):
+- [serpent](https://codeberg.org/cdsoft/luax/blob/master/doc/serpent.md):
   Lua serializer and pretty printer
-- [json](https://github.com/CDSoft/luax/blob/master/doc/json.md): JSON
+- [json](https://codeberg.org/cdsoft/luax/blob/master/doc/json.md): JSON
   encoder/decoder
 
-More information here: <https://github.com/cdsoft/luax>
+More information here: <https://codeberg.org/cdsoft/luax>
 
 # License
 
@@ -593,9 +587,9 @@ More information here: <https://github.com/cdsoft/luax>
     along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
     For further information about ypp you can visit
-    https://github.com/cdsoft/ypp
+    https://codeberg.org/cdsoft/ypp
 
 # Feedback
 
 Your feedback and contributions are welcome. You can contact me at
-[CDSoft](https://CDSoft.github.io).
+[CDSoft](https://cdsoft.codeberg.page).

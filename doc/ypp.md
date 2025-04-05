@@ -1,13 +1,13 @@
 # Yet a PreProcessor
 
-[ypp]: https://github.com/cdsoft/ypp "Yet another PreProcessor"
-[UPP]: https://github.com/cdsoft/upp "Universal PreProcessor"
-[Panda]: https://github.com/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)"
+[ypp]: https://codeberg.org/cdsoft/ypp "Yet another PreProcessor"
+[UPP]: https://codeberg.org/cdsoft/upp "Universal PreProcessor"
+[Panda]: https://codeberg.org/cdsoft/panda "Pandoc add-ons (Lua filters for Pandoc)"
 [Pandoc]: https://pandoc.org "A universal document converter"
 [Typst]: https://typst.app/ "Compose papers faster"
 [Lua]: http://www.lua.org/
-[GitHub]: https://github.com/CDSoft/ypp
-[CDSoft]: https://CDSoft.github.io
+[Codeberg]: https://codeberg.org/cdsoft/ypp
+[CDSoft]: https://cdsoft.codeberg.page
 [GraphViz]: http://graphviz.org/
 [PlantUML]: http://plantuml.sourceforge.net/
 [ditaa]: http://ditaa.sourceforge.net/
@@ -18,11 +18,11 @@
 [Python]: https://www.python.org/
 [Lua]: http://www.lua.org/
 [gnuplot]: http://www.gnuplot.info/
-[lsvg]: https://github.com/cdsoft/lsvg/
-[LuaX]: https://github.com/cdsoft/luax "Lua eXtended interpreter"
-[LuaX documentation]: https://github.com/cdsoft/luax
+[lsvg]: https://codeberg.org/cdsoft/lsvg/
+[LuaX]: https://codeberg.org/cdsoft/luax "Lua eXtended interpreter"
+[LuaX documentation]: https://codeberg.org/cdsoft/luax
 [Octave]: https://octave.org/
-[bang]: https://github.com/cdsoft/bang "Ninja file generator"
+[bang]: https://codeberg.org/cdsoft/bang "Ninja file generator"
 [Ninja]: https://ninja-build.org
 
 `ypp` is yet another preprocessor. It's an attempt to merge [UPP] and [Panda].
@@ -64,14 +64,13 @@ end end end]]
 
 @donate "https://liberapay.com/LuaX/donate"  "https://liberapay.com/assets/widgets/donate.svg"                                              "Donate using Liberapay"
 @donate "https://ko-fi.com/K3K11CD108"       "https://storage.ko-fi.com/cdn/kofi6.png?v=6"                                                  "Buy Me a Coffee at ko-fi.com"
-@donate "https://github.com/sponsors/CDSoft" "https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" "Donate using Github"
 
 Feel free to promote Ypp!
 
 # Open source
 
 [ypp] is an Open source software.
-Anybody can contribute on [GitHub] to:
+Anybody can contribute on [Codeberg] to:
 
 - suggest or add new features
 - report or fix bugs
@@ -80,10 +79,6 @@ Anybody can contribute on [GitHub] to:
 - find new usages
 - ...
 
-If you like ypp (or LuaX) and are willing to support its development,
-please consider donating via [Github](https://github.com/sponsors/CDSoft?o=esc)
-or [Liberapay](https://liberapay.com/LuaX/donate).
-
 # Installation
 
 Ypp is written in LuaX. It can be compiled with [Ninja], [LuaX] and [bang].
@@ -91,7 +86,7 @@ Ypp is written in LuaX. It can be compiled with [Ninja], [LuaX] and [bang].
 ## LuaX
 
 ``` sh
-$ git clone https://github.com/CDSoft/luax
+$ git clone https://codeberg.org/cdsoft/luax
 $ cd luax
 $ ./bootstrap.sh
 $ ninja install     # install LuaX to ~/.local/bin
@@ -100,7 +95,7 @@ $ ninja install     # install LuaX to ~/.local/bin
 ## Bang
 
 ``` sh
-$ git clone https://github.com/CDSoft/bang
+$ git clone https://codeberg.org/cdsoft/bang
 $ cd bang
 $ ./boot.lua
 $ ninja install     # build bang with Ninja and install it to ~/.local/bin
@@ -109,7 +104,7 @@ $ ninja install     # build bang with Ninja and install it to ~/.local/bin
 ## Ypp
 
 ``` sh
-$ git clone https://github.com/CDSoft/ypp
+$ git clone https://codeberg.org/cdsoft/ypp
 $ cd ypp
 $ bang
 $ ninja install     # build ypp with Ninja and install it to ~/.local/bin
@@ -302,7 +297,7 @@ in a single executable, no external dependency required).
 Here are some LuaX modules that can be useful in ypp documents:
 
 @@ luaxdoc = F.curry(function(name, descr)
-    return ("[%s](https://github.com/CDSoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
+    return ("[%s](https://codeberg.org/cdsoft/luax/blob/master/doc/%s.md): %s"):format(name, name, descr)
 end)
 
 - @luaxdoc "F"       "functional programming inspired functions"
@@ -317,7 +312,7 @@ end)
 - @luaxdoc "serpent" "Lua serializer and pretty printer"
 - @luaxdoc "json"    "JSON encoder/decoder"
 
-More information here: <https://github.com/cdsoft/luax>
+More information here: <https://codeberg.org/cdsoft/luax>
 
 # License
 
@@ -335,7 +330,7 @@ More information here: <https://github.com/cdsoft/luax>
     along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
     For further information about ypp you can visit
-    https://github.com/cdsoft/ypp
+    https://codeberg.org/cdsoft/ypp
 
 Feedback
 ========

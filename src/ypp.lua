@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with ypp.  If not, see <https://www.gnu.org/licenses/>.
 
 For further information about ypp you can visit
-https://github.com/cdsoft/ypp
+https://codeberg.org/cdsoft/ypp
 --]]
 
 --@MAIN
@@ -306,7 +306,7 @@ local function parse_args()
     local parser = require "argparse"()
         : name "ypp"
         : description(("ypp %s\nYet a PreProcessor"):format(_YPP_VERSION))
-        : epilog "For more information, see https://github.com/CDSoft/ypp"
+        : epilog "For more information, see https://codeberg.org/cdsoft/ypp"
 
     parser : flag "-v"
         : description "Show ypp version"
