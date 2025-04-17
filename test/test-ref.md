@@ -231,20 +231,20 @@ const char *answer(const char *question)
 
 ### Images with the default format (SVG)
 
-- ypp_images/9a8a73b7973f99e3.svg
-- .build/test/ypp_images/9a8a73b7973f99e3.svg
+- ypp_images/ffb9fb8258108609.svg
+- .build/test/ypp_images/ffb9fb8258108609.svg
 
 
 ### Images with a specific format (e.g. PNG)
 
-- ypp_images/2e84820d15bf345b.png
-- .build/test/ypp_images/2e84820d15bf345b.png
+- ypp_images/2b736945c4996a4b.png
+- .build/test/ypp_images/2b736945c4996a4b.png
 
 
 ### Images with a custom command
 
-- ypp_images/9a8a73b7973f99e3.svg
-- .build/test/ypp_images/9a8a73b7973f99e3.svg
+- ypp_images/ffb9fb8258108609.svg
+- .build/test/ypp_images/ffb9fb8258108609.svg
 
 
 ### Images generated with Asymptote
@@ -255,13 +255,13 @@ ypp_images/test-asy.svg
 
 ypp_images/test-octave.svg
 
-ypp_images/4cd70118e8654415.svg
+ypp_images/7da9cceada6eff0a.svg
 
 ### Images from an external file
 
 ypp_images/test-dot.svg
 
-ypp_images/398c8ba71be19f13.svg
+ypp_images/5481a5c8f77181ad.svg
 
 ### Images preprocessed with ypp
 
