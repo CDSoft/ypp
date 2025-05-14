@@ -292,3 +292,21 @@ ypp_images/hello.svg
 
 
 check .build/test/test-file.txt
+
+## Deferred evaluation
+
+### Table of content
+
+1. Chapter 1
+2. Chapter 2
+
+
+nbch = 2
+
+### Chapter 1
+
+nbch = 2
+
+### Chapter 2
+
+nbch = 2

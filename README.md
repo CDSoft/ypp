@@ -334,6 +334,19 @@ by giving the appropriate options. E.g.:
     # python script that produces a CSV document
     ]===]
 
+### `defer`
+
+- `defer(func)`: emit a unique tag that will later be replaced by the
+  result of `func()`.
+
+E.g.:
+
+    @@ N = 0
+    total = @defer(function() return N end) (should be "2")
+    ...
+    @@(N = N+1)
+    @@(N = N+1)
+
 ### `doc`
 
 - `doc(filename, [opts])`: extract documentation fragments from the file
@@ -352,6 +365,13 @@ The `doc` macro can also be called as a curried function (arguments can
 be swapped). E.g.:
 
     @doc "file.c" {pattern="///(.-)///"}
+
+### `file`
+
+- `f = file(name)`: return a file object that can be used to create
+  files incrementally. Files are only saved once ypp succeed
+- `f(s)`: add `s` to the file
+- `f:ypp(s)`: preprocess and add `s` to the file
 
 ### `image`
 
@@ -524,13 +544,6 @@ E.g.:
     [===[
     The current language is English.
     ]===]
-
-### `file`
-
-- `f = file(name)`: return a file object that can be used to create
-  files incrementally. Files are only saved once ypp succeed
-- `f(s)`: add `s` to the file
-- `f:ypp(s)`: preprocess and add `s` to the file
 
 ## LuaX modules
 

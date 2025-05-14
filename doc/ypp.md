@@ -277,13 +277,14 @@ $\sum_{i=0}^100 = @sum$
 @module "atexit"
 @module "comment"
 @module "convert"
+@module "defer"
 @module "doc"
+@module "file"
 @module "image"
 @module "include"
 @module "q"
 @module "script"
 @module "when"
-@module "file"
 
 ## LuaX modules
 

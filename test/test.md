@@ -321,3 +321,27 @@ first line : 1 + 2 = @(1+2)
 second line : 1 + 2 = @(1+2)
 ]]
 check @f.name
+
+## Deferred evaluation
+
+### Table of content
+
+@@(
+    local toc = {}
+    function chapter(title)
+        toc[#toc+1] = string.format("%d. %s", #toc+1, title)
+        return "### "..title
+    end
+    nbch = defer(function() return #toc end)
+    return defer(function() return F.unlines(toc) end)
+)
+
+nbch = @nbch
+
+@chapter "Chapter 1"
+
+nbch = @nbch
+
+@chapter "Chapter 2"
+
+nbch = @nbch
