@@ -245,13 +245,13 @@ return function(s, conf)
     local i = 1
     while i <= #s do
         local i1, i2, out = parse(s, i, state)
-        if not i1 then
+        if not i2 then
             ts[#ts+1] = s:sub(i, #s)
             break
         end
         if i1 > i then ts[#ts+1] = s:sub(i, i1-1) end
         ts[#ts+1] = out
-        i = i2 ---@diagnostic disable-line: cast-local-type
+        i = i2
     end
     return table.concat(ts)
 end
