@@ -20,7 +20,7 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.8"
+version "1.8.1"
 
 help.name "ypp"
 help.description "$name"
@@ -34,10 +34,7 @@ section "Compilation"
 
 local sources = {
     ls "src/*.lua",
-    build "$builddir/_YPP_VERSION" {
-        description = "VERSION $out",
-        command = "echo $version > $out",
-    },
+    file "$builddir/_YPP_VERSION" { vars.version },
 }
 
 build.luax.add_global "flags" "-q"
