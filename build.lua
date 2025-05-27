@@ -20,12 +20,11 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.8.1"
+version "1.8.2"
 
 help.name "ypp"
 help.description "$name"
 
-var "builddir" ".build"
 clean "$builddir"
 
 ---------------------------------------------------------------------

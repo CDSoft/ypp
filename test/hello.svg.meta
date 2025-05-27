@@ -1,4 +1,4 @@
-hash: baf28aae8ab2ca43
+hash: eaeb9f9cc21506d0
 render: dot -Tsvg -o %o.svg %i
 out: .build/test/ypp_images/hello
 link: ypp_images/hello
