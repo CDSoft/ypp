@@ -20,7 +20,7 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.8.2"
+version "1.8.3"
 
 help.name "ypp"
 help.description "$name"
@@ -67,18 +67,24 @@ section "Documentation"
 
 build "README.md" {
     description = "PANDOC $out",
-    command = "pandoc --to gfm $in -o $out",
+    command = {
+        "pandoc --to gfm $in -o $out",
+        "--fail-if-warnings",
+        "--lua-filter doc/fix_links.lua",
+    },
+    implicit_in = "doc/fix_links.lua",
 
     build "$builddir/doc/README.md" { "doc/ypp.md",
         description = "YPP $in",
         command = {
             "export BUILD=$builddir;",
-            "export YPP_IMG=doc/img;",
             "$builddir/ypp",
                 "-t svg",
                 "--MF $depfile",
                 "$in",
                 "-o $out",
+                "--img [doc/]img",
+                "--meta $builddir/doc",
         },
         depfile = "$out.d",
         implicit_in = {

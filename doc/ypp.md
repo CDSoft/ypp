@@ -1,3 +1,5 @@
+![](ypp-banner.svg){width=100%}
+
 # Yet a PreProcessor
 
 [ypp]: https://codeberg.org/cdsoft/ypp "Yet another PreProcessor"

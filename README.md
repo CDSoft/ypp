@@ -1,3 +1,5 @@
+<img src="doc/ypp-banner.svg" style="width:100.0%" />
+
 # Yet a PreProcessor
 
 `ypp` is yet another preprocessor. It’s an attempt to merge
