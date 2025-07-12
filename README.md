@@ -338,8 +338,10 @@ by giving the appropriate options. E.g.:
 
 ### `defer`
 
-- `defer(func)`: emit a unique tag that will later be replaced by the
-  result of `func()`.
+- `defer(func, ...)`: emit a unique tag that will later be replaced by
+  the result of `func(...)` if `func` is callable.
+- `defer(table, ...)`: emit a unique tag that will later be replaced by
+  the concatenation of `table` (one item per line).
 
 E.g.:
 

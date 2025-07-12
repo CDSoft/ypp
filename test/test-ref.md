@@ -310,3 +310,31 @@ nbch = 2
 ### Chapter 2
 
 nbch = 2
+
+### Accumulation in a table
+
+
+
+lines:
+one
+two
+three
+four
+five
+6
+42
+
+
+
+
+
+
+
+
+
+
+words: un deux trois
+
+
+
+

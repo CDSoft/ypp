@@ -25,7 +25,7 @@ local F = require "F"
 local function format_value(x)
     local mt = getmetatable(x)
     if mt and mt.__tostring then return tostring(x) end
-    if type(x) == "table" then return F.map(tostring, x):unlines() end
+    if type(x) == "table" then return F.flatten(x):map(tostring):unlines() end
     return tostring(x)
 end
 

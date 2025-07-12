@@ -332,8 +332,8 @@ check @f.name
         toc[#toc+1] = string.format("%d. %s", #toc+1, title)
         return "### "..title
     end
-    nbch = defer(function() return #toc end)
-    return defer(function() return F.unlines(toc) end)
+    nbch = defer(F.length, toc)
+    return defer(toc)
 )
 
 nbch = @nbch
@@ -345,3 +345,24 @@ nbch = @nbch
 @chapter "Chapter 2"
 
 nbch = @nbch
+
+### Accumulation in a table
+
+@@ lines = {}
+
+lines:
+@defer(lines)
+
+@@ lines[#lines+1] = "one"
+@@ lines[#lines+1] = "two"
+@@ lines[#lines+1] = "three"
+@@ lines[#lines+1] = { "four", "five", 6 }
+@@ lines[#lines+1] = 42
+
+@@ words = {}
+
+words: @defer(F.unwords, words)
+
+@@ words[#words+1] = "un"
+@@ words[#words+1] = "deux"
+@@ words[#words+1] = "trois"

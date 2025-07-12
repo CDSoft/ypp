@@ -21,7 +21,8 @@ https://codeberg.org/cdsoft/ypp
 --@LOAD
 
 --[[@@@
-* `defer(func)`: emit a unique tag that will later be replaced by the result of `func()`.
+* `defer(func, ...)`: emit a unique tag that will later be replaced by the result of `func(...)` if `func` is callable.
+* `defer(table, ...)`: emit a unique tag that will later be replaced by the concatenation of `table` (one item per line).
 
 E.g.:
 
@@ -38,9 +39,15 @@ total = @defer(function() return N end) (should be "2")
 
 local deferred_functions = {}
 
-local function defer(func)
+local function callable(x)
+    local t, mt = type(x), getmetatable(x)
+    return t=="function" or (type(mt)=="table" and mt.__call)
+end
+
+local function defer(x, ...)
     local tag = string.format("▶%d◀", F.size(deferred_functions))
-    deferred_functions[tag] = func
+    deferred_functions[tag] = callable(x) and F.partial(x, ...)
+                              or function() return F.flatten(x):map(tostring):unlines() end
     return tag
 end
 
@@ -55,5 +62,5 @@ return setmetatable({
     defer = defer,
     replace = replace,
 }, {
-    __call = function(self, s) return self.defer(s) end,
+    __call = function(self, s, ...) return self.defer(s, ...) end,
 })
