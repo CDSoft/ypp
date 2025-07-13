@@ -20,7 +20,7 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.8.3"
+version "1.8.4"
 
 help.name "ypp"
 help.description "$name"
