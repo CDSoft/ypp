@@ -118,7 +118,7 @@ $ make test
 
     Usage: ypp [-h] [-v] [-a] [-l script] [-e statement] [-D definition]
            [-p path] [-o file] [-t {svg,pdf,png}] [--MT target]
-           [--MF name] [--MD] [--img path] [--meta path] [-m char]
+           [--MF name] [--MD] [--img path] [--meta path] [-m char] [-s]
            [<input>] ...
 
     ypp
@@ -143,6 +143,7 @@ $ make test
        --img path            Set the path for generated images
        --meta path           Set the path for generated meta image files
        -m char               Set the default macro character (default: '@')
+       -s                    Add a blank line separator between all input files
 
     For more information, see https://codeberg.org/cdsoft/ypp
 
@@ -169,6 +170,7 @@ $ make test
 | `--img path` | Sets the path for generated images |
 | `--meta path` | Sets the path for generated meta image files |
 | `-m char` | Sets the default macro character (default: ‘@’) |
+| `-s` | Separate files with a blank line |
 
 # Documentation
 

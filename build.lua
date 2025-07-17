@@ -20,7 +20,7 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.8.4"
+version "1.9"
 
 help.name "ypp"
 help.description "$name"
@@ -142,6 +142,51 @@ local tests = {
             { "$builddir/test/test.md.d", "test/test-ref.d" },
             { "$builddir/test/test-file.txt", "test/test-file.txt" },
             { "$builddir/test/ypp_images/hello.svg.meta", "test/hello.svg.meta" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
+    },
+    build "$builddir/test/test123-no-separator.md" { "test/test1.md", "test/test2.md", "test/test3.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp",
+                "--MF $depfile",
+                "$in",
+                "-o $out",
+        },
+        depfile = "$out.d",
+        implicit_in = {
+            "$builddir/ypp",
+        },
+        implicit_out = {
+            "$builddir/test/test123-no-separator.md.d",
+        },
+        validations = F{
+            { "$builddir/test/test123-no-separator.md", "test/test123-no-separator-ref.md" },
+            { "$builddir/test/test123-no-separator.md.d", "test/test123-no-separator-ref.d" },
+        } : map(function(files)
+            return build(files[1]..".diff") { "diff", files }
+        end),
+    },
+    build "$builddir/test/test123-separator.md" { "test/test1.md", "test/test2.md", "test/test3.md",
+        description = "YPP $in",
+        command = {
+            "$builddir/ypp",
+                "--MF $depfile",
+                "$in",
+                "-o $out",
+                "-s",
+        },
+        depfile = "$out.d",
+        implicit_in = {
+            "$builddir/ypp",
+        },
+        implicit_out = {
+            "$builddir/test/test123-separator.md.d",
+        },
+        validations = F{
+            { "$builddir/test/test123-separator.md", "test/test123-separator-ref.md" },
+            { "$builddir/test/test123-separator.md.d", "test/test123-separator-ref.d" },
         } : map(function(files)
             return build(files[1]..".diff") { "diff", files }
         end),

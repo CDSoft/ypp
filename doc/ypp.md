@@ -150,6 +150,7 @@ found, it is searched in the installation directory of `luax` or in `$PATH`.
 | `--img path`          | Sets the path for generated images                            |
 | `--meta path`         | Sets the path for generated meta image files                  |
 | `-m char`             | Sets the default macro character (default: '@')               |
+| `-s`                  | Separate files with a blank line                              |
 
 # Documentation
 

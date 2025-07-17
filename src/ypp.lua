@@ -209,10 +209,19 @@ end
 
 ypp.with_inputfile = with_inputfile
 
-local function process_file(filename)
-    return with_inputfile(filename, function(full_filepath)
+local file_separator = nil
+
+local function update_separator(new_separator)
+    file_separator = new_separator
+end
+
+local function process_file(filename, i, n)
+    with_inputfile(filename, function(full_filepath)
         return process(read_file(full_filepath))
     end)
+    if file_separator and i < n then
+        process(file_separator)
+    end
 end
 
 function ypp.input_file(level)
@@ -393,12 +402,21 @@ local function parse_args()
             update_macro_char("-m", default_local_configuration, c)
         end)
 
+    parser : flag "-s"
+        : description "Add a blank line separator between all input files"
+        : target "separate"
+        : action(function(_, _, _, _)
+            update_separator("\n")
+        end)
+
     parser : argument "input"
         : description "Input file"
         : args "*"
         : action(function(_, _, names, _)
             if #names == 0 then names = {"-"} end
-            F.foreach(names, process_file)
+            F.foreachi(names, function(i, name)
+                process_file(name, i, #names)
+            end)
         end)
 
     return F.patch(parser:parse(), {output=output})
