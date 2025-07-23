@@ -207,7 +207,7 @@ local function parse(s, i0, state)
     if not i1 then return #s+1, #s+1, "" end
     local tag = s:sub(i1, i2-1)
 
-    -- S -> "@@ LHS = RHS
+    -- S -> "@@ LHS = RHS"
     if tag == stat_tag then
         local i3, i4 = parse_lhs(s, i2)
         local i5, i6 = parse_eq(s, i4) ---@diagnostic disable-line: unused-local
