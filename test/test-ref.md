@@ -45,6 +45,7 @@ chaining methods: 55
 chaining methods: WORLD! <- HELLO
 chaining methods: OLLEH -< !DLROW
 chaining methods: WORLD! <- HELLO : reverse()
+uncomplete chains: a-b-c: this colon is not part of the previous macro
 
 escaping: `@F.range(1, 10):sum()`
 
@@ -338,3 +339,7 @@ words: un deux trois
 
 
 
+
+## End of the document
+
+This text shall not be forgotten.

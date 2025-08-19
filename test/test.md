@@ -42,6 +42,7 @@ chaining methods: @F.range(1, 10):sum()
 chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")
 chaining methods: @string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ") : reverse()
 chaining methods: @(string.words[==[ hello world! ]==] : map(string.upper) : reverse() : str(" <- ")) : reverse()
+uncomplete chains: @string.words"a b c":str"-": this colon is not part of the previous macro
 
 escaping: `@q"@F.range(1, 10):sum()"`
 
@@ -366,3 +367,7 @@ words: @defer(F.unwords, words)
 @@ words[#words+1] = "un"
 @@ words[#words+1] = "deux"
 @@ words[#words+1] = "trois"
+
+## End of the document
+
+This text shall not be forgotten.

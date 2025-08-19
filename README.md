@@ -194,17 +194,19 @@ with a subset of the Lua grammar:
 
 The expression grammar is:
 
-    expression ::= <identifier> continuation
+    expression ::= <identifier> expr_cont
 
-    continuation ::= '(' well parenthesized substring ')' continuation
-                   | '{' well bracketed substring '}' continuation
-                   | <single quoted string> continuation
-                   | <double quoted string> continuation
-                   | <long string> continuation
-                   | '[' well bracketed substring ']' continuation
-                   | '.' expression
-                   | ':' expression
-                   | <empty string>
+    call_cont ::= '(' well parenthesized substring ')' expr_cont
+                | '{' well bracketed substring '}' expr_cont
+                | <single quoted string> expr_cont
+                | <double quoted string> expr_cont
+                | <long string> expr_cont
+
+    expr_cont ::= call_cont
+                | '[' well bracketed substring ']' expr_cont
+                | '.' expression
+                | ':' <identifier> call_cont
+                | <empty string>
 
 And the third one is an assignment to Lua variables:
 
