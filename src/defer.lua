@@ -20,6 +20,8 @@ https://codeberg.org/cdsoft/ypp
 
 --@LOAD
 
+local F = require "F"
+
 --[[@@@
 * `defer(func, ...)`: emit a unique tag that will later be replaced by the result of `func(...)` if `func` is callable.
 * `defer(table, ...)`: emit a unique tag that will later be replaced by the concatenation of `table` (one item per line).
@@ -37,7 +39,10 @@ total = @defer(function() return N end) (should be "2")
 ]=====]
 @@@]]
 
-local deferred_functions = {}
+local start_tag, end_tag = "\x02⟪defer:", "⟫\x03"
+local tag_id = 0
+
+local deferred_functions = F{}
 
 local function callable(x)
     local t, mt = type(x), getmetatable(x)
@@ -45,17 +50,15 @@ local function callable(x)
 end
 
 local function defer(x, ...)
-    local tag = string.format("▶%d◀", F.size(deferred_functions))
+    tag_id = tag_id + 1
+    local tag = start_tag..tag_id..end_tag
     deferred_functions[tag] = callable(x) and F.partial(x, ...)
                               or function() return F.flatten(x):map(tostring):unlines() end
     return tag
 end
 
 local function replace(s)
-    for tag, func in pairs(deferred_functions) do
-        s = s:gsub(tag, func())
-    end
-    return s
+    return s : gsub(start_tag.."%d+"..end_tag, deferred_functions : mapt(F.call))
 end
 
 return setmetatable({
