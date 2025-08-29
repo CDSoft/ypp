@@ -44,6 +44,14 @@ It provides several interesting features:
 - diagrams ([Graphviz], [PlantUML], [Asymptote], [blockdiag], [mermaid], [Octave], [lsvg], ...)
 - documentation extraction (e.g. from comments in source files)
 
+# Releases
+
+It is strongly recommended to build Ypp from source,
+as this is the only reliable way to install the exact version you need.
+
+However, if you do require precompiled binaries,
+this page offers a selection for various platforms: <https://cdelord.fr/pub>.
+
 # Pricing
 
 Ypp is a free and open source software.
