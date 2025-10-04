@@ -198,7 +198,8 @@ return flex.str(function(filename, opts)
                     : drop_while(string.null)
                     : drop_while_end(string.null)
                 if #src == 0 then return nil end
-                return F.unlines { start, src:unlines(), stop }
+                local block = F.unlines { start, src:unlines(), stop }
+                return convert.if_required(block, {to = opts.from})
             end
         else
             code = F.const(nil)
