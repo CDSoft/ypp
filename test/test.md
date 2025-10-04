@@ -191,7 +191,18 @@ This comment is also ignored
 
 ## Documentation extraction
 
-@doc "test.c" {pattern="@@@(.-)@@@", shift=2}
+### Doc blocks only
+
+@doc "test.c" {pattern="@@@(.-)@@@", shift=3}
+
+### Doc blocks and code in code blocks
+
+@@ codedoc = doc {
+    pattern = "/%*@@@(.-)@@@%*/",
+    code = true,
+    hide = "//%-%-%-[%-]*.-//%-%-%-[%-]*",
+}
+@codedoc "test2.c" {shift=3}
 
 ## Scripts
 

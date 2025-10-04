@@ -177,6 +177,8 @@ Texte français conservé (lang=fr)
 
 ## Documentation extraction
 
+### Doc blocks only
+
 **`answer`** takes any question and returns the most relevant answer.
 
 Example:
@@ -192,6 +194,33 @@ The code is:
 const char *answer(const char *question)
 {
     return "42";
+}
+```
+
+
+### Doc blocks and code in code blocks
+
+
+#### Example of *reversed* literate programming
+
+##### Fibonacci sequence
+
+Native implementation:
+
+``` c
+int fib(int n) {
+    if (n <= 1) return 1;       /* fib(0) == fib(1) == 1         */
+    return fib(n-1) + fib(n-2); /* fib(n) == fib(n-1) + fib(n-2) */
+}
+```
+
+##### Tests
+
+``` c
+int main(void) {
+    assert(fib(0) == 1);
+    assert(fib(1) == 1);
+    assert(fib(10) == 89);
 }
 ```
 

@@ -376,6 +376,11 @@ E.g.:
     (e.g. `"markdown"`, `"rst"`, …). The default format is Markdown.
   - `opts.shift` is the offset applied to the header levels. The default
     offset is `0`.
+  - `opts.code` extract code (i.e. everything but documentation
+    fragments) in code blocks. The code language is given by the
+    filename (if `opts.code==true`) or by `opts.code` if it is a string.
+  - `opts.hide` is a Lua pattern used to identify portions of
+    documentations or code to exclude.
 
 The `doc` macro can also be called as a curried function (arguments can
 be swapped). E.g.:
