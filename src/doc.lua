@@ -115,7 +115,6 @@ local langs = {
 
   -- Scientific languages
   ["r"] = "r",
-  ["R"] = "r",
   ["m"] = "matlab",
   ["jl"] = "julia",
   ["f"] = "fortran",
@@ -183,7 +182,7 @@ return flex.str(function(filename, opts)
             name = name:lower()
             ext = ext and ext:gsub("^%.", ""):lower()
             if opts.code == true then
-                lang = langs[ext] or langs[name]
+                lang = langs[ext] or langs[name:basename()]
             else
                 lang = langs[opts.code:gsub("^%.", "")] or opts.code
             end
