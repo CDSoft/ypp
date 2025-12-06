@@ -64,7 +64,7 @@ function flex_str_mt:__tostring()
     -- string value requested
     -- convert to string and call f on this string
     if self.s == F.Nil then ypp.error "missing argument" end
-    return tostring(self.f(tostring(self.s), self.opt))
+    return tostring(self.f(self.s, self.opt))
 end
 
 function flex_str_mt:__index(k)
@@ -101,7 +101,7 @@ end
 function flex_array_mt:__tostring()
     -- string value requested
     -- convert the result of f to a string
-    return tostring(f(self.xs, self.opt))
+    return tostring(self.f(self.xs, self.opt))
 end
 
 local function flex_array(f)
