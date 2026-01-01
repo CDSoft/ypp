@@ -192,22 +192,23 @@ local LHS = seq {
 }
 
 local RHS = alt {
-    token"%-?%d+%.%d+e%-?%d+",  -- RHS -> number
-    token"%-?%d+%.e%-?%d+",     -- RHS -> number
-    token"%-?%.%d+e%-?%d+",     -- RHS -> number
-    token"%-?%d+e%-?%d+",       -- RHS -> number
-    token"%-?%d+%.%d+",         -- RHS -> number
-    token"%-?%d+%.",            -- RHS -> number
-    token"%-?%.%d+",            -- RHS -> number
-    token"%-?%d+",              -- RHS -> number
-    token"true",                -- RHS -> boolean
-    token"false",               -- RHS -> boolean
-    PARENS,                     -- RHS -> (...)
-    BRACKETS,                   -- RHS -> {...}
-    DOUBLE_QUOTE_STRING,        -- RHS -> "..."
-    SINGLE_QUOTE_STRING,        -- RHS -> '..."
-    LONGSTRING,                 -- RHS -> [=[ ... ]=]
-    E,                          -- RHS -> E
+    token"0[xX]%x+",                -- RHS -> hexadecimal number
+    token"%-?%d+%.%d+[eE]%-?%d+",   -- RHS -> real number
+    token"%-?%d+%.[eE]%-?%d+",      -- RHS -> real number
+    token"%-?%.%d+[eE]%-?%d+",      -- RHS -> real number
+    token"%-?%d+[eE]%-?%d+",        -- RHS -> real number
+    token"%-?%d+%.%d+",             -- RHS -> real number
+    token"%-?%d+%.",                -- RHS -> real number
+    token"%-?%.%d+",                -- RHS -> real number
+    token"%-?%d+",                  -- RHS -> integral number
+    token"true",                    -- RHS -> boolean
+    token"false",                   -- RHS -> boolean
+    PARENS,                         -- RHS -> (...)
+    BRACKETS,                       -- RHS -> {...}
+    DOUBLE_QUOTE_STRING,            -- RHS -> "..."
+    SINGLE_QUOTE_STRING,            -- RHS -> '...'
+    LONGSTRING,                     -- RHS -> [=[ ... ]=]
+    E,                              -- RHS -> E
 }
 
 -- assignement -> LHS "=" RHS

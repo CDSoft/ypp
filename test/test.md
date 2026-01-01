@@ -139,6 +139,13 @@ d = @d
 @@ t[3][3].z = "z"
 t = @F.show(t)
 
+@@ x = 0x255 @x
+@@ x = 0X42 @x
+
+@@ x = 3.1416 @x
+@@ x = 314.16e-2 @x
+@@ x = 0.31416E1 @x
+
 ## File inclusion
 
 @@ypp.macro "!"
