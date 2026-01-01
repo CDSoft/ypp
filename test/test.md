@@ -46,6 +46,12 @@ uncomplete chains: @string.words"a b c":str"-": this colon is not part of the pr
 
 escaping: `@q"@F.range(1, 10):sum()"`
 
+Strings can not contain newline characters:
+@string.lower "COOL!" 'this is not
+a string'
+@string.lower 'BUT THIS IS A\
+MULTILINE SINGLE QUOTED STRING'
+
 ### pattern_1
 
 1+1 = @(1+1)

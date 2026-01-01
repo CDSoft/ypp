@@ -49,6 +49,12 @@ uncomplete chains: a-b-c: this colon is not part of the previous macro
 
 escaping: `@F.range(1, 10):sum()`
 
+Strings can not contain newline characters:
+cool! 'this is not
+a string'
+but this is a
+multiline single quoted string
+
 ### pattern_1
 
 1+1 = 2

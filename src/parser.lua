@@ -143,6 +143,7 @@ local function parse_quoted_string(c)
         while i <= #s do
             local ci = s:sub(i, i)
             if ci == c then return i1, i+1 end
+            if ci == '\n' or ci == '\r' then return end
             if ci == '\\' then i = i + 1 end
             i = i + 1
         end
