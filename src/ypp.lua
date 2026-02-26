@@ -74,15 +74,10 @@ local output_contents = F{}
 local input_files = F{fs.join(fs.getcwd(), "-")} -- stack of input files (current branch from the root to the deepest included document)
 local output_file = "-"
 
-local red  = F.id   ---@type function | table
-local cyan = F.id   ---@type function | table
+local red  = term.color.red
+local cyan = term.color.cyan
 
-local function colorize()
-    red  = term.color.red
-    cyan = term.color.cyan
-end
-
-if term.isatty(io.stderr) then colorize() end
+term.color.enable(term.isatty(io.stderr))
 
 local function print_frame(source, source_name, line)
     local context = 5
@@ -324,7 +319,7 @@ local function parse_args()
     parser : flag "-a"
         : description "Force colorization using ANSI codes"
         : target "color"
-        : action(function(_, _, _, _) colorize() end)
+        : action(function(_, _, _, _) term.color.enable() end)
 
     parser : option "-l"
         : description "Execute a Lua script"
