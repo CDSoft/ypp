@@ -20,7 +20,7 @@ https://codeberg.org/cdsoft/ypp
 
 local F = require "F"
 
-version "1.10.6"
+version "1.11"
 
 help.name "ypp"
 help.description "$name"
@@ -45,6 +45,12 @@ local binaries = {
 }
 
 local ypp_luax = build.luax.luax "$builddir/ypp.luax" { sources }
+
+local prebuilt = {
+    build.cp "bin/ypp.lua"        "$builddir/ypp.lua",
+    build.cp "bin/ypp-pandoc.lua" "$builddir/ypp-pandoc.lua",
+    build.cp "bin/ypp.luax"       "$builddir/ypp.luax",
+}
 
 phony "release" {
     build.tar "$builddir/release/${version}/ypp-${version}-lua.tar.gz" {
@@ -276,7 +282,7 @@ section "Shortcuts"
 ---------------------------------------------------------------------
 
 help "compile" "Compile $name"
-phony "compile" { binaries, ypp_luax }
+phony "compile" { binaries, ypp_luax, prebuilt }
 default "compile"
 
 help "doc" "Generate README.md"
