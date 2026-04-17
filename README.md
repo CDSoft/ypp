@@ -1,5 +1,15 @@
 <img src="doc/ypp-banner.svg" style="width:100.0%" />
 
+Disclaimer
+==========
+
+> [!IMPORTANT]
+> **ypp is now part of [LuaX](https://codeberg.org/cdsoft/luax) (<https://codeberg.org/cdsoft/luax>).**
+>
+> This consolidation simplifies maintenance and updates, and makes deploying LuaX, Bang, and ypp more consistent.
+>
+> The legacy ypp repository is now deprecated and will no longer receive updates.
+
 # Yet a PreProcessor
 
 `ypp` is yet another preprocessor. It’s an attempt to merge
